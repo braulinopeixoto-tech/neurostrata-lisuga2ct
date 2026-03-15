@@ -15,7 +15,19 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
 
   const addPatient = (patient: any) => {
-    setPatients((prev) => [{ id: Date.now().toString(), ...patient }, ...prev])
+    const newPatient = {
+      id: Date.now().toString(),
+      ...patient,
+      auditLogs: [
+        {
+          id: Date.now().toString(),
+          date: new Date().toISOString(),
+          action: 'Registro Inicial (EHR)',
+          user: 'Usuário Atual',
+        },
+      ],
+    }
+    setPatients((prev) => [newPatient, ...prev])
   }
 
   return (

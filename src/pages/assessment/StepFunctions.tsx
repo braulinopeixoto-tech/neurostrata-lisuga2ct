@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
-import { PSYCHIC_FUNCTIONS } from '@/lib/mock-data'
+import { PSYCHIC_FUNCTIONS_CATEGORIZED } from '@/lib/mock-data'
+import { AlertTriangle } from 'lucide-react'
 
 export function StepFunctions({
   onNext,
@@ -12,66 +12,58 @@ export function StepFunctions({
   onNext: () => void
   patientSelected?: boolean
 }) {
-  const [scores, setScores] = useState<Record<string, number>>(
-    PSYCHIC_FUNCTIONS.reduce((acc, fn) => ({ ...acc, [fn]: 50 }), {}),
-  )
-  const [observations, setObservations] = useState<Record<string, string>>({})
+  const [scores, setScores] = useState<Record<string, number>>({})
+
+  const getScore = (fn: string) => scores[fn] || 50
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
       <div>
-        <h2 className="text-xl font-semibold text-primary">1. Funções Psíquicas</h2>
+        <h2 className="text-xl font-semibold text-primary">Mapeamento de 18 Funções Psíquicas</h2>
         <p className="text-sm text-muted-foreground">
-          Avalie sistematicamente o desempenho neurofuncional em escala de 0 a 100.
+          Avalie o comprometimento em 4 eixos funcionais (0 = Disfuncional grave, 100 = Plenamente
+          preservado).
         </p>
         {!patientSelected && (
-          <p className="text-sm text-destructive mt-3 font-medium bg-destructive/10 p-3 rounded-md border border-destructive/20 inline-block">
-            Por favor, selecione um paciente no topo da página antes de avançar.
-          </p>
+          <div className="flex items-center gap-2 text-sm text-destructive mt-3 bg-destructive/10 p-3 rounded-md border border-destructive/20 w-max">
+            <AlertTriangle className="w-4 h-4" /> Selecione o paciente antes de avançar.
+          </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {PSYCHIC_FUNCTIONS.map((fn) => (
-          <div
-            key={fn}
-            className="space-y-4 bg-muted/20 p-5 rounded-xl border border-border/50 hover:border-accent/40 transition-colors shadow-sm"
-          >
-            <div className="flex justify-between items-center">
-              <Label className="font-semibold text-foreground/90 line-clamp-1" title={fn}>
-                {fn}
-              </Label>
-              <span className="text-sm font-mono bg-white px-2.5 py-1 rounded-md border shadow-sm w-12 text-center text-primary font-medium">
-                {scores[fn]}
-              </span>
-            </div>
-            <div className="pt-2 pb-1">
-              <Slider
-                value={[scores[fn]]}
-                max={100}
-                step={1}
-                onValueChange={(val) => setScores({ ...scores, [fn]: val[0] })}
-                className="cursor-pointer"
-              />
-            </div>
-            <div>
-              <Input
-                placeholder="Observações clínicas (opcional)"
-                className="h-9 text-xs bg-white/70 focus:bg-white transition-colors"
-                value={observations[fn] || ''}
-                onChange={(e) => setObservations({ ...observations, [fn]: e.target.value })}
-              />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        {PSYCHIC_FUNCTIONS_CATEGORIZED.map((cat) => (
+          <div key={cat.category} className="space-y-4 p-5 bg-muted/20 border rounded-xl">
+            <h3 className={`font-bold text-sm uppercase tracking-wider flex items-center gap-2`}>
+              <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
+              Eixo {cat.category}
+            </h3>
+            <div className="space-y-5">
+              {cat.items.map((fn) => (
+                <div key={fn} className="space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <Label className="font-medium">{fn}</Label>
+                    <span
+                      className={`font-mono px-2 py-0.5 rounded text-xs ${getScore(fn) < 40 ? 'bg-destructive/10 text-destructive' : 'bg-white border'}`}
+                    >
+                      {getScore(fn)}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[getScore(fn)]}
+                    max={100}
+                    step={1}
+                    onValueChange={(val) => setScores({ ...scores, [fn]: val[0] })}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-end pt-6 border-t mt-8">
-        <Button
-          onClick={onNext}
-          disabled={!patientSelected}
-          className="w-full sm:w-auto text-base h-11 px-8"
-        >
+      <div className="flex justify-end pt-4 border-t">
+        <Button onClick={onNext} disabled={!patientSelected} className="px-8 h-11">
           Avançar para RDoC
         </Button>
       </div>
