@@ -2,12 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
 interface AppState {
-  currentUser: {
-    id: string
-    fullName: string
-    role: string
-    registrationId: string
-  }
+  currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: typeof MOCK_PATIENTS
   addPatient: (patient: any) => void
   currentAssessmentId: string | null
@@ -31,6 +26,11 @@ interface AppState {
     comorbidities: string
   }
   setAssessmentData: (data: Partial<AppState['currentAssessmentData']>) => void
+  documents: any[]
+  addDocument: (doc: any) => void
+  updateDocument: (id: string, data: any) => void
+  patientEvidence: Record<string, any>
+  setPatientEvidence: (patientId: string, evidence: any) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -42,11 +42,12 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     role: 'Médico',
     registrationId: 'CRM 12345-SP',
   })
-
   const [patients, setPatients] = useState(MOCK_PATIENTS)
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState(MOCK_PROFESSIONALS)
   const [formulas, setFormulas] = useState(MOCK_FORMULAS)
+  const [documents, setDocuments] = useState<any[]>([])
+  const [patientEvidence, setPatientEvidence] = useState<Record<string, any>>({})
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -59,60 +60,47 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     comorbidities: '',
   })
 
-  const setAssessmentData = (data: Partial<typeof currentAssessmentData>) => {
+  const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
     setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
-  }
 
-  const addPatient = (patient: any) => {
-    const newPatient = {
-      id: Date.now().toString(),
-      ...patient,
-      auditLogs: [
-        {
-          id: Date.now().toString(),
-          date: new Date().toISOString(),
-          action: 'Registro Inicial (EHR)',
-          user: currentUser.fullName,
-        },
-      ],
-    }
-    setPatients((prev) => [newPatient, ...prev])
-  }
+  const addPatient = (patient: any) =>
+    setPatients((prev) => [
+      {
+        id: Date.now().toString(),
+        ...patient,
+        auditLogs: [
+          {
+            id: Date.now().toString(),
+            date: new Date().toISOString(),
+            action: 'Registro Inicial (EHR)',
+            user: currentUser.fullName,
+          },
+        ],
+      },
+      ...prev,
+    ])
 
-  const addProfessional = (professional: any) => {
-    const newProfessional = {
-      ...professional,
-      id: `NS-P${Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, '0')}`,
-    }
-    setProfessionals((prev) => [newProfessional, ...prev])
-  }
-
-  const updateProfessional = (id: string, professional: any) => {
+  const addProfessional = (professional: any) =>
+    setProfessionals((prev) => [{ ...professional, id: `NS-P${Date.now()}` }, ...prev])
+  const updateProfessional = (id: string, professional: any) =>
     setProfessionals((prev) => prev.map((p) => (p.id === id ? { ...p, ...professional } : p)))
-  }
-
-  const deleteProfessional = (id: string) => {
+  const deleteProfessional = (id: string) =>
     setProfessionals((prev) => prev.filter((p) => p.id !== id))
-  }
 
-  const addFormula = (formula: any) => {
-    const newFormula = {
-      ...formula,
-      id: `NS-F${Math.floor(Math.random() * 10000).toString()}`,
-      createdAt: new Date().toISOString(),
-    }
-    setFormulas((prev) => [newFormula, ...prev])
-  }
-
-  const updateFormula = (id: string, formula: any) => {
+  const addFormula = (formula: any) =>
+    setFormulas((prev) => [
+      { ...formula, id: `NS-F${Date.now()}`, createdAt: new Date().toISOString() },
+      ...prev,
+    ])
+  const updateFormula = (id: string, formula: any) =>
     setFormulas((prev) => prev.map((f) => (f.id === id ? { ...f, ...formula } : f)))
-  }
+  const deleteFormula = (id: string) => setFormulas((prev) => prev.filter((f) => f.id !== id))
 
-  const deleteFormula = (id: string) => {
-    setFormulas((prev) => prev.filter((f) => f.id !== id))
-  }
+  const addDocument = (doc: any) => setDocuments((prev) => [doc, ...prev])
+  const updateDocument = (id: string, data: any) =>
+    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, ...data } : d)))
+  const updatePatientEvidence = (patientId: string, evidence: any) =>
+    setPatientEvidence((prev) => ({ ...prev, [patientId]: evidence }))
 
   return (
     <AppStateContext.Provider
@@ -132,6 +120,11 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         deleteFormula,
         currentAssessmentData,
         setAssessmentData,
+        documents,
+        addDocument,
+        updateDocument,
+        patientEvidence,
+        setPatientEvidence: updatePatientEvidence,
       }}
     >
       {children}
@@ -141,8 +134,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
 export default function useAppStore() {
   const context = useContext(AppStateContext)
-  if (!context) {
-    throw new Error('useAppStore must be used within AppStoreProvider')
-  }
+  if (!context) throw new Error('useAppStore must be used within AppStoreProvider')
   return context
 }
