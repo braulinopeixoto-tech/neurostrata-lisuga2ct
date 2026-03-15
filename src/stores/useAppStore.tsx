@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
 interface AppState {
+  currentUser: {
+    id: string
+    fullName: string
+    role: string
+    registrationId: string
+  }
   patients: typeof MOCK_PATIENTS
   addPatient: (patient: any) => void
   currentAssessmentId: string | null
@@ -19,6 +25,14 @@ interface AppState {
 const AppStateContext = createContext<AppState | undefined>(undefined)
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
+  // Mock current user simulating an authenticated doctor
+  const [currentUser] = useState({
+    id: 'NS-P001',
+    fullName: 'Dr. Renato Alves',
+    role: 'Médico',
+    registrationId: 'CRM 12345-SP',
+  })
+
   const [patients, setPatients] = useState(MOCK_PATIENTS)
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState(MOCK_PROFESSIONALS)
@@ -33,7 +47,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
           id: Date.now().toString(),
           date: new Date().toISOString(),
           action: 'Registro Inicial (EHR)',
-          user: 'Usuário Atual',
+          user: currentUser.fullName,
         },
       ],
     }
@@ -78,6 +92,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   return (
     <AppStateContext.Provider
       value={{
+        currentUser,
         patients,
         addPatient,
         currentAssessmentId,

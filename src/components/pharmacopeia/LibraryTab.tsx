@@ -1,14 +1,22 @@
 import { useState } from 'react'
-import { Search, FlaskConical } from 'lucide-react'
+import { Search, FlaskConical, FileText } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CLINICAL_PROTOCOLS, PROTOCOL_CATEGORIES } from '@/lib/clinical-protocols'
+import { PrescriptionModal } from './PrescriptionModal'
+import useAppStore from '@/stores/useAppStore'
 
 export function LibraryTab() {
+  const { currentUser } = useAppStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [prescriptionProtocol, setPrescriptionProtocol] = useState<any>(null)
+
+  const canGeneratePrescription = ['Médico', 'Farmacêutico Clínico', 'Nutricionista'].includes(
+    currentUser.role,
+  )
 
   const filteredProtocols = CLINICAL_PROTOCOLS.filter((p) => {
     const matchesSearch =
@@ -77,11 +85,25 @@ export function LibraryTab() {
                 </pre>
               </div>
             </CardContent>
-            <CardFooter className="border-t bg-muted/5 py-3 px-6 text-xs text-muted-foreground flex justify-between items-center">
-              <span className="font-medium flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-accent/50" /> Forma: {protocol.form}
-              </span>
-              <span className="italic">Posologia: {protocol.posology}</span>
+            <CardFooter className="border-t bg-muted/5 p-4 flex flex-col items-start gap-3">
+              <div className="flex justify-between items-center w-full text-xs text-muted-foreground">
+                <span className="font-medium flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-accent/50" /> Forma: {protocol.form}
+                </span>
+                <span className="italic truncate ml-2 text-right" title={protocol.posology}>
+                  Posologia: {protocol.posology}
+                </span>
+              </div>
+              {canGeneratePrescription && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full h-8 bg-white border-accent/30 text-accent hover:bg-accent/10 transition-colors"
+                  onClick={() => setPrescriptionProtocol(protocol)}
+                >
+                  <FileText className="w-3.5 h-3.5 mr-2" /> Gerar Receita
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}
@@ -92,6 +114,12 @@ export function LibraryTab() {
           </div>
         )}
       </div>
+
+      <PrescriptionModal
+        open={!!prescriptionProtocol}
+        onOpenChange={(open) => !open && setPrescriptionProtocol(null)}
+        protocol={prescriptionProtocol}
+      />
     </div>
   )
 }
