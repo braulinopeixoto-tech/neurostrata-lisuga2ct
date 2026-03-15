@@ -120,6 +120,37 @@ export const MOCK_PROFESSIONALS = [
   },
 ]
 
+export const NEURO_AXES = [
+  'Eixo anti-inflamatório do SNC',
+  'Eixo memória',
+  'Eixo cognição',
+  'Eixo mitocondrial',
+  'Eixo ansiolítico',
+  'Eixo estabilidade do humor',
+  'Eixo plasticidade sináptica',
+]
+
+export const MOCK_FORMULAS = [
+  {
+    id: 'f1',
+    title: 'Suporte Mitocondrial Avançado',
+    axis: 'Eixo mitocondrial',
+    content:
+      'Coenzima Q10 (Ubiquinol) ........ 100mg\nPQQ (Pirroloquinolina quinona) ... 10mg\nL-Carnitina .................... 500mg\nÁcido Alfa-Lipóico .............. 200mg\nExcipiente q.s.p ................ 1 dose\n\nPosologia: Tomar 1 dose pela manhã.',
+    professionalId: 'NS-P001',
+    createdAt: '2023-11-01T08:00:00Z',
+  },
+  {
+    id: 'f2',
+    title: 'Modulação de Ansiedade e Estresse',
+    axis: 'Eixo ansiolítico',
+    content:
+      'L-Theanina ...................... 200mg\nAshwagandha (Extrato Padronizado) 300mg\nMagnésio Treonato ............... 150mg\nPassiflora incarnata ............ 250mg\nExcipiente q.s.p ................ 1 dose\n\nPosologia: Tomar 1 dose à noite, 1 hora antes de dormir.',
+    professionalId: 'NS-P003',
+    createdAt: '2023-11-05T14:30:00Z',
+  },
+]
+
 export const PSYCHIC_FUNCTIONS_CATEGORIZED = [
   {
     category: 'Cognitivo',

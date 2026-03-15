@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import { MOCK_PATIENTS, MOCK_PROFESSIONALS } from '@/lib/mock-data'
+import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
 interface AppState {
   patients: typeof MOCK_PATIENTS
@@ -10,6 +10,10 @@ interface AppState {
   addProfessional: (professional: any) => void
   updateProfessional: (id: string, professional: any) => void
   deleteProfessional: (id: string) => void
+  formulas: typeof MOCK_FORMULAS
+  addFormula: (formula: any) => void
+  updateFormula: (id: string, formula: any) => void
+  deleteFormula: (id: string) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -18,6 +22,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [patients, setPatients] = useState(MOCK_PATIENTS)
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState(MOCK_PROFESSIONALS)
+  const [formulas, setFormulas] = useState(MOCK_FORMULAS)
 
   const addPatient = (patient: any) => {
     const newPatient = {
@@ -53,6 +58,23 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setProfessionals((prev) => prev.filter((p) => p.id !== id))
   }
 
+  const addFormula = (formula: any) => {
+    const newFormula = {
+      ...formula,
+      id: `NS-F${Math.floor(Math.random() * 10000).toString()}`,
+      createdAt: new Date().toISOString(),
+    }
+    setFormulas((prev) => [newFormula, ...prev])
+  }
+
+  const updateFormula = (id: string, formula: any) => {
+    setFormulas((prev) => prev.map((f) => (f.id === id ? { ...f, ...formula } : f)))
+  }
+
+  const deleteFormula = (id: string) => {
+    setFormulas((prev) => prev.filter((f) => f.id !== id))
+  }
+
   return (
     <AppStateContext.Provider
       value={{
@@ -64,6 +86,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         addProfessional,
         updateProfessional,
         deleteProfessional,
+        formulas,
+        addFormula,
+        updateFormula,
+        deleteFormula,
       }}
     >
       {children}

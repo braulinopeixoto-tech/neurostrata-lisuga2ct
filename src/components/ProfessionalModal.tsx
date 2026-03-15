@@ -49,6 +49,8 @@ const SPECIALTIES = [
   'Terapeuta Ocupacional',
   'Fisioterapeuta',
   'Psicopedagogo',
+  'Farmacêutico',
+  'Nutricionista',
   'Outro',
 ]
 
@@ -131,7 +133,7 @@ export function ProfessionalModal({
                 name="registrationId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Registro (CRM/CRP)</FormLabel>
+                    <FormLabel>Registro (CRM/CRP/CRF/CRN)</FormLabel>
                     <FormControl>
                       <Input placeholder="Ex: CRM 12345-SP" {...field} />
                     </FormControl>
