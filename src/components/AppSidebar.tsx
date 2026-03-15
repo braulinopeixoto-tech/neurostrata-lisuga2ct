@@ -6,6 +6,7 @@ import {
   BookOpen,
   Settings,
   BrainCircuit,
+  Stethoscope,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -23,6 +24,7 @@ export function AppSidebar() {
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Pacientes', path: '/patients', icon: Users },
+    { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
     { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
   ]

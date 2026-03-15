@@ -13,6 +13,7 @@ import Assessment from './pages/assessment/Assessment'
 import Analysis from './pages/Analysis'
 import Report from './pages/Report'
 import Protocols from './pages/Protocols'
+import Professionals from './pages/Professionals'
 
 const App = () => (
   <AppStoreProvider>
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/patients/:id" element={<PatientDetail />} />
+            <Route path="/professionals" element={<Professionals />} />
             <Route path="/assessment" element={<Assessment />} />
             <Route path="/analysis/:id" element={<Analysis />} />
             <Route path="/report/:id" element={<Report />} />

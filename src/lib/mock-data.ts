@@ -90,6 +90,36 @@ export const MOCK_PROTOCOLS = [
   },
 ]
 
+export const MOCK_PROFESSIONALS = [
+  {
+    id: 'NS-P001',
+    fullName: 'Dr. Renato Alves',
+    registrationId: 'CRM 12345-SP',
+    specialty: 'Neurologista',
+    cpf: '123.456.789-00',
+    email: 'renato.alves@neurostrata.com',
+    phone: '(11) 98765-4321',
+  },
+  {
+    id: 'NS-P002',
+    fullName: 'Dra. Silva Marques',
+    registrationId: 'CRP 06/98765',
+    specialty: 'Neuropsicólogo(a)',
+    cpf: '987.654.321-00',
+    email: 'silva.marques@neurostrata.com',
+    phone: '(11) 91234-5678',
+  },
+  {
+    id: 'NS-P003',
+    fullName: 'Dr. Carlos Eduardo',
+    registrationId: 'CRM 54321-RJ',
+    specialty: 'Psiquiatra',
+    cpf: '456.789.123-00',
+    email: 'carlos.eduardo@neurostrata.com',
+    phone: '(21) 99876-5432',
+  },
+]
+
 export const PSYCHIC_FUNCTIONS_CATEGORIZED = [
   {
     category: 'Cognitivo',
@@ -124,27 +154,27 @@ export const RDOC_DOMAINS = [
   {
     id: 'nv',
     name: 'Valência Negativa',
-    desc: 'Sistemas que respondem primariamente a situações aversivas ou ameaças (medo, ansiedade, perda).',
+    desc: 'Sistemas que respondem primariamente a situações aversivas ou ameaças.',
   },
   {
     id: 'pv',
     name: 'Valência Positiva',
-    desc: 'Sistemas que respondem a contextos motivacionais positivos (recompensa, hábito, aprendizado por reforço).',
+    desc: 'Sistemas que respondem a contextos motivacionais positivos.',
   },
   {
     id: 'cs',
     name: 'Sistemas Cognitivos',
-    desc: 'Processos como atenção, percepção, memória de trabalho e controle cognitivo.',
+    desc: 'Processos como atenção, percepção, memória de trabalho e controle.',
   },
   {
     id: 'sp',
     name: 'Processos Sociais',
-    desc: 'Mediação de respostas interpessoais, comunicação, percepção de si e do outro.',
+    desc: 'Mediação de respostas interpessoais, comunicação, percepção de si.',
   },
   {
     id: 'ar',
     name: 'Excitação e Regulação',
-    desc: 'Manutenção do nível de ativação cerebral e regulação de ritmos circadianos.',
+    desc: 'Manutenção do nível de ativação cerebral e regulação de ritmos.',
   },
 ]
 
