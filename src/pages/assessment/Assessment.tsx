@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Brain, Activity, User, Dna, Bot, Network, Stethoscope, FileText } from 'lucide-react'
+import { Brain, Activity, User, Dna, Bot, Network, Stethoscope, BrainCircuit } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -15,7 +15,7 @@ import { StepRDoC } from './StepRDoC'
 import { StepBigFive } from './StepBigFive'
 import { StepBiomarkers } from './StepBiomarkers'
 import { StepProcessing } from './StepProcessing'
-import { StepQuickReport } from './StepQuickReport'
+import { StepMultiAgent } from './StepMultiAgent'
 import useAppStore from '@/stores/useAppStore'
 import { cn } from '@/lib/utils'
 
@@ -24,13 +24,13 @@ const ALL_STEPS = [
   { id: '2', title: 'Matriz RDoC', icon: Activity, complex: true, medicalOnly: false },
   { id: '3', title: 'Big Five', icon: Network, complex: true, medicalOnly: false },
   { id: '4', title: 'Biomarcadores', icon: Dna, complex: true, medicalOnly: false },
-  { id: 'q', title: 'Relatório IA', icon: FileText, complex: true, medicalOnly: true },
+  { id: 'ma', title: 'Motor Multi-Agente', icon: BrainCircuit, complex: true, medicalOnly: true },
   { id: '5', title: 'Processamento', icon: Bot, complex: false, medicalOnly: false },
 ]
 
 export default function Assessment() {
   const [currentTab, setCurrentTab] = useState('1')
-  const { patients, professionals } = useAppStore()
+  const { patients, professionals, setCurrentAssessmentId } = useAppStore()
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
   const [selectedProfId, setSelectedProfId] = useState<string>('')
 
@@ -38,13 +38,13 @@ export default function Assessment() {
   const selectedProf = professionals.find((p) => p.id === selectedProfId)
 
   const isComplex = () => {
-    if (!selectedProf) return true // Default to full workflow if no professional is selected
+    if (!selectedProf) return true
     const fullRoles = ['Médico', 'Neurologista', 'Psiquiatra', 'Psicólogo(a)', 'Neuropsicólogo(a)']
     return fullRoles.includes(selectedProf.specialty)
   }
 
   const isMedical = () => {
-    if (!selectedProf) return true // Default to true if no prof selected to allow exploration
+    if (!selectedProf) return true
     return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
   }
 
@@ -54,12 +54,17 @@ export default function Assessment() {
     return true
   })
 
-  // Redirect if current tab is no longer visible due to professional role change
   useEffect(() => {
     if (!visibleSteps.find((s) => s.id === currentTab)) {
       setCurrentTab(visibleSteps[0].id)
     }
   }, [selectedProfId, currentTab, visibleSteps])
+
+  useEffect(() => {
+    if (selectedPatientId) {
+      setCurrentAssessmentId(selectedPatientId)
+    }
+  }, [selectedPatientId, setCurrentAssessmentId])
 
   const goNext = (id: string) => {
     const idx = visibleSteps.findIndex((s) => s.id === id)
@@ -203,12 +208,8 @@ export default function Assessment() {
             </>
           )}
           {isMedical() && (
-            <TabsContent value="q" className="m-0 p-6 focus-visible:outline-none">
-              <StepQuickReport
-                onNext={() => goNext('q')}
-                onPrev={() => goPrev('q')}
-                patientName={selectedPatient?.name}
-              />
+            <TabsContent value="ma" className="m-0 p-6 focus-visible:outline-none">
+              <StepMultiAgent onNext={() => goNext('ma')} onPrev={() => goPrev('ma')} />
             </TabsContent>
           )}
           <TabsContent value="5" className="m-0 p-6 focus-visible:outline-none">

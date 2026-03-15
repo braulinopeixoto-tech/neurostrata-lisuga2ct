@@ -20,12 +20,22 @@ interface AppState {
   addFormula: (formula: any) => void
   updateFormula: (id: string, formula: any) => void
   deleteFormula: (id: string) => void
+  currentAssessmentData: {
+    qeegTheta: boolean
+    qeegAlpha: boolean
+    seizureRisk: boolean
+    implants: boolean
+    age: string
+    medications: string
+    sleepQuality: string
+    comorbidities: string
+  }
+  setAssessmentData: (data: Partial<AppState['currentAssessmentData']>) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
-  // Mock current user simulating an authenticated doctor
   const [currentUser] = useState({
     id: 'NS-P001',
     fullName: 'Dr. Renato Alves',
@@ -37,6 +47,21 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState(MOCK_PROFESSIONALS)
   const [formulas, setFormulas] = useState(MOCK_FORMULAS)
+
+  const [currentAssessmentData, setCurrentAssessmentData] = useState({
+    qeegTheta: false,
+    qeegAlpha: false,
+    seizureRisk: false,
+    implants: false,
+    age: '',
+    medications: '',
+    sleepQuality: 'regular',
+    comorbidities: '',
+  })
+
+  const setAssessmentData = (data: Partial<typeof currentAssessmentData>) => {
+    setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
+  }
 
   const addPatient = (patient: any) => {
     const newPatient = {
@@ -105,6 +130,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         addFormula,
         updateFormula,
         deleteFormula,
+        currentAssessmentData,
+        setAssessmentData,
       }}
     >
       {children}
