@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Brain, Activity, User, Dna, Bot, Network, Stethoscope } from 'lucide-react'
+import { Brain, Activity, User, Dna, Bot, Network, Stethoscope, FileText } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -15,15 +15,17 @@ import { StepRDoC } from './StepRDoC'
 import { StepBigFive } from './StepBigFive'
 import { StepBiomarkers } from './StepBiomarkers'
 import { StepProcessing } from './StepProcessing'
+import { StepQuickReport } from './StepQuickReport'
 import useAppStore from '@/stores/useAppStore'
 import { cn } from '@/lib/utils'
 
 const ALL_STEPS = [
-  { id: '1', title: 'Funções Psíquicas', icon: Brain, complex: false },
-  { id: '2', title: 'Matriz RDoC', icon: Activity, complex: true },
-  { id: '3', title: 'Big Five', icon: Network, complex: true },
-  { id: '4', title: 'Biomarcadores', icon: Dna, complex: true },
-  { id: '5', title: 'Processamento', icon: Bot, complex: false },
+  { id: '1', title: 'Funções Psíquicas', icon: Brain, complex: false, medicalOnly: false },
+  { id: '2', title: 'Matriz RDoC', icon: Activity, complex: true, medicalOnly: false },
+  { id: '3', title: 'Big Five', icon: Network, complex: true, medicalOnly: false },
+  { id: '4', title: 'Biomarcadores', icon: Dna, complex: true, medicalOnly: false },
+  { id: 'q', title: 'Relatório IA', icon: FileText, complex: true, medicalOnly: true },
+  { id: '5', title: 'Processamento', icon: Bot, complex: false, medicalOnly: false },
 ]
 
 export default function Assessment() {
@@ -41,7 +43,16 @@ export default function Assessment() {
     return fullRoles.includes(selectedProf.specialty)
   }
 
-  const visibleSteps = ALL_STEPS.filter((s) => (isComplex() ? true : !s.complex))
+  const isMedical = () => {
+    if (!selectedProf) return true // Default to true if no prof selected to allow exploration
+    return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
+  }
+
+  const visibleSteps = ALL_STEPS.filter((s) => {
+    if (s.complex && !isComplex()) return false
+    if (s.medicalOnly && !isMedical()) return false
+    return true
+  })
 
   // Redirect if current tab is no longer visible due to professional role change
   useEffect(() => {
@@ -151,7 +162,11 @@ export default function Assessment() {
         <TabsList
           className={cn(
             'grid w-full h-auto p-1 bg-muted/50 gap-1 rounded-xl transition-all',
-            visibleSteps.length === 5 ? 'grid-cols-5' : 'grid-cols-2 max-w-xl mx-auto',
+            visibleSteps.length === 6
+              ? 'grid-cols-3 md:grid-cols-6 max-w-full'
+              : visibleSteps.length === 5
+                ? 'grid-cols-2 md:grid-cols-5 max-w-4xl mx-auto'
+                : 'grid-cols-2 max-w-xl mx-auto',
           )}
         >
           {visibleSteps.map((step) => (
@@ -186,6 +201,15 @@ export default function Assessment() {
                 <StepBiomarkers onNext={() => goNext('4')} onPrev={() => goPrev('4')} />
               </TabsContent>
             </>
+          )}
+          {isMedical() && (
+            <TabsContent value="q" className="m-0 p-6 focus-visible:outline-none">
+              <StepQuickReport
+                onNext={() => goNext('q')}
+                onPrev={() => goPrev('q')}
+                patientName={selectedPatient?.name}
+              />
+            </TabsContent>
           )}
           <TabsContent value="5" className="m-0 p-6 focus-visible:outline-none">
             <StepProcessing patientId={selectedPatientId} isComplex={isComplex()} />
