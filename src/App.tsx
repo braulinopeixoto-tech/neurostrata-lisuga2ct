@@ -15,6 +15,7 @@ import Report from './pages/Report'
 import Protocols from './pages/Protocols'
 import Professionals from './pages/Professionals'
 import Pharmacopeia from './pages/Pharmacopeia'
+import Neuronavigation from './pages/Neuronavigation'
 
 const App = () => (
   <AppStoreProvider>
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/professionals" element={<Professionals />} />
             <Route path="/assessment" element={<Assessment />} />
             <Route path="/pharmacopeia" element={<Pharmacopeia />} />
+            <Route path="/neuronavigation" element={<Neuronavigation />} />
             <Route path="/analysis/:id" element={<Analysis />} />
             <Route path="/report/:id" element={<Report />} />
             <Route path="/protocols" element={<Protocols />} />

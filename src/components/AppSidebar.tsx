@@ -8,6 +8,7 @@ import {
   BrainCircuit,
   Stethoscope,
   FlaskConical,
+  Compass,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -28,6 +29,7 @@ export function AppSidebar() {
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
     { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
     { name: 'Farmacopeia', path: '/pharmacopeia', icon: FlaskConical },
+    { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
   ]
 
