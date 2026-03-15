@@ -7,9 +7,11 @@ import { AlertTriangle } from 'lucide-react'
 
 export function StepFunctions({
   onNext,
+  nextLabel = 'Avançar',
   patientSelected = true,
 }: {
   onNext: () => void
+  nextLabel?: string
   patientSelected?: boolean
 }) {
   const [scores, setScores] = useState<Record<string, number>>({})
@@ -64,7 +66,7 @@ export function StepFunctions({
 
       <div className="flex justify-end pt-4 border-t">
         <Button onClick={onNext} disabled={!patientSelected} className="px-8 h-11">
-          Avançar para RDoC
+          Avançar para {nextLabel}
         </Button>
       </div>
     </div>

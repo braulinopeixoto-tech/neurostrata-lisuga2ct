@@ -4,20 +4,35 @@ import { BrainCircuit, CheckCircle2 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import useAppStore from '@/stores/useAppStore'
 
-export function StepProcessing({ patientId }: { patientId?: string }) {
+export function StepProcessing({
+  patientId,
+  isComplex = true,
+}: {
+  patientId?: string
+  isComplex?: boolean
+}) {
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('Inicializando NSI Engine...')
   const navigate = useNavigate()
   const { setCurrentAssessmentId } = useAppStore()
 
   useEffect(() => {
-    const sequence = [
+    const fullSequence = [
       { p: 15, text: 'Correlacionando 18 Funções Psíquicas...' },
       { p: 35, text: 'Integrando domínios RDoC e Big Five...' },
       { p: 60, text: 'Mapeando marcadores qEEG (Topografia)...' },
       { p: 85, text: 'Calculando NeuroStrata Index (NSI)...' },
       { p: 100, text: 'Geração de insights concluída.' },
     ]
+
+    const limitedSequence = [
+      { p: 25, text: 'Analisando 18 Funções Psíquicas...' },
+      { p: 50, text: 'Gerando modelo funcional focado...' },
+      { p: 80, text: 'Sintetizando laudo simplificado...' },
+      { p: 100, text: 'Geração de insights concluída.' },
+    ]
+
+    const sequence = isComplex ? fullSequence : limitedSequence
 
     let timer = 0
     sequence.forEach((step, index) => {
@@ -37,7 +52,7 @@ export function StepProcessing({ patientId }: { patientId?: string }) {
         }
       }, timer)
     })
-  }, [navigate, patientId, setCurrentAssessmentId])
+  }, [navigate, patientId, setCurrentAssessmentId, isComplex])
 
   return (
     <div className="py-16 flex flex-col items-center justify-center text-center animate-fade-in">

@@ -40,6 +40,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 const SPECIALTIES = [
+  'Médico',
   'Neurologista',
   'Psiquiatra',
   'Psicólogo(a)',
@@ -47,6 +48,7 @@ const SPECIALTIES = [
   'Fonoaudiólogo(a)',
   'Terapeuta Ocupacional',
   'Fisioterapeuta',
+  'Psicopedagogo',
   'Outro',
 ]
 
