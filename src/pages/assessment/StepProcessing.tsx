@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BrainCircuit, CheckCircle2 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+import useAppStore from '@/stores/useAppStore'
 
-export function StepProcessing() {
+export function StepProcessing({ patientId }: { patientId?: string }) {
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('Inicializando Motor NeuroStrata...')
   const navigate = useNavigate()
+  const { setCurrentAssessmentId } = useAppStore()
 
   useEffect(() => {
     const sequence = [
@@ -23,11 +25,18 @@ export function StepProcessing() {
         setProgress(step.p)
         setStatus(step.text)
         if (index === sequence.length - 1) {
-          setTimeout(() => navigate('/analysis/new'), 1000)
+          setTimeout(() => {
+            if (patientId) {
+              setCurrentAssessmentId(patientId)
+              navigate(`/analysis/${patientId}`)
+            } else {
+              navigate('/analysis/new')
+            }
+          }, 1000)
         }
       }, timer)
     })
-  }, [navigate])
+  }, [navigate, patientId, setCurrentAssessmentId])
 
   return (
     <div className="py-12 flex flex-col items-center justify-center text-center animate-fade-in">

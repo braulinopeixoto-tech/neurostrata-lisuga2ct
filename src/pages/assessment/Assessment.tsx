@@ -1,10 +1,19 @@
 import { useState } from 'react'
-import { Brain, Activity, Workflow, Bot } from 'lucide-react'
+import { Brain, Activity, Workflow, Bot, User } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
 import { StepFunctions } from './StepFunctions'
 import { StepRDoC } from './StepRDoC'
 import { StepProcessing } from './StepProcessing'
+import useAppStore from '@/stores/useAppStore'
 
 const STEPS = [
   { id: 1, title: 'Funções Psíquicas', icon: Brain },
@@ -15,20 +24,53 @@ const STEPS = [
 
 export default function Assessment() {
   const [currentStep, setCurrentStep] = useState(1)
+  const { patients } = useAppStore()
+  const [selectedPatientId, setSelectedPatientId] = useState<string>('')
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1))
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-primary">Nova Avaliação Neurofuncional</h1>
         <p className="text-muted-foreground mt-1">
           Preencha os dados estruturados para gerar o Mapa Dimensional.
         </p>
       </div>
 
-      <div className="relative mb-12">
+      <Card className="border-t-4 border-t-primary shadow-sm animate-fade-in">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div>
+              <Label
+                htmlFor="patient-select"
+                className="text-base font-semibold flex items-center gap-2 text-primary"
+              >
+                <User className="w-5 h-5" />
+                Nome do Paciente
+              </Label>
+              <p className="text-sm text-muted-foreground mt-1">
+                Selecione o paciente para associar os dados desta avaliação.
+              </p>
+            </div>
+            <Select value={selectedPatientId} onValueChange={setSelectedPatientId}>
+              <SelectTrigger id="patient-select" className="w-full md:w-[400px] bg-white">
+                <SelectValue placeholder="Selecione um paciente..." />
+              </SelectTrigger>
+              <SelectContent>
+                {patients.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="relative mb-12 mt-8">
         <div className="absolute top-1/2 left-0 w-full h-1 bg-muted -translate-y-1/2 z-0 rounded-full" />
         <Progress
           value={(currentStep / 4) * 100}
@@ -64,7 +106,9 @@ export default function Assessment() {
 
       <Card className="border-t-4 border-t-accent shadow-lg animate-slide-up">
         <CardContent className="p-6">
-          {currentStep === 1 && <StepFunctions onNext={nextStep} />}
+          {currentStep === 1 && (
+            <StepFunctions onNext={nextStep} patientSelected={!!selectedPatientId} />
+          )}
           {currentStep === 2 && <StepRDoC onNext={nextStep} onPrev={prevStep} />}
           {currentStep === 3 && (
             <div className="text-center py-12">
@@ -89,7 +133,7 @@ export default function Assessment() {
               </div>
             </div>
           )}
-          {currentStep === 4 && <StepProcessing />}
+          {currentStep === 4 && <StepProcessing patientId={selectedPatientId} />}
         </CardContent>
       </Card>
     </div>

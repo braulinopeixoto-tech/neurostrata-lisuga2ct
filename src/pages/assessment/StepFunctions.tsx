@@ -5,7 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { PSYCHIC_FUNCTIONS } from '@/lib/mock-data'
 
-export function StepFunctions({ onNext }: { onNext: () => void }) {
+export function StepFunctions({
+  onNext,
+  patientSelected = true,
+}: {
+  onNext: () => void
+  patientSelected?: boolean
+}) {
   // Take first 6 for demo brevity
   const functions = PSYCHIC_FUNCTIONS.slice(0, 6)
   const [scores, setScores] = useState<Record<string, number>>(
@@ -17,6 +23,11 @@ export function StepFunctions({ onNext }: { onNext: () => void }) {
       <div>
         <h2 className="text-xl font-semibold">1. Funções Psíquicas</h2>
         <p className="text-sm text-muted-foreground">Avalie o desempenho em escala de 0 a 100.</p>
+        {!patientSelected && (
+          <p className="text-sm text-destructive mt-2 font-medium">
+            Por favor, selecione um paciente no topo da página antes de avançar.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -44,7 +55,7 @@ export function StepFunctions({ onNext }: { onNext: () => void }) {
       </div>
 
       <div className="flex justify-end pt-4 border-t">
-        <Button onClick={onNext} className="w-full sm:w-auto">
+        <Button onClick={onNext} disabled={!patientSelected} className="w-full sm:w-auto">
           Avançar para RDoC
         </Button>
       </div>
