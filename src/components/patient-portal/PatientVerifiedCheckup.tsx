@@ -1,13 +1,16 @@
 import { useMemo } from 'react'
 import { ShieldCheck, Brain, Lock, CheckCircle2, Clock, Map as MapIcon, Play } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import useAppStore, { CheckupStageId } from '@/stores/useAppStore'
 import { PatientFunctionsForm } from './PatientFunctionsForm'
 import { PatientRDoCForm } from './PatientRDoCForm'
 import { PatientBigFiveForm } from './PatientBigFiveForm'
+import { PatientOnboardingFlow } from './PatientOnboardingFlow'
+import { HeatMapVisualizer } from './HeatMapVisualizer'
+import { ClinicalScores } from './ClinicalScores'
+import { PeriodicCheckinForm } from './PeriodicCheckinForm'
 
 const STAGES: { id: CheckupStageId; title: string; subtitle: string }[] = [
   {
@@ -20,48 +23,66 @@ const STAGES: { id: CheckupStageId; title: string; subtitle: string }[] = [
 ]
 
 export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
-  const { patients, patientJourneys } = useAppStore()
+  const { patients, patientJourneys, patientOnboarded } = useAppStore()
 
   const patient = useMemo(() => patients.find((p) => p.id === patientId), [patients, patientId])
   const journey = patientJourneys[patientId]
+  const isOnboarded = patientOnboarded[patientId]
 
-  if (!patient?.linkedProfessionals || patient.linkedProfessionals.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4 bg-muted/20 border border-dashed rounded-xl p-8 animate-fade-in">
-        <Lock className="w-16 h-16 text-muted-foreground/50 mb-2" />
-        <h2 className="text-2xl font-bold text-primary">Acesso Restrito ao Check-up</h2>
-        <p className="text-muted-foreground max-w-lg text-lg">
-          Acesso restrito: Para iniciar o Check-up Mental Verificado, você deve estar vinculado a um
-          profissional (Médico, Psicólogo ou Neuropsicólogo).
-        </p>
-      </div>
-    )
+  if (!isOnboarded) {
+    return <PatientOnboardingFlow patientId={patientId} />
   }
 
   const activeIndex = STAGES.findIndex((s) => journey?.stages[s.id] !== 'validated')
   const isComplete = activeIndex === -1
   const activeStage = isComplete ? null : STAGES[activeIndex]
   const activeStatus = activeStage ? journey?.stages[activeStage.id] : null
-  const professional = patient.linkedProfessionals[0]
+  const professional = patient?.linkedProfessionals?.[0]
 
-  const renderActiveContent = () => {
-    if (isComplete) {
-      return (
-        <Card className="border-t-4 border-t-emerald-500 bg-emerald-50/50">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <Brain className="w-20 h-20 text-emerald-500 mb-6" />
-            <h3 className="text-2xl font-bold text-emerald-800">
-              Arquitetura Mental Mapeada com Sucesso
-            </h3>
-            <p className="text-emerald-700 mt-3 max-w-md text-lg">
-              Você completou todas as etapas do Check-up Mental Verificado. Seus resultados foram
-              validados pela equipe clínica e integrados ao seu Biograma Longitudinal.
-            </p>
-          </CardContent>
-        </Card>
-      )
+  if (isComplete && journey) {
+    // Flatten data for the HeatMap and Scores
+    const allData = {
+      ...journey.data?.psychic_functions,
+      ...journey.data?.rdoc,
+      ...journey.data?.big_five,
     }
 
+    return (
+      <div className="space-y-8 animate-fade-in mt-6">
+        <div className="bg-gradient-to-r from-emerald-50 to-transparent border border-emerald-100 p-6 rounded-xl flex items-start gap-4">
+          <Brain className="w-8 h-8 text-emerald-600 shrink-0 mt-1" />
+          <div>
+            <h3 className="text-xl font-bold text-emerald-900">
+              Arquitetura Mental Mapeada com Sucesso
+            </h3>
+            <p className="text-sm text-emerald-800/80 mt-1 leading-relaxed max-w-3xl">
+              Seus resultados foram validados clinicamente por {professional?.name}. Abaixo, você
+              encontra a visualização de seus indicadores e o formulário para monitoramento
+              contínuo.
+            </p>
+          </div>
+        </div>
+
+        <ClinicalScores data={allData} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <HeatMapVisualizer data={allData} />
+          <PeriodicCheckinForm patientId={patientId} />
+        </div>
+
+        <div className="text-center pt-8 border-t">
+          <p className="text-xs text-muted-foreground inline-flex items-center gap-1.5 bg-muted/30 px-4 py-2 rounded-full border border-border/50">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <strong>Aviso Institucional:</strong> O sistema não realiza diagnóstico automático e
+            funciona estritamente como infraestrutura de suporte à decisão clínica e
+            auto-observação.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const renderActiveContent = () => {
     if (activeStatus === 'pending_validation') {
       return (
         <Card className="border-t-4 border-t-amber-500 bg-amber-50/50">
@@ -74,7 +95,7 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
             </p>
             <div className="mt-6 flex items-center justify-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full border border-amber-200">
               <ShieldCheck className="w-4 h-4" />
-              <span className="text-sm font-medium">Profissional: {professional.name}</span>
+              <span className="text-sm font-medium">Profissional: {professional?.name}</span>
             </div>
           </CardContent>
         </Card>
@@ -98,7 +119,7 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
             "Aqui, enquanto você se revela, alguém capacitado te observa."
           </blockquote>
           <p className="text-sm text-muted-foreground font-medium mt-1">
-            Jornada guiada e acompanhada por: {professional.name} ({professional.role})
+            Jornada guiada e acompanhada por: {professional?.name} ({professional?.role})
           </p>
         </div>
       </div>

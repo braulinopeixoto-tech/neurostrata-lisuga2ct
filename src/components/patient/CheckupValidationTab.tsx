@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { ShieldCheck, CheckCircle2, Clock, Lock, Activity } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 import { toast } from '@/components/ui/use-toast'
+import { AlertsDashboard } from './AlertsDashboard'
 
 export function CheckupValidationTab({ patient }: { patient: any }) {
   const { patientJourneys, validateJourneyStage, currentUser } = useAppStore()
@@ -46,15 +47,17 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-lg font-bold flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-primary" /> Validação do Check-up Mental
+            <ShieldCheck className="w-5 h-5 text-primary" /> Supervisão Profissional (Check-up)
           </h2>
           <p className="text-sm text-muted-foreground">
-            Acompanhe o progresso do paciente e valide cada etapa para compor a avaliação clínica.
+            Acompanhe o progresso longitudinal do paciente, valide autoavaliações e gerencie
+            alertas.
           </p>
         </div>
       </div>
 
       <div className="space-y-4">
+        <h3 className="font-semibold text-foreground border-b pb-2">Etapas de Validação</h3>
         {STAGES.map((stage, index) => {
           const status = journey.stages[stage.id as keyof typeof journey.stages]
           const data = journey.data?.[stage.id as keyof typeof journey.data]
@@ -158,6 +161,8 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
           )
         })}
       </div>
+
+      <AlertsDashboard patientId={patient.id} />
     </div>
   )
 }

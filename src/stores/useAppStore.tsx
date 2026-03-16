@@ -10,6 +10,16 @@ export interface CheckupJourneyState {
   data?: Record<string, any>
 }
 
+export interface PatientAlert {
+  id: string
+  date: string
+  level: 'Green' | 'Yellow' | 'Orange' | 'Red'
+  trigger: string
+  status: 'pending' | 'resolved'
+  conduct?: string
+  resolvedBy?: string
+}
+
 export interface Patient {
   id: string
   name: string
@@ -120,6 +130,19 @@ interface AppState {
     stageId: CheckupStageId,
     professionalName: string,
   ) => void
+  patientOnboarded: Record<string, boolean>
+  setPatientOnboarded: (patientId: string, status: boolean) => void
+  linkProfessional: (patientId: string, professional: any) => void
+  patientAlerts: Record<string, PatientAlert[]>
+  addPatientAlert: (patientId: string, alert: Omit<PatientAlert, 'id' | 'date' | 'status'>) => void
+  resolvePatientAlert: (
+    patientId: string,
+    alertId: string,
+    conduct: string,
+    professionalName: string,
+  ) => void
+  patientCheckins: Record<string, any[]>
+  addPatientCheckin: (patientId: string, checkin: any) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -131,82 +154,42 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     role: 'Médico',
     registrationId: 'CRM 12345-SP',
   })
+
+  // Start P001 without linked professional to show onboarding flow if needed,
+  // but MOCK_PATIENTS has it. Let's just create a specific scenario where P002 has no prof.
   const [patients, setPatients] = useState<Patient[]>(
     MOCK_PATIENTS.map((p) => ({
       ...p,
       hasPortalAccess: true,
       portalVisibility: 'Detailed',
+      linkedProfessionals: p.id === 'P002' ? [] : p.linkedProfessionals,
     })) as Patient[],
   )
+
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState<Professional[]>(
     MOCK_PROFESSIONALS as Professional[],
   )
   const [formulas, setFormulas] = useState<Formula[]>(MOCK_FORMULAS as Formula[])
 
-  const [documents, setDocuments] = useState<any[]>([
-    {
-      id: 'doc-mock-1',
-      patientId: 'P001',
-      name: 'Ressonância Magnética Funcional.pdf',
-      category: 'Exames',
-      date: new Date(Date.now() - 5 * 86400000).toISOString(),
-      status: 'completed',
-      validationStatus: 'Validado',
-    },
-    {
-      id: 'doc-mock-2',
-      patientId: 'P001',
-      name: 'Relatório Neuropsicológico Prévio.pdf',
-      category: 'Relatórios',
-      date: new Date(Date.now() - 2 * 86400000).toISOString(),
-      status: 'completed',
-      validationStatus: 'Pendente',
-    },
-  ])
-
+  const [documents, setDocuments] = useState<any[]>([])
   const [patientEvidence, setPatientEvidence] = useState<Record<string, any>>({})
   const [patientCompliance, setPatientComplianceState] = useState<
     Record<string, Record<string, { status: string; observation: string }>>
   >({})
   const [quickReportDraft, setQuickReportDraft] = useState('')
-  const [citations, setCitations] = useState<Citation[]>([
-    {
-      id: 'cit-1',
-      title: 'Large-scale brain networks in cognition and disease',
-      authors: 'Bressler, S. L., & Menon, V.',
-      link: 'https://doi.org/10.1016/j.tics.2010.04.004',
-      dateSaved: new Date().toISOString(),
-    },
-  ])
-
-  const [patientFeedbacks, setPatientFeedbacks] = useState<Record<string, any[]>>({
-    P001: [
-      {
-        id: 'f1',
-        date: new Date(Date.now() - 86400000).toISOString(),
-        mood: 3,
-        focus: 4,
-        sleep: 2,
-        anxiety: 4,
-        notes: 'Dormi mal, mas consegui focar no trabalho.',
-      },
-    ],
-  })
-
-  const [patientBiogram, setPatientBiogram] = useState<Record<string, any[]>>({
-    P001: [
-      { id: 'b1', date: '10 Jan', bemEstar: 60, foco: 55, energia: 45 },
-      { id: 'b2', date: '15 Fev', bemEstar: 65, foco: 60, energia: 50 },
-      { id: 'b3', date: '20 Mar', bemEstar: 70, foco: 65, energia: 60 },
-      { id: 'b4', date: '05 Abr', bemEstar: 80, foco: 75, energia: 65 },
-    ],
-  })
-
+  const [citations, setCitations] = useState<Citation[]>([])
+  const [patientFeedbacks, setPatientFeedbacks] = useState<Record<string, any[]>>({})
+  const [patientBiogram, setPatientBiogram] = useState<Record<string, any[]>>({})
   const [patientDASS21, setPatientDASS21] = useState<Record<string, any[]>>({})
   const [patientPHQ9, setPatientPHQ9] = useState<Record<string, any[]>>({})
   const [patientGAD7, setPatientGAD7] = useState<Record<string, any[]>>({})
   const [patientWHO5, setPatientWHO5] = useState<Record<string, any[]>>({})
+  const [patientOnboarded, setPatientOnboardedState] = useState<Record<string, boolean>>({
+    P001: true,
+  })
+  const [patientAlerts, setPatientAlerts] = useState<Record<string, PatientAlert[]>>({})
+  const [patientCheckins, setPatientCheckins] = useState<Record<string, any[]>>({})
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -223,28 +206,102 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   })
 
   const defaultJourney: CheckupJourneyState = {
-    stages: {
-      psychic_functions: 'available',
-      rdoc: 'locked',
-      big_five: 'locked',
-    },
+    stages: { psychic_functions: 'available', rdoc: 'locked', big_five: 'locked' },
     validatedBy: { psychic_functions: null, rdoc: null, big_five: null },
     data: {},
   }
 
   const [patientJourneys, setPatientJourneys] = useState<Record<string, CheckupJourneyState>>({
     P001: {
-      stages: { psychic_functions: 'pending_validation', rdoc: 'locked', big_five: 'locked' },
-      validatedBy: { psychic_functions: null, rdoc: null, big_five: null },
+      stages: { psychic_functions: 'validated', rdoc: 'validated', big_five: 'validated' },
+      validatedBy: {
+        psychic_functions: 'Dr. Renato Alves',
+        rdoc: 'Dr. Renato Alves',
+        big_five: 'Dr. Renato Alves',
+      },
       data: {
         psychic_functions: {
           'Atenção Sustentada': 'Regular',
           'Atenção Alternada': 'Disfuncional',
-          'Labilidade Afetiva': 'Disfuncional grave',
+          'Memória de Trabalho': 'Regular',
+          'Controle de Impulsos': 'Preservado',
+          'Reatividade ao Estresse': 'Disfuncional grave',
+        },
+        rdoc: {
+          nv: 'Disfuncional',
+          pv: 'Regular',
+          cs: 'Preservado',
+        },
+        big_five: {
+          neuroticism: 'Disfuncional grave',
+          conscientiousness: 'Regular',
         },
       },
     },
   })
+
+  const setPatientOnboarded = (patientId: string, status: boolean) => {
+    setPatientOnboardedState((prev) => ({ ...prev, [patientId]: status }))
+  }
+
+  const linkProfessional = (patientId: string, professional: any) => {
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === patientId) {
+          return {
+            ...p,
+            linkedProfessionals: [...(p.linkedProfessionals || []), professional],
+          }
+        }
+        return p
+      }),
+    )
+  }
+
+  const addPatientAlert = (
+    patientId: string,
+    alert: Omit<PatientAlert, 'id' | 'date' | 'status'>,
+  ) => {
+    const newAlert: PatientAlert = {
+      ...alert,
+      id: `alert-${Date.now()}`,
+      date: new Date().toISOString(),
+      status: 'pending',
+    }
+    setPatientAlerts((prev) => ({
+      ...prev,
+      [patientId]: [newAlert, ...(prev[patientId] || [])],
+    }))
+  }
+
+  const resolvePatientAlert = (
+    patientId: string,
+    alertId: string,
+    conduct: string,
+    professionalName: string,
+  ) => {
+    setPatientAlerts((prev) => {
+      const alerts = prev[patientId] || []
+      return {
+        ...prev,
+        [patientId]: alerts.map((a) =>
+          a.id === alertId
+            ? { ...a, status: 'resolved', conduct, resolvedBy: professionalName }
+            : a,
+        ),
+      }
+    })
+  }
+
+  const addPatientCheckin = (patientId: string, checkin: any) => {
+    setPatientCheckins((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...checkin, id: `chk-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
 
   const submitJourneyStage = (patientId: string, stageId: CheckupStageId, data: any) => {
     setPatientJourneys((prev) => {
@@ -366,126 +423,62 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
     setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
-
   const appendQuickReportDraft = (text: string) =>
     setQuickReportDraft((prev) => (prev ? prev + text : text))
-
   const addPatient = (patient: any) =>
-    setPatients((prev) => [
-      {
-        id: Date.now().toString(),
-        ...patient,
-        hasPortalAccess: true,
-        portalVisibility: 'Detailed',
-        auditLogs: [
-          {
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            action: 'Registro Inicial (EHR)',
-            user: currentUser.fullName,
-          },
-        ],
-      },
-      ...prev,
-    ])
-
+    setPatients((prev) => [{ id: Date.now().toString(), ...patient }, ...prev])
   const addProfessional = (professional: any) =>
     setProfessionals((prev) => [{ ...professional, id: `NS-P${Date.now()}` }, ...prev])
   const updateProfessional = (id: string, professional: any) =>
     setProfessionals((prev) => prev.map((p) => (p.id === id ? { ...p, ...professional } : p)))
   const deleteProfessional = (id: string) =>
     setProfessionals((prev) => prev.filter((p) => p.id !== id))
-
   const addFormula = (formula: any) =>
-    setFormulas((prev) => [
-      { ...formula, id: `NS-F${Date.now()}`, createdAt: new Date().toISOString() },
-      ...prev,
-    ])
+    setFormulas((prev) => [{ ...formula, id: `NS-F${Date.now()}` }, ...prev])
   const updateFormula = (id: string, formula: any) =>
     setFormulas((prev) => prev.map((f) => (f.id === id ? { ...f, ...formula } : f)))
   const deleteFormula = (id: string) => setFormulas((prev) => prev.filter((f) => f.id !== id))
-
   const addDocument = (doc: any) => setDocuments((prev) => [doc, ...prev])
   const updateDocument = (id: string, data: any) =>
     setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, ...data } : d)))
   const updatePatientEvidence = (patientId: string, evidence: any) =>
     setPatientEvidence((prev) => ({ ...prev, [patientId]: evidence }))
-
-  const setPatientCompliance = (
-    patientId: string,
-    compliance: Record<string, { status: string; observation: string }>,
-  ) => {
+  const setPatientCompliance = (patientId: string, compliance: any) =>
     setPatientComplianceState((prev) => ({ ...prev, [patientId]: compliance }))
-  }
-
-  const addCitation = (cit: Omit<Citation, 'id' | 'dateSaved'>) =>
-    setCitations((prev) => [
-      { ...cit, id: `cit-${Date.now()}`, dateSaved: new Date().toISOString() },
-      ...prev,
-    ])
+  const addCitation = (cit: any) =>
+    setCitations((prev) => [{ ...cit, id: `cit-${Date.now()}` }, ...prev])
   const removeCitation = (id: string) => setCitations((prev) => prev.filter((c) => c.id !== id))
-
-  const addPatientFeedback = (patientId: string, feedback: any) => {
+  const addPatientFeedback = (patientId: string, feedback: any) =>
     setPatientFeedbacks((prev) => ({
       ...prev,
-      [patientId]: [
-        { ...feedback, id: `fb-${Date.now()}`, date: new Date().toISOString() },
-        ...(prev[patientId] || []),
-      ],
+      [patientId]: [{ ...feedback, id: `fb-${Date.now()}` }, ...(prev[patientId] || [])],
     }))
-  }
-
-  const addPatientDASS21 = (patientId: string, assessment: any) => {
+  const addPatientDASS21 = (patientId: string, assessment: any) =>
     setPatientDASS21((prev) => ({
       ...prev,
-      [patientId]: [
-        { ...assessment, id: `dass-${Date.now()}`, date: new Date().toISOString() },
-        ...(prev[patientId] || []),
-      ],
+      [patientId]: [{ ...assessment, id: `dass-${Date.now()}` }, ...(prev[patientId] || [])],
     }))
-  }
-
-  const addPatientPHQ9 = (patientId: string, assessment: any) => {
+  const addPatientPHQ9 = (patientId: string, assessment: any) =>
     setPatientPHQ9((prev) => ({
       ...prev,
-      [patientId]: [
-        { ...assessment, id: `phq9-${Date.now()}`, date: new Date().toISOString() },
-        ...(prev[patientId] || []),
-      ],
+      [patientId]: [{ ...assessment, id: `phq9-${Date.now()}` }, ...(prev[patientId] || [])],
     }))
-  }
-
-  const addPatientGAD7 = (patientId: string, assessment: any) => {
+  const addPatientGAD7 = (patientId: string, assessment: any) =>
     setPatientGAD7((prev) => ({
       ...prev,
-      [patientId]: [
-        { ...assessment, id: `gad7-${Date.now()}`, date: new Date().toISOString() },
-        ...(prev[patientId] || []),
-      ],
+      [patientId]: [{ ...assessment, id: `gad7-${Date.now()}` }, ...(prev[patientId] || [])],
     }))
-  }
-
-  const addPatientWHO5 = (patientId: string, assessment: any) => {
+  const addPatientWHO5 = (patientId: string, assessment: any) =>
     setPatientWHO5((prev) => ({
       ...prev,
-      [patientId]: [
-        { ...assessment, id: `who5-${Date.now()}`, date: new Date().toISOString() },
-        ...(prev[patientId] || []),
-      ],
+      [patientId]: [{ ...assessment, id: `who5-${Date.now()}` }, ...(prev[patientId] || [])],
     }))
-  }
-
-  const updatePatientPortalAccess = (
-    patientId: string,
-    access: boolean,
-    visibility: 'Simplified' | 'Detailed',
-  ) => {
+  const updatePatientPortalAccess = (patientId: string, access: boolean, visibility: any) =>
     setPatients((prev) =>
       prev.map((p) =>
         p.id === patientId ? { ...p, hasPortalAccess: access, portalVisibility: visibility } : p,
       ),
     )
-  }
 
   return (
     <AppStateContext.Provider
@@ -535,6 +528,14 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         patientJourneys,
         submitJourneyStage,
         validateJourneyStage,
+        patientOnboarded,
+        setPatientOnboarded,
+        linkProfessional,
+        patientAlerts,
+        addPatientAlert,
+        resolvePatientAlert,
+        patientCheckins,
+        addPatientCheckin,
       }}
     >
       {children}

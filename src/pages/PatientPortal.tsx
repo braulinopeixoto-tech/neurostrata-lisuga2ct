@@ -31,14 +31,9 @@ import { PatientVerifiedCheckup } from '@/components/patient-portal/PatientVerif
 export default function PatientPortal() {
   const { patients } = useAppStore()
   const { toast } = useToast()
-  const patient = patients[0] || {
-    name: 'Paciente Modelo',
-    id: 'P001',
-    status: 'Ativo',
-    hasPortalAccess: true,
-    portalVisibility: 'Detailed',
-  }
-  const [activeTab, setActiveTab] = useState('dashboard')
+  // Use P001 which is fully mocked, or fallback
+  const patient = patients.find((p) => p.id === 'P001') || patients[0]
+  const [activeTab, setActiveTab] = useState('checkup')
 
   if (!patient.hasPortalAccess) {
     return (
@@ -182,16 +177,16 @@ export default function PatientPortal() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap hide-scrollbar print:hidden">
           <TabsTrigger
-            value="dashboard"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <Activity className="w-4 h-4" /> Consulta Rápida
-          </TabsTrigger>
-          <TabsTrigger
             value="checkup"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap text-primary font-bold uppercase tracking-tight"
           >
             <Brain className="w-4 h-4" /> Check-up Mental Verificado
+          </TabsTrigger>
+          <TabsTrigger
+            value="dashboard"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Activity className="w-4 h-4" /> Consulta Rápida
           </TabsTrigger>
           <TabsTrigger
             value="digitization"
@@ -222,6 +217,10 @@ export default function PatientPortal() {
             </>
           )}
         </TabsList>
+
+        <TabsContent value="checkup" className="m-0 print:hidden animate-fade-in space-y-6">
+          <PatientVerifiedCheckup patientId={patient.id} />
+        </TabsContent>
 
         <TabsContent value="dashboard" className="m-0 space-y-6 print:block animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -285,10 +284,6 @@ export default function PatientPortal() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-
-        <TabsContent value="checkup" className="m-0 print:hidden animate-fade-in space-y-6">
-          <PatientVerifiedCheckup patientId={patient.id} />
         </TabsContent>
 
         <TabsContent value="digitization" className="m-0 print:block animate-fade-in">
