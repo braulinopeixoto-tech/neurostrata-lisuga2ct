@@ -1,10 +1,13 @@
-import { Save, Download, FileText, CheckCircle2 } from 'lucide-react'
+import { Save, Download, FileText, CheckCircle2, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
+import useAppStore from '@/stores/useAppStore'
 
 export default function Report() {
+  const { currentUser } = useAppStore()
+
   const handleExport = (format: string) => {
     toast({
       title: `${format} Gerado`,
@@ -139,16 +142,37 @@ export default function Report() {
           </div>
         </section>
 
-        <section className="mt-16 pt-8 border-t space-y-4 text-xs text-muted-foreground">
-          <p className="text-center italic">
-            Documento assinado digitalmente em conformidade com as normas LGPD. Registro de
-            auditoria temporal gravado no sistema EHR.
-          </p>
-          <div className="flex justify-center mt-8">
-            <div className="border-t border-muted-foreground w-64 text-center pt-2">
-              <strong>Dr. Renato Alves</strong>
+        <section className="mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-start gap-6 bg-muted/10 p-6 rounded-lg">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-green-700 font-bold">
+              <ShieldCheck className="w-6 h-6" />
+              <span>Assinatura Digital Verificada</span>
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1.5 bg-white p-3 rounded border">
+              <p className="flex items-center gap-2">
+                <strong>Padrão:</strong> Certificação ICP-Brasil Nível A3
+              </p>
+              <p className="flex items-start gap-2">
+                <strong>Autenticidade:</strong>
+                <span className="font-mono bg-muted px-1.5 py-0.5 rounded text-[10px] break-all max-w-[200px] sm:max-w-none">
+                  cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce
+                </span>
+              </p>
+              <p className="flex items-center gap-2">
+                <strong>Carimbo de Tempo:</strong> {new Date().toISOString()}
+              </p>
+            </div>
+            <p className="text-center italic mt-2">
+              Documento assinado digitalmente em conformidade com as normas LGPD. Registro de
+              auditoria temporal gravado no sistema EHR.
+            </p>
+          </div>
+
+          <div className="flex justify-center md:justify-end w-full md:w-auto mt-4 md:mt-0">
+            <div className="border-t border-foreground w-64 text-center pt-3">
+              <strong className="text-base text-primary">{currentUser.fullName}</strong>
               <br />
-              CRM 12345-SP
+              <span className="text-sm text-muted-foreground">{currentUser.registrationId}</span>
             </div>
           </div>
         </section>

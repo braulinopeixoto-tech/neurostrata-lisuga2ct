@@ -21,10 +21,48 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from '@/components/ui/sidebar'
+import useAppStore from '@/stores/useAppStore'
 
 export function AppSidebar() {
   const location = useLocation()
+  const { patients } = useAppStore()
+
+  const activePatientMatch = location.pathname.match(/^\/patients\/([^/]+)/)
+  const activePatientId = activePatientMatch ? activePatientMatch[1] : null
+  const activePatient = activePatientId ? patients.find((p) => p.id === activePatientId) : null
+
+  const getRiskStatus = (score: number) => {
+    const risk = 100 - score
+    if (risk >= 50)
+      return {
+        level: 'Alto Risco',
+        color: 'text-red-600',
+        bg: 'bg-red-50',
+        border: 'border-red-200',
+        activeIndex: 0,
+      }
+    if (risk >= 20)
+      return {
+        level: 'Risco Moderado',
+        color: 'text-amber-600',
+        bg: 'bg-amber-50',
+        border: 'border-amber-200',
+        activeIndex: 1,
+      }
+    return {
+      level: 'Risco Baixo (Estável)',
+      color: 'text-green-600',
+      bg: 'bg-green-50',
+      border: 'border-green-200',
+      activeIndex: 2,
+    }
+  }
+
+  const riskStatus = activePatient ? getRiskStatus(activePatient.score) : null
 
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -48,6 +86,36 @@ export function AppSidebar() {
         </Link>
       </SidebarHeader>
       <SidebarContent className="px-2 pt-4">
+        {activePatient && riskStatus && (
+          <SidebarGroup className="mb-2 p-0">
+            <SidebarGroupLabel className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+              Alerta de Risco: Paciente Atual
+            </SidebarGroupLabel>
+            <SidebarGroupContent className="px-2">
+              <div
+                className={`p-3 rounded-lg border ${riskStatus.bg} ${riskStatus.border} flex flex-col items-center gap-3`}
+              >
+                <span
+                  className={`text-[11px] font-bold ${riskStatus.color} uppercase text-center tracking-wider`}
+                >
+                  {activePatient.name.split(' ')[0]} - {riskStatus.level}
+                </span>
+
+                <div className="flex gap-3 bg-slate-900 px-4 py-2.5 rounded-full shadow-inner border border-slate-700">
+                  <div
+                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${riskStatus.activeIndex === 0 ? 'bg-red-500 shadow-[0_0_12px_rgba(239,68,68,1)]' : 'bg-red-500/20'}`}
+                  />
+                  <div
+                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${riskStatus.activeIndex === 1 ? 'bg-yellow-400 shadow-[0_0_12px_rgba(250,204,21,1)]' : 'bg-yellow-400/20'}`}
+                  />
+                  <div
+                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${riskStatus.activeIndex === 2 ? 'bg-green-500 shadow-[0_0_12px_rgba(34,197,94,1)]' : 'bg-green-500/20'}`}
+                  />
+                </div>
+              </div>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.path}>
