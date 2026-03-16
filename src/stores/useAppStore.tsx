@@ -1,6 +1,36 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
+export interface Patient {
+  id: string
+  name: string
+  dob: string
+  sex: string
+  lastAssessment: string
+  status: string
+  score: number
+  education?: string
+  auditLogs?: any[]
+  [key: string]: any
+}
+
+export interface Professional {
+  id: string
+  fullName: string
+  registrationId: string
+  specialty: string
+  email: string
+  phone: string
+  [key: string]: any
+}
+
+export interface Formula {
+  id: string
+  name: string
+  createdAt?: string
+  [key: string]: any
+}
+
 interface Citation {
   id: string
   title: string
@@ -11,16 +41,16 @@ interface Citation {
 
 interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
-  patients: typeof MOCK_PATIENTS
+  patients: Patient[]
   addPatient: (patient: any) => void
   addPatientAuditLog: (patientId: string, log: any) => void
   currentAssessmentId: string | null
   setCurrentAssessmentId: (id: string | null) => void
-  professionals: typeof MOCK_PROFESSIONALS
+  professionals: Professional[]
   addProfessional: (professional: any) => void
   updateProfessional: (id: string, professional: any) => void
   deleteProfessional: (id: string) => void
-  formulas: typeof MOCK_FORMULAS
+  formulas: Formula[]
   addFormula: (formula: any) => void
   updateFormula: (id: string, formula: any) => void
   deleteFormula: (id: string) => void
@@ -62,10 +92,12 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     role: 'Médico',
     registrationId: 'CRM 12345-SP',
   })
-  const [patients, setPatients] = useState(MOCK_PATIENTS)
+  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS as Patient[])
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
-  const [professionals, setProfessionals] = useState(MOCK_PROFESSIONALS)
-  const [formulas, setFormulas] = useState(MOCK_FORMULAS)
+  const [professionals, setProfessionals] = useState<Professional[]>(
+    MOCK_PROFESSIONALS as Professional[],
+  )
+  const [formulas, setFormulas] = useState<Formula[]>(MOCK_FORMULAS as Formula[])
   const [documents, setDocuments] = useState<any[]>([])
   const [patientEvidence, setPatientEvidence] = useState<Record<string, any>>({})
   const [patientCompliance, setPatientComplianceState] = useState<
