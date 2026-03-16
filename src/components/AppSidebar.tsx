@@ -9,6 +9,9 @@ import {
   Stethoscope,
   FlaskConical,
   Compass,
+  ShieldAlert,
+  FileArchive,
+  TrendingUp,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -31,6 +34,9 @@ export function AppSidebar() {
     { name: 'Farmacopeia', path: '/pharmacopeia', icon: FlaskConical },
     { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
+    { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
+    { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
+    { name: 'Linha do Tempo de Performance', path: '/performance-timeline', icon: TrendingUp },
   ]
 
   return (

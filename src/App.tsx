@@ -16,6 +16,9 @@ import Protocols from './pages/Protocols'
 import Professionals from './pages/Professionals'
 import Pharmacopeia from './pages/Pharmacopeia'
 import Neuronavigation from './pages/Neuronavigation'
+import AuditorPortal from './pages/AuditorPortal'
+import ReportCenter from './pages/ReportCenter'
+import PerformanceTimeline from './pages/PerformanceTimeline'
 
 const App = () => (
   <AppStoreProvider>
@@ -35,6 +38,9 @@ const App = () => (
             <Route path="/analysis/:id" element={<Analysis />} />
             <Route path="/report/:id" element={<Report />} />
             <Route path="/protocols" element={<Protocols />} />
+            <Route path="/auditor-portal" element={<AuditorPortal />} />
+            <Route path="/report-center" element={<ReportCenter />} />
+            <Route path="/performance-timeline" element={<PerformanceTimeline />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
