@@ -9,6 +9,8 @@ import { ReportsTab } from '@/components/patient/ReportsTab'
 import { AuditTab } from '@/components/patient/AuditTab'
 import { DigitizationTab } from '@/components/patient/DigitizationTab'
 import { ComplianceTab } from '@/components/patient/ComplianceTab'
+import { ModularLibraryTab } from '@/components/protocols/ModularLibraryTab'
+import { LegalConsultationTab } from '@/components/patient/LegalConsultationTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -41,42 +43,54 @@ export default function PatientDetail() {
       </div>
 
       <Tabs defaultValue="anamnesis" className="w-full">
-        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto">
+        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap shrink-0 scrollbar-hide">
           <TabsTrigger
             value="anamnesis"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
-            Anamnese Estruturada
+            Anamnese
           </TabsTrigger>
           <TabsTrigger
             value="digitization"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
-            Digitalização de Dados
+            Digitalização
           </TabsTrigger>
           <TabsTrigger
             value="compliance"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
             Conformidade (UNESCO)
           </TabsTrigger>
           <TabsTrigger
             value="evolution"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
-            Evolução Neurofuncional
+            Evolução
           </TabsTrigger>
           <TabsTrigger
             value="reports"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
-            Laudos Clínicos
+            Laudos
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
             Auditoria EHR
+          </TabsTrigger>
+          <TabsTrigger
+            value="protocols"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
+          >
+            Biblioteca de Protocolos
+          </TabsTrigger>
+          <TabsTrigger
+            value="legal"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-blue-700 data-[state=active]:text-blue-800"
+          >
+            Consulta Jurídica
           </TabsTrigger>
         </TabsList>
 
@@ -97,6 +111,12 @@ export default function PatientDetail() {
         </TabsContent>
         <TabsContent value="audit" className="m-0">
           <AuditTab patient={patient} />
+        </TabsContent>
+        <TabsContent value="protocols" className="m-0">
+          <ModularLibraryTab />
+        </TabsContent>
+        <TabsContent value="legal" className="m-0">
+          <LegalConsultationTab patient={patient} />
         </TabsContent>
       </Tabs>
     </div>
