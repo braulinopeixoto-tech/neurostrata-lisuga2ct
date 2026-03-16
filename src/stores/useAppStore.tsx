@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
+interface Citation {
+  id: string
+  title: string
+  authors: string
+  link: string
+  dateSaved: string
+}
+
 interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: typeof MOCK_PATIENTS
@@ -40,6 +48,9 @@ interface AppState {
   quickReportDraft: string
   setQuickReportDraft: (text: string) => void
   appendQuickReportDraft: (text: string) => void
+  citations: Citation[]
+  addCitation: (cit: Omit<Citation, 'id' | 'dateSaved'>) => void
+  removeCitation: (id: string) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -61,6 +72,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     Record<string, Record<string, { status: string; observation: string }>>
   >({})
   const [quickReportDraft, setQuickReportDraft] = useState('')
+  const [citations, setCitations] = useState<Citation[]>([
+    {
+      id: 'cit-1',
+      title: 'Large-scale brain networks in cognition and disease',
+      authors: 'Bressler, S. L., & Menon, V.',
+      link: 'https://doi.org/10.1016/j.tics.2010.04.004',
+      dateSaved: new Date().toISOString(),
+    },
+  ])
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -139,6 +159,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setPatientComplianceState((prev) => ({ ...prev, [patientId]: compliance }))
   }
 
+  const addCitation = (cit: Omit<Citation, 'id' | 'dateSaved'>) =>
+    setCitations((prev) => [
+      { ...cit, id: `cit-${Date.now()}`, dateSaved: new Date().toISOString() },
+      ...prev,
+    ])
+  const removeCitation = (id: string) => setCitations((prev) => prev.filter((c) => c.id !== id))
+
   return (
     <AppStateContext.Provider
       value={{
@@ -168,6 +195,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         quickReportDraft,
         setQuickReportDraft,
         appendQuickReportDraft,
+        citations,
+        addCitation,
+        removeCitation,
       }}
     >
       {children}

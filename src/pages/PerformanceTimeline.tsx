@@ -8,6 +8,11 @@ import {
   Activity,
   Brain,
   ArrowRight,
+  Map as MapIcon,
+  Bot,
+  BookMarked,
+  Copy,
+  Trash2,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
@@ -44,16 +49,26 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from '@/components/ui/use-toast'
+import { BrainMapVisualizer } from '@/components/charts/BrainMapVisualizer'
 import useAppStore from '@/stores/useAppStore'
 
 export default function PerformanceTimeline() {
-  const { patients, currentUser, patientEvidence, quickReportDraft } = useAppStore()
+  const {
+    patients,
+    currentUser,
+    patientEvidence,
+    quickReportDraft,
+    citations,
+    removeCitation,
+    appendQuickReportDraft,
+  } = useAppStore()
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
   const [showPerformance, setShowPerformance] = useState(true)
   const [showStability, setShowStability] = useState(true)
   const [showConnectivity, setShowConnectivity] = useState(true)
 
   const [reportModalOpen, setReportModalOpen] = useState(false)
+  const [citationsModalOpen, setCitationsModalOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState('progress')
 
   const patient = patients.find((p) => p.id === selectedPatientId)
@@ -100,6 +115,17 @@ export default function PerformanceTimeline() {
     setReportModalOpen(false)
   }
 
+  const handleInsertCitation = (cit: any) => {
+    appendQuickReportDraft(
+      `\n\n[Referência Bibliográfica]\n${cit.authors}. "${cit.title}". Disponível em: ${cit.link}`,
+    )
+    toast({
+      title: 'Citação Inserida',
+      description: 'A referência foi adicionada ao seu Quick Report de paciente.',
+      action: <CheckCircle className="text-success w-5 h-5" />,
+    })
+  }
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10 animate-fade-in-up">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -111,14 +137,23 @@ export default function PerformanceTimeline() {
             Acompanhamento longitudinal de métricas e geração de relatórios técnicos automatizados.
           </p>
         </div>
-        {selectedPatientId && (
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <Button
-            onClick={() => setReportModalOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+            variant="outline"
+            onClick={() => setCitationsModalOpen(true)}
+            className="bg-white shadow-sm flex-1 md:flex-none"
           >
-            <FileText className="w-4 h-4 mr-2" /> Gerar Relatório Técnico
+            <BookMarked className="w-4 h-4 mr-2 text-blue-600" /> Biblioteca de Citações
           </Button>
-        )}
+          {selectedPatientId && (
+            <Button
+              onClick={() => setReportModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm flex-1 md:flex-none"
+            >
+              <FileText className="w-4 h-4 mr-2" /> Gerar Relatório
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card className="shadow-sm">
@@ -170,12 +205,15 @@ export default function PerformanceTimeline() {
 
       {selectedPatientId ? (
         <Tabs defaultValue="longitudinal" className="w-full">
-          <TabsList className="w-full sm:w-auto grid grid-cols-2 mb-4">
-            <TabsTrigger value="longitudinal" className="flex items-center gap-2">
+          <TabsList className="w-full sm:w-auto grid grid-cols-1 sm:grid-cols-3 mb-4 h-auto p-1 bg-muted rounded-lg">
+            <TabsTrigger value="longitudinal" className="flex-1 flex items-center gap-2 py-2">
               <Activity className="w-4 h-4" /> Evolução Longitudinal
             </TabsTrigger>
-            <TabsTrigger value="prepost" className="flex items-center gap-2">
+            <TabsTrigger value="prepost" className="flex-1 flex items-center gap-2 py-2">
               <ArrowRight className="w-4 h-4" /> Comparativo Pré x Pós
+            </TabsTrigger>
+            <TabsTrigger value="brainmaps" className="flex-1 flex items-center gap-2 py-2">
+              <MapIcon className="w-4 h-4" /> Modo Comparativo (Mapas)
             </TabsTrigger>
           </TabsList>
 
@@ -321,28 +359,108 @@ export default function PerformanceTimeline() {
             </Card>
           </TabsContent>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in-up">
-            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-semibold text-primary text-sm">Remodelação Consolidada</h4>
-                <p className="text-xs text-muted-foreground mt-1">
-                  O aumento sustentado na conectividade global correlaciona-se com a melhora
-                  reportada na regulação emocional e atenção seletiva.
-                </p>
+          <TabsContent value="brainmaps">
+            <Card className="shadow-sm border-t-4 border-t-violet-500 animate-fade-in">
+              <CardHeader>
+                <CardTitle className="text-xl">
+                  Comparativo de Mapeamento Cerebral (Basal vs Atual)
+                </CardTitle>
+                <CardDescription>
+                  Análise espacial de ativação. A transição topográfica evidencia a consolidação da
+                  rede alvo estabelecida.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-slate-50/50 p-6 rounded-xl border mt-4">
+                  <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-sm border border-slate-200">
+                    <Badge
+                      variant="outline"
+                      className="mb-4 bg-slate-100 uppercase tracking-widest"
+                    >
+                      Pré-Intervenção (Base)
+                    </Badge>
+                    <BrainMapVisualizer
+                      title="Padrão Admissional"
+                      subtitle="Hiperativação Frontal"
+                      variant="frontal"
+                      className="scale-110"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-sm border border-violet-100">
+                    <Badge className="mb-4 bg-violet-100 text-violet-800 border-violet-200 hover:bg-violet-100 uppercase tracking-widest">
+                      Pós-Intervenção (Atual)
+                    </Badge>
+                    <BrainMapVisualizer
+                      title="Padrão Consolidado"
+                      subtitle="Equilíbrio e Integração"
+                      variant="default"
+                      className="scale-110"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Motor de Sugestões de Protocolos IA */}
+          <Card className="mt-8 border-t-4 border-t-accent shadow-sm animate-fade-in-up">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Bot className="w-6 h-6 text-accent" /> Motor de Sugestão de Protocolos
+              </CardTitle>
+              <CardDescription>
+                A IA cruzou os achados da avaliação com a "Biblioteca Inteligente" para recomendar
+                os seguintes direcionamentos clínicos.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+                    <div>
+                      <h4 className="font-bold text-primary flex items-center gap-2">
+                        tACS Alpha (10Hz) Parietal + rTMS Medial PFC
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
+                        <strong className="text-slate-700 font-semibold">
+                          Justificativa Clínica:
+                        </strong>{' '}
+                        Identificada hiperatividade na DMN (Default Mode Network) no mapeamento da
+                        linha de base. Este protocolo favorece a supressão de ritmos acelerados e
+                        induz relaxamento cortical, o que se correlaciona intimamente com a melhora
+                        de 60% observada na métrica de "Estabilidade".
+                      </p>
+                    </div>
+                    <Badge className="shrink-0 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">
+                      Evidência Alta
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+                    <div>
+                      <h4 className="font-bold text-primary flex items-center gap-2">
+                        Neurofeedback Específico + Treinamento ERP
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
+                        <strong className="text-slate-700 font-semibold">
+                          Justificativa Clínica:
+                        </strong>{' '}
+                        Como o paciente atingiu um platô sustentável na Fase 2 (Score de Performance
+                        estabilizado em 85%), sugere-se a transição direta para o Módulo de
+                        Treinamento Funcional para fixação definitiva da neuroplasticidade
+                        alcançada.
+                      </p>
+                    </div>
+                    <Badge className="shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">
+                      Evidência Média
+                    </Badge>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="bg-accent/5 p-4 rounded-lg border border-accent/20 flex items-start gap-3">
-              <Brain className="w-5 h-5 text-accent mt-0.5 shrink-0" />
-              <div>
-                <h4 className="font-semibold text-accent text-sm">Platô Terapêutico Alcançado</h4>
-                <p className="text-xs text-muted-foreground mt-1">
-                  As métricas de estabilidade indicam que o paciente atingiu uma reserva funcional
-                  robusta. Indicado fase de manutenção.
-                </p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </Tabs>
       ) : (
         <Card className="bg-muted/30 border-dashed">
@@ -511,9 +629,9 @@ export default function PerformanceTimeline() {
                           clínicos de desregulação emocional.
                         </p>
                         {quickReportDraft && (
-                          <div className="bg-white p-3 border border-dashed rounded text-sm italic">
+                          <div className="bg-white p-3 border border-dashed rounded text-sm italic whitespace-pre-wrap">
                             <span className="font-semibold block mb-1 not-italic">
-                              Trechos da Pesquisa Associada:
+                              Anotações e Pesquisas Associadas:
                             </span>
                             {quickReportDraft}
                           </div>
@@ -573,6 +691,77 @@ export default function PerformanceTimeline() {
                 <Download className="w-4 h-4 mr-2" /> Exportar PDF Final
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal da Biblioteca de Citações */}
+      <Dialog open={citationsModalOpen} onOpenChange={setCitationsModalOpen}>
+        <DialogContent className="max-w-2xl bg-slate-50">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <BookMarked className="w-5 h-5 text-blue-600" /> Biblioteca de Citações Favoritas
+            </DialogTitle>
+            <DialogDescription>
+              Gerencie as referências científicas salvas (Neurosynth) e insira-as nos seus
+              relatórios e matrizes.
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] mt-4 pr-4">
+            <div className="space-y-4">
+              {citations.length === 0 ? (
+                <div className="text-center p-8 text-muted-foreground bg-white border border-dashed rounded-lg">
+                  Nenhuma citação salva. Utilize o módulo de Neuronavegação para pesquisar e
+                  adicionar referências aos seus favoritos.
+                </div>
+              ) : (
+                citations.map((cit) => (
+                  <Card key={cit.id} className="shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-primary text-sm leading-tight">
+                            {cit.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground mt-1">{cit.authors}</p>
+                          <a
+                            href={cit.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline mt-2 inline-block break-all"
+                          >
+                            {cit.link}
+                          </a>
+                        </div>
+                        <div className="flex sm:flex-col gap-2 shrink-0 w-full sm:w-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-8 flex-1 sm:flex-none justify-start"
+                            onClick={() => handleInsertCitation(cit)}
+                          >
+                            <Copy className="w-3 h-3 mr-1.5" /> Inserir no Report
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-xs h-8 text-destructive hover:bg-destructive/10 flex-1 sm:flex-none justify-start"
+                            onClick={() => removeCitation(cit.id)}
+                          >
+                            <Trash2 className="w-3 h-3 mr-1.5" /> Remover
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+          <DialogFooter className="mt-4 border-t pt-4">
+            <Button variant="outline" onClick={() => setCitationsModalOpen(false)}>
+              Fechar Biblioteca
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

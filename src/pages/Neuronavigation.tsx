@@ -14,6 +14,7 @@ import {
   Dna,
   FileText,
   Layers,
+  BookmarkPlus,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -28,7 +29,7 @@ export default function Neuronavigation() {
   const [searchInput, setSearchInput] = useState(query)
   const [isSearching, setIsSearching] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
-  const { appendQuickReportDraft } = useAppStore()
+  const { appendQuickReportDraft, addCitation } = useAppStore()
 
   useEffect(() => {
     if (query) {
@@ -59,6 +60,19 @@ export default function Neuronavigation() {
     toast({
       title: 'Evidência Adicionada',
       description: 'O resumo científico foi incluído no Quick Report com sucesso.',
+      action: <CheckCircle2 className="text-success w-5 h-5" />,
+    })
+  }
+
+  const handleSaveCitation = () => {
+    addCitation({
+      title: `Meta-análise automatizada: Correlatos neurais de "${query}"`,
+      authors: 'Neurosynth Platform',
+      link: `https://neurosynth.org/analyses/terms/${query}/`,
+    })
+    toast({
+      title: 'Citação Salva',
+      description: 'A referência foi adicionada à sua Biblioteca de Citações.',
       action: <CheckCircle2 className="text-success w-5 h-5" />,
     })
   }
@@ -199,11 +213,20 @@ export default function Neuronavigation() {
 
       {hasSearched && !isSearching && (
         <div className="space-y-6 animate-fade-in-up">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-xl font-bold text-primary">Resultados para: "{query}"</h2>
-            <Button onClick={handleIncludeEvidence} className="bg-blue-600 hover:bg-blue-700">
-              <FileSignature className="w-4 h-4 mr-2" /> Incluir no Quick Report
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleSaveCitation}
+                variant="outline"
+                className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <BookmarkPlus className="w-4 h-4 mr-2" /> Salvar Favorito
+              </Button>
+              <Button onClick={handleIncludeEvidence} className="bg-blue-600 hover:bg-blue-700">
+                <FileSignature className="w-4 h-4 mr-2" /> Incluir no Quick Report
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
