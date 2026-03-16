@@ -8,6 +8,7 @@ import { AppStoreProvider } from '@/stores/useAppStore'
 
 import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
+import MedicalArea from '@/pages/MedicalArea'
 import Patients from '@/pages/Patients'
 import PatientDetail from '@/pages/PatientDetail'
 import Assessment from '@/pages/assessment/Assessment'
@@ -33,6 +34,7 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/medical" element={<MedicalArea />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/patients/:id" element={<PatientDetail />} />
             <Route path="/professionals" element={<Professionals />} />

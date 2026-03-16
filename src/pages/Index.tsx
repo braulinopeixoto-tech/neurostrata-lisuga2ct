@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
   User,
-  ShieldAlert,
   Scale,
   Stethoscope,
   Brain,
@@ -22,7 +21,7 @@ import { Button } from '@/components/ui/button'
 
 export default function Index() {
   const professionalAreas = [
-    { name: 'Área Médica', icon: Stethoscope, path: '/dashboard' },
+    { name: 'Área Médica', icon: Stethoscope, path: '/medical' },
     { name: 'Área Neuropsicológica', icon: Brain, path: '/dashboard' },
     { name: 'Área Nutri', icon: Apple, path: '/dashboard' },
     { name: 'Área Fono', icon: MessageSquare, path: '/dashboard' },
