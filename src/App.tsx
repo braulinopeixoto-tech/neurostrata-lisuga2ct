@@ -20,6 +20,7 @@ import Neuronavigation from './pages/Neuronavigation'
 import AuditorPortal from './pages/AuditorPortal'
 import ReportCenter from './pages/ReportCenter'
 import PerformanceTimeline from './pages/PerformanceTimeline'
+import PatientPortal from './pages/PatientPortal'
 
 const App = () => (
   <AppStoreProvider>
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/auditor-portal" element={<AuditorPortal />} />
             <Route path="/report-center" element={<ReportCenter />} />
             <Route path="/performance-timeline" element={<PerformanceTimeline />} />
+            <Route path="/patient-portal" element={<PatientPortal />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

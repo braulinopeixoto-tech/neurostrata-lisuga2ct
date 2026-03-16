@@ -13,6 +13,7 @@ import {
   FileArchive,
   TrendingUp,
   Activity,
+  UserCircle,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -77,6 +78,7 @@ export function AppSidebar() {
     { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
     { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
     { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
+    { name: 'Portal do Paciente', path: '/patient-portal', icon: UserCircle },
   ]
 
   return (
