@@ -45,21 +45,25 @@ export function AuditTab({ patient }: { patient: any }) {
     // 1. Audit Logs
     if (patient.auditLogs) {
       combined.push(
-        ...patient.auditLogs.map((log: any) => ({
-          id: log.id,
-          date: log.date,
-          title: log.action,
-          description: 'Registro manual no sistema EHR.',
-          user: log.user,
-          type: 'log',
-          hash:
-            `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.substring(0, 32) +
-            log.id,
-          ip: '172.16.254.1',
-          icon: Activity,
-          color: 'text-blue-500',
-          bgColor: 'bg-blue-500/10',
-        })),
+        ...patient.auditLogs.map((log: any) => {
+          const isCompliance = log.action.includes('Conformidade')
+          return {
+            id: log.id,
+            date: log.date,
+            title: log.action,
+            description: log.details || 'Registro manual no sistema EHR.',
+            user: log.user,
+            type: 'log',
+            hash:
+              `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.substring(0, 32) +
+              log.id,
+            ip: '172.16.254.1',
+            icon: isCompliance ? ShieldCheck : Activity,
+            color: isCompliance ? 'text-green-500' : 'text-blue-500',
+            bgColor: isCompliance ? 'bg-green-500/10' : 'bg-blue-500/10',
+            metadata: log.metadata,
+          }
+        }),
       )
     }
 
@@ -291,7 +295,7 @@ export function AuditTab({ patient }: { patient: any }) {
                 <h4 className="text-sm font-semibold flex items-center gap-2">
                   <Network className="w-4 h-4" /> Carga de Dados Preservada
                 </h4>
-                <div className="bg-background border rounded-lg p-4 max-h-[250px] overflow-y-auto">
+                <div className="bg-background border rounded-lg p-4 max-h-[300px] overflow-y-auto">
                   <div className="space-y-4">
                     {Object.entries(selectedEvent.metadata).map(([key, items]: [string, any]) => (
                       <div key={key}>

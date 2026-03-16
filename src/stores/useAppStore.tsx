@@ -5,6 +5,7 @@ interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: typeof MOCK_PATIENTS
   addPatient: (patient: any) => void
+  addPatientAuditLog: (patientId: string, log: any) => void
   currentAssessmentId: string | null
   setCurrentAssessmentId: (id: string | null) => void
   professionals: typeof MOCK_PROFESSIONALS
@@ -31,6 +32,11 @@ interface AppState {
   updateDocument: (id: string, data: any) => void
   patientEvidence: Record<string, any>
   setPatientEvidence: (patientId: string, evidence: any) => void
+  patientCompliance: Record<string, Record<string, { status: string; observation: string }>>
+  setPatientCompliance: (
+    patientId: string,
+    compliance: Record<string, { status: string; observation: string }>,
+  ) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -48,6 +54,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [formulas, setFormulas] = useState(MOCK_FORMULAS)
   const [documents, setDocuments] = useState<any[]>([])
   const [patientEvidence, setPatientEvidence] = useState<Record<string, any>>({})
+  const [patientCompliance, setPatientComplianceState] = useState<
+    Record<string, Record<string, { status: string; observation: string }>>
+  >({})
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -80,6 +89,20 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       ...prev,
     ])
 
+  const addPatientAuditLog = (patientId: string, log: any) => {
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === patientId) {
+          return {
+            ...p,
+            auditLogs: [{ ...log, id: `log-${Date.now()}` }, ...(p.auditLogs || [])],
+          }
+        }
+        return p
+      }),
+    )
+  }
+
   const addProfessional = (professional: any) =>
     setProfessionals((prev) => [{ ...professional, id: `NS-P${Date.now()}` }, ...prev])
   const updateProfessional = (id: string, professional: any) =>
@@ -102,12 +125,20 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const updatePatientEvidence = (patientId: string, evidence: any) =>
     setPatientEvidence((prev) => ({ ...prev, [patientId]: evidence }))
 
+  const setPatientCompliance = (
+    patientId: string,
+    compliance: Record<string, { status: string; observation: string }>,
+  ) => {
+    setPatientComplianceState((prev) => ({ ...prev, [patientId]: compliance }))
+  }
+
   return (
     <AppStateContext.Provider
       value={{
         currentUser,
         patients,
         addPatient,
+        addPatientAuditLog,
         currentAssessmentId,
         setCurrentAssessmentId,
         professionals,
@@ -125,6 +156,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         updateDocument,
         patientEvidence,
         setPatientEvidence: updatePatientEvidence,
+        patientCompliance,
+        setPatientCompliance,
       }}
     >
       {children}

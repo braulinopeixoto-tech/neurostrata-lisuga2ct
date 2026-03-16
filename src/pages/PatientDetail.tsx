@@ -8,6 +8,7 @@ import { EvolutionTab } from '@/components/patient/EvolutionTab'
 import { ReportsTab } from '@/components/patient/ReportsTab'
 import { AuditTab } from '@/components/patient/AuditTab'
 import { DigitizationTab } from '@/components/patient/DigitizationTab'
+import { ComplianceTab } from '@/components/patient/ComplianceTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -54,6 +55,12 @@ export default function PatientDetail() {
             Digitalização de Dados
           </TabsTrigger>
           <TabsTrigger
+            value="compliance"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
+          >
+            Conformidade (UNESCO)
+          </TabsTrigger>
+          <TabsTrigger
             value="evolution"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3"
           >
@@ -78,6 +85,9 @@ export default function PatientDetail() {
         </TabsContent>
         <TabsContent value="digitization" className="m-0">
           <DigitizationTab patientId={patient.id} />
+        </TabsContent>
+        <TabsContent value="compliance" className="m-0">
+          <ComplianceTab patientId={patient.id} />
         </TabsContent>
         <TabsContent value="evolution" className="m-0">
           <EvolutionTab />
