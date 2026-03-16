@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Activity,
   UserCircle,
+  Scale,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -75,8 +76,9 @@ export function AppSidebar() {
     { name: 'Farmacopeia', path: '/pharmacopeia', icon: FlaskConical },
     { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
-    { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
     { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
+    { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
+    { name: 'Portal do Defensor', path: '/defensor-portal', icon: Scale },
     { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
     { name: 'Portal do Paciente', path: '/patient-portal', icon: UserCircle },
   ]

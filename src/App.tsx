@@ -18,6 +18,7 @@ import Professionals from '@/pages/Professionals'
 import Pharmacopeia from '@/pages/Pharmacopeia'
 import Neuronavigation from '@/pages/Neuronavigation'
 import AuditorPortal from '@/pages/AuditorPortal'
+import DefensorPortal from '@/pages/DefensorPortal'
 import ReportCenter from '@/pages/ReportCenter'
 import PerformanceTimeline from '@/pages/PerformanceTimeline'
 import PatientPortal from '@/pages/PatientPortal'
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/report/:id" element={<Report />} />
             <Route path="/protocols" element={<Protocols />} />
             <Route path="/auditor-portal" element={<AuditorPortal />} />
+            <Route path="/defensor-portal" element={<DefensorPortal />} />
             <Route path="/report-center" element={<ReportCenter />} />
             <Route path="/performance-timeline" element={<PerformanceTimeline />} />
             <Route path="/patient-portal" element={<PatientPortal />} />

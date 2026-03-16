@@ -95,7 +95,7 @@ export default function Index() {
           </Card>
         </Link>
 
-        <Link to="/report-center" className="block group">
+        <Link to="/defensor-portal" className="block group">
           <Card className="h-full border-t-4 border-t-indigo-500 hover:shadow-lg transition-all hover:-translate-y-1 bg-white">
             <CardHeader>
               <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -103,7 +103,8 @@ export default function Index() {
               </div>
               <CardTitle>Portal do Defensor</CardTitle>
               <CardDescription>
-                Modelos judiciais, fundamentação ética e gestão de laudos de estratificação.
+                Gestão de defesas jurídicas apoiadas em dados neurofuncionais e Biograma
+                Longitudinal.
               </CardDescription>
             </CardHeader>
             <CardContent>
