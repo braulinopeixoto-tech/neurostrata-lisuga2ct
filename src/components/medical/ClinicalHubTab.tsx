@@ -11,6 +11,7 @@ import {
   Syringe,
   Pill,
   Beaker,
+  Brain,
 } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 import useAppStore from '@/stores/useAppStore'
@@ -30,17 +31,17 @@ export function ClinicalHubTab() {
       <Card className="lg:col-span-2 shadow-sm border-t-4 border-t-primary">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <PenLine className="w-5 h-5 text-primary" /> Quick Report Tool
+            <PenLine className="w-5 h-5 text-primary" /> Quick Report
           </CardTitle>
           <CardDescription>
-            Registre anotações rápidas durante a consulta. O rascunho é sincronizado globalmente
-            para as suas avaliações.
+            Geração rápida de resumos clínicos. O rascunho é sincronizado globalmente para as suas
+            avaliações e laudos.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Textarea
             placeholder="Digite suas observações clínicas rápidas..."
-            className="min-h-[200px]"
+            className="min-h-[250px]"
             value={quickReportDraft}
             onChange={(e) => setQuickReportDraft(e.target.value)}
           />
@@ -54,6 +55,24 @@ export function ClinicalHubTab() {
       </Card>
 
       <div className="space-y-6">
+        <Card className="shadow-sm border-t-4 border-t-emerald-500">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Brain className="w-5 h-5 text-emerald-500" /> Área de Nova Avaliação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Inicie um workflow estruturado para avaliação neurofuncional de novos pacientes.
+            </p>
+            <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700">
+              <Link to="/assessment">
+                Iniciar Avaliação <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -62,7 +81,7 @@ export function ClinicalHubTab() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Base de dados pesquisável de medicamentos, suplementos e interações farmacológicas.
+              Referência pesquisável de medicamentos, suplementos e interações farmacológicas.
             </p>
             <Button asChild className="w-full" variant="outline">
               <Link to="/pharmacopeia">
@@ -80,17 +99,17 @@ export function ClinicalHubTab() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              <div className="flex flex-col items-center p-2 bg-muted/30 rounded border text-xs text-center font-medium">
-                <Zap className="w-4 h-4 mb-1 text-amber-500" /> Neuromodulação
+              <div className="flex flex-col items-center justify-center p-2 bg-muted/30 rounded border text-xs text-center font-medium h-16">
+                <Pill className="w-4 h-4 mb-1 text-blue-500" /> Medicamentosos
               </div>
-              <div className="flex flex-col items-center p-2 bg-muted/30 rounded border text-xs text-center font-medium">
-                <Syringe className="w-4 h-4 mb-1 text-emerald-500" /> Injetáveis
+              <div className="flex flex-col items-center justify-center p-2 bg-muted/30 rounded border text-[11px] leading-tight text-center font-medium h-16">
+                <Zap className="w-4 h-4 mb-1 text-amber-500" /> Protocolos de Neuromodulação
               </div>
-              <div className="flex flex-col items-center p-2 bg-muted/30 rounded border text-xs text-center font-medium">
-                <Beaker className="w-4 h-4 mb-1 text-purple-500" /> Manipulação
+              <div className="flex flex-col items-center justify-center p-2 bg-muted/30 rounded border text-xs text-center font-medium h-16">
+                <Syringe className="w-4 h-4 mb-1 text-emerald-500" /> Protocolos Injetáveis
               </div>
-              <div className="flex flex-col items-center p-2 bg-muted/30 rounded border text-xs text-center font-medium">
-                <Pill className="w-4 h-4 mb-1 text-blue-500" /> Medicações
+              <div className="flex flex-col items-center justify-center p-2 bg-muted/30 rounded border text-[11px] leading-tight text-center font-medium h-16">
+                <Beaker className="w-4 h-4 mb-1 text-purple-500" /> Protocolos de Manipulação
               </div>
             </div>
             <Button asChild className="w-full" variant="outline">

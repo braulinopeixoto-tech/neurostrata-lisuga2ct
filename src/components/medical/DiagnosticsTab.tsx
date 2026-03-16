@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Activity, Beaker, Dna, ScanSearch, Plus } from 'lucide-react'
+import { Activity, Beaker, Dna, ScanSearch, Plus, FileArchive } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 
 export function DiagnosticsTab() {
@@ -27,37 +27,44 @@ export function DiagnosticsTab() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-primary">Fluxo de Exames e Diagnóstico</h2>
-          <p className="text-sm text-muted-foreground">
-            Gerencie resultados laboratoriais, de imagem, salivares e genéticos em um só lugar.
+          <p className="text-sm text-muted-foreground max-w-2xl mt-1">
+            Gerencie os resultados provenientes de laboratórios e clínicas. Os dados processados
+            alimentam automaticamente a <strong>Central de Relatórios</strong> e o{' '}
+            <strong>Biograma Longitudinal</strong> do paciente.
           </p>
         </div>
-        <Button>
-          <Plus className="w-4 h-4 mr-2" /> Solicitar Exame
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="hidden md:flex">
+            <FileArchive className="w-4 h-4 mr-2" /> Central de Relatórios
+          </Button>
+          <Button>
+            <Plus className="w-4 h-4 mr-2" /> Solicitar Exame
+          </Button>
+        </div>
       </div>
 
-      <Tabs defaultValue="labs" className="w-full">
+      <Tabs defaultValue="laboratorios" className="w-full">
         <TabsList className="w-full grid grid-cols-2 md:grid-cols-4 mb-4 h-auto p-1 bg-muted rounded-lg">
-          <TabsTrigger value="labs" className="flex gap-2 py-2">
-            <Beaker className="w-4 h-4" /> Laboratoriais
+          <TabsTrigger value="laboratorios" className="flex gap-2 py-2">
+            <Beaker className="w-4 h-4" /> Laboratórios
           </TabsTrigger>
-          <TabsTrigger value="imaging" className="flex gap-2 py-2">
-            <ScanSearch className="w-4 h-4" /> Imagem
+          <TabsTrigger value="imagens" className="flex gap-2 py-2">
+            <ScanSearch className="w-4 h-4" /> Clínicas de Imagens
           </TabsTrigger>
-          <TabsTrigger value="salivary" className="flex gap-2 py-2">
-            <Activity className="w-4 h-4" /> Salivares
+          <TabsTrigger value="salivares" className="flex gap-2 py-2">
+            <Activity className="w-4 h-4" /> Testes Salivares
           </TabsTrigger>
-          <TabsTrigger value="genetic" className="flex gap-2 py-2">
-            <Dna className="w-4 h-4" /> Genéticos
+          <TabsTrigger value="geneticos" className="flex gap-2 py-2">
+            <Dna className="w-4 h-4" /> Testes Genéticos
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="labs">
+        <TabsContent value="laboratorios">
           <Card>
             <CardHeader>
-              <CardTitle>Exames Laboratoriais</CardTitle>
+              <CardTitle>Laboratórios</CardTitle>
               <CardDescription>
-                Gerenciamento de exames de sangue e marcadores metabólicos.
+                Gerenciamento de exames de sangue e marcadores metabólicos sistêmicos.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -105,11 +112,13 @@ export function DiagnosticsTab() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="imaging">
+        <TabsContent value="imagens">
           <Card>
             <CardHeader>
-              <CardTitle>Clínicas de Imagem e Funcional</CardTitle>
-              <CardDescription>Ressonâncias, PET Scans e Mapeamentos qEEG.</CardDescription>
+              <CardTitle>Clínicas de Imagens</CardTitle>
+              <CardDescription>
+                Processamento de Ressonâncias, PET Scans e Mapeamentos Funcionais (qEEG).
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -147,12 +156,12 @@ export function DiagnosticsTab() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="salivary">
+        <TabsContent value="salivares">
           <Card>
             <CardHeader>
               <CardTitle>Testes Salivares</CardTitle>
               <CardDescription>
-                Análises de ritmo circadiano e marcadores de estresse.
+                Análises de ritmo circadiano, marcadores de estresse e hormônios esteróides.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -191,11 +200,13 @@ export function DiagnosticsTab() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="genetic">
+        <TabsContent value="geneticos">
           <Card>
             <CardHeader>
               <CardTitle>Testes Genéticos</CardTitle>
-              <CardDescription>Painéis farmacogenéticos e polimorfismos.</CardDescription>
+              <CardDescription>
+                Painéis farmacogenéticos e avaliação de polimorfismos (SNPs) relevantes.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>

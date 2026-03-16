@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, UserPlus, ArrowRight } from 'lucide-react'
+import { TrendingUp, UserPlus, ArrowRight, Activity } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -19,31 +19,11 @@ export function MonitoringTab() {
         <Card className="shadow-sm border-t-4 border-t-accent">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-accent" /> Evolução e Performance
+              <UserPlus className="w-5 h-5 text-accent" /> Encaminhamento e Monitoramento
             </CardTitle>
             <CardDescription>
-              Acompanhe os desfechos clínicos longitudinais e respostas ao tratamento.
+              Gestão de referências para outras especialidades e monitoramento contínuo de status.
             </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Acesse o painel completo para visualizar gráficos de conectividade, performance e
-              estabilidade dos pacientes.
-            </p>
-            <Button asChild className="w-full">
-              <Link to="/performance-timeline">
-                Acessar Dashboard de Evolução <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-sm border-t-4 border-t-blue-500">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-blue-500" /> Encaminhamentos Ativos
-            </CardTitle>
-            <CardDescription>Gestão de referências para outras especialidades.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -69,16 +49,43 @@ export function MonitoringTab() {
                 </Badge>
               </div>
             </div>
+            <Button variant="outline" className="w-full mt-4">
+              Ver Todos Encaminhamentos
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm border-t-4 border-t-blue-500">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-blue-500" /> Evolução e Performance
+            </CardTitle>
+            <CardDescription>
+              Acompanhe os desfechos clínicos longitudinais e métricas precisas de recuperação.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col h-full">
+            <p className="text-sm text-muted-foreground mb-6 flex-1">
+              Acesse o painel completo para visualizar gráficos de conectividade, performance
+              executiva e estabilidade comportamental dos pacientes.
+            </p>
+            <Button asChild className="w-full">
+              <Link to="/performance-timeline">
+                Dashboard de Performance <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="text-lg">Pacientes em Monitoramento Contínuo</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Activity className="w-5 h-5 text-primary" /> Alertas de Acompanhamento (Real-time)
+          </CardTitle>
           <CardDescription>
             Visão geral de pacientes em programas de evolução longitudinal e alertas de
-            autoavaliação.
+            autoavaliação diária.
           </CardDescription>
         </CardHeader>
         <CardContent>
