@@ -206,3 +206,36 @@ export const MOCK_CITATIONS = [
     dateSaved: '2023-08-10T12:00:00Z',
   },
 ]
+
+export const RDOC_DOMAINS = [
+  {
+    id: 'nv',
+    name: 'Sistemas de Valência Negativa',
+    description: 'Respostas a situações aversivas, como medo, ansiedade e perda.',
+  },
+  {
+    id: 'pv',
+    name: 'Sistemas de Valência Positiva',
+    description: 'Respostas a situações de recompensa, como motivação, busca e aprendizado.',
+  },
+  {
+    id: 'cs',
+    name: 'Sistemas Cognitivos',
+    description: 'Processos como atenção, percepção, memória de trabalho e controle cognitivo.',
+  },
+  {
+    id: 'sp',
+    name: 'Sistemas de Processamento Social',
+    description: 'Processos mediando interações interpessoais, como apego e comunicação.',
+  },
+  {
+    id: 'ar',
+    name: 'Sistemas de Alerta e Regulação',
+    description: 'Regulação de estados como sono, vigília e ritmos circadianos.',
+  },
+  {
+    id: 'sm',
+    name: 'Sistemas Sensório-Motores',
+    description: 'Processos responsáveis por planejamento e execução motora.',
+  },
+]
