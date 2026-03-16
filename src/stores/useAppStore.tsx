@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
+export type CheckupStageId = 'daily' | 'phq9' | 'gad7' | 'who5' | 'dass21'
+export type CheckupStageStatus = 'locked' | 'available' | 'pending_validation' | 'validated'
+
+export interface CheckupJourneyState {
+  stages: Record<CheckupStageId, CheckupStageStatus>
+  validatedBy: Record<CheckupStageId, string | null>
+}
+
 export interface Patient {
   id: string
   name: string
@@ -13,6 +21,7 @@ export interface Patient {
   auditLogs?: any[]
   hasPortalAccess?: boolean
   portalVisibility?: 'Simplified' | 'Detailed'
+  linkedProfessionals?: { id: string; name: string; role: string }[]
   [key: string]: any
 }
 
@@ -103,6 +112,13 @@ interface AppState {
   addPatientWHO5: (patientId: string, assessment: any) => void
   patientBiogram: Record<string, any[]>
   addPatientBiogramData: (patientId: string, data: any) => void
+  patientJourneys: Record<string, CheckupJourneyState>
+  completeJourneyStage: (patientId: string, stageId: CheckupStageId) => void
+  validateJourneyStage: (
+    patientId: string,
+    stageId: CheckupStageId,
+    professionalName: string,
+  ) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -204,6 +220,57 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     rdoc: {} as Record<string, string>,
     bigFive: {} as Record<string, string>,
   })
+
+  const defaultJourney: CheckupJourneyState = {
+    stages: {
+      daily: 'available',
+      phq9: 'locked',
+      gad7: 'locked',
+      who5: 'locked',
+      dass21: 'locked',
+    },
+    validatedBy: { daily: null, phq9: null, gad7: null, who5: null, dass21: null },
+  }
+
+  const [patientJourneys, setPatientJourneys] = useState<Record<string, CheckupJourneyState>>({
+    P001: defaultJourney,
+  })
+
+  const completeJourneyStage = (patientId: string, stageId: CheckupStageId) => {
+    setPatientJourneys((prev) => {
+      const journey = prev[patientId] || defaultJourney
+      return {
+        ...prev,
+        [patientId]: {
+          ...journey,
+          stages: { ...journey.stages, [stageId]: 'pending_validation' },
+        },
+      }
+    })
+  }
+
+  const validateJourneyStage = (
+    patientId: string,
+    stageId: CheckupStageId,
+    professionalName: string,
+  ) => {
+    setPatientJourneys((prev) => {
+      const journey = prev[patientId] || defaultJourney
+      const newStages = { ...journey.stages, [stageId]: 'validated' as CheckupStageStatus }
+      const newVal = { ...journey.validatedBy, [stageId]: professionalName }
+
+      const order: CheckupStageId[] = ['daily', 'phq9', 'gad7', 'who5', 'dass21']
+      const currentIndex = order.indexOf(stageId)
+      if (currentIndex !== -1 && currentIndex < order.length - 1) {
+        const nextStage = order[currentIndex + 1]
+        if (newStages[nextStage] === 'locked') {
+          newStages[nextStage] = 'available'
+        }
+      }
+
+      return { ...prev, [patientId]: { stages: newStages, validatedBy: newVal } }
+    })
+  }
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
     setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
@@ -394,6 +461,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         addPatientWHO5,
         patientBiogram,
         addPatientBiogramData,
+        patientJourneys,
+        completeJourneyStage,
+        validateJourneyStage,
       }}
     >
       {children}

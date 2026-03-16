@@ -37,7 +37,13 @@ const OPTIONS = [
   { value: 3, label: '3 - Quase todos os dias' },
 ]
 
-export function PatientPHQ9Form({ patientId }: { patientId: string }) {
+export function PatientPHQ9Form({
+  patientId,
+  onComplete,
+}: {
+  patientId: string
+  onComplete?: () => void
+}) {
   const { patientPHQ9, addPatientPHQ9 } = useAppStore()
   const history = patientPHQ9[patientId] || []
 
@@ -118,6 +124,7 @@ export function PatientPHQ9Form({ patientId }: { patientId: string }) {
         action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
       })
     }
+    onComplete?.()
   }
 
   if (hasSubmittedToday) {

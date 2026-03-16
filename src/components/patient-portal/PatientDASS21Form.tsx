@@ -52,7 +52,13 @@ const OPTIONS = [
   { value: 3, label: '3 - Aplicou-se a mim muito ou na maioria do tempo' },
 ]
 
-export function PatientDASS21Form({ patientId }: { patientId: string }) {
+export function PatientDASS21Form({
+  patientId,
+  onComplete,
+}: {
+  patientId: string
+  onComplete?: () => void
+}) {
   const { patientDASS21, addPatientDASS21 } = useAppStore()
   const history = patientDASS21[patientId] || []
 
@@ -148,6 +154,7 @@ export function PatientDASS21Form({ patientId }: { patientId: string }) {
       description: 'Sua escala DASS-21 foi processada com sucesso.',
       action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
     })
+    onComplete?.()
   }
 
   if (hasSubmittedToday) {

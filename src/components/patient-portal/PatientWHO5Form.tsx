@@ -27,7 +27,13 @@ const OPTIONS = [
   { value: 0, label: '0 - Nunca' },
 ]
 
-export function PatientWHO5Form({ patientId }: { patientId: string }) {
+export function PatientWHO5Form({
+  patientId,
+  onComplete,
+}: {
+  patientId: string
+  onComplete?: () => void
+}) {
   const { patientWHO5, addPatientWHO5 } = useAppStore()
   const history = patientWHO5[patientId] || []
 
@@ -73,6 +79,7 @@ export function PatientWHO5Form({ patientId }: { patientId: string }) {
       description: 'Sua escala WHO-5 foi processada e enviada ao seu profissional.',
       action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
     })
+    onComplete?.()
   }
 
   if (hasSubmittedToday) {

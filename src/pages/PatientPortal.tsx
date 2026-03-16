@@ -14,8 +14,8 @@ import {
   Calendar,
   Eye,
   Map as MapIcon,
-  MessageSquare,
   UploadCloud,
+  Brain,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -25,15 +25,11 @@ import { useToast } from '@/hooks/use-toast'
 import useAppStore from '@/stores/useAppStore'
 import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRadarChart'
 import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
-import { PatientDailyFeedbackForm } from '@/components/patient-portal/PatientDailyFeedbackForm'
-import { PatientDASS21Form } from '@/components/patient-portal/PatientDASS21Form'
-import { PatientPHQ9Form } from '@/components/patient-portal/PatientPHQ9Form'
-import { PatientGAD7Form } from '@/components/patient-portal/PatientGAD7Form'
-import { PatientWHO5Form } from '@/components/patient-portal/PatientWHO5Form'
 import { PatientDigitizationTab } from '@/components/patient-portal/PatientDigitizationTab'
+import { PatientVerifiedCheckup } from '@/components/patient-portal/PatientVerifiedCheckup'
 
 export default function PatientPortal() {
-  const { patients, patientFeedbacks } = useAppStore()
+  const { patients } = useAppStore()
   const { toast } = useToast()
   const patient = patients[0] || {
     name: 'Paciente Modelo',
@@ -192,16 +188,10 @@ export default function PatientPortal() {
             <Activity className="w-4 h-4" /> Consulta Rápida
           </TabsTrigger>
           <TabsTrigger
-            value="feedback"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap relative pr-6"
+            value="checkup"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap text-primary font-bold uppercase tracking-tight"
           >
-            <MessageSquare className="w-4 h-4" /> Autoavaliação e Escalas
-            {patientFeedbacks &&
-              !patientFeedbacks[patient.id]?.some((f: any) =>
-                f.date.startsWith(new Date().toISOString().split('T')[0]),
-              ) && (
-                <span className="flex h-2 w-2 rounded-full bg-rose-500 absolute top-3 right-1.5 animate-pulse" />
-              )}
+            <Brain className="w-4 h-4" /> Check-up Mental Verificado
           </TabsTrigger>
           <TabsTrigger
             value="digitization"
@@ -297,55 +287,8 @@ export default function PatientPortal() {
           </div>
         </TabsContent>
 
-        <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in space-y-6">
-          <div className="bg-muted/50 p-4 rounded-lg border flex items-center gap-3">
-            <MessageSquare className="w-6 h-6 text-primary" />
-            <div>
-              <h3 className="font-semibold text-foreground text-lg">
-                Central de Avaliações Clínicas
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Selecione o questionário ou escala que deseja responder hoje. Os dados serão
-                enviados de forma segura.
-              </p>
-            </div>
-          </div>
-
-          <Tabs defaultValue="daily" className="w-full">
-            <TabsList className="w-full flex flex-wrap h-auto p-1 bg-muted rounded-lg mb-6">
-              <TabsTrigger value="daily" className="flex-1 min-w-[100px] py-2">
-                Diário de Sintomas
-              </TabsTrigger>
-              <TabsTrigger value="phq9" className="flex-1 min-w-[100px] py-2">
-                PHQ-9 (Humor)
-              </TabsTrigger>
-              <TabsTrigger value="gad7" className="flex-1 min-w-[100px] py-2">
-                GAD-7 (Ansiedade)
-              </TabsTrigger>
-              <TabsTrigger value="who5" className="flex-1 min-w-[100px] py-2">
-                WHO-5 (Bem-Estar)
-              </TabsTrigger>
-              <TabsTrigger value="dass21" className="flex-1 min-w-[100px] py-2">
-                DASS-21
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="daily" className="mt-0 focus-visible:outline-none">
-              <PatientDailyFeedbackForm patientId={patient.id} />
-            </TabsContent>
-            <TabsContent value="phq9" className="mt-0 focus-visible:outline-none">
-              <PatientPHQ9Form patientId={patient.id} />
-            </TabsContent>
-            <TabsContent value="gad7" className="mt-0 focus-visible:outline-none">
-              <PatientGAD7Form patientId={patient.id} />
-            </TabsContent>
-            <TabsContent value="who5" className="mt-0 focus-visible:outline-none">
-              <PatientWHO5Form patientId={patient.id} />
-            </TabsContent>
-            <TabsContent value="dass21" className="mt-0 focus-visible:outline-none">
-              <PatientDASS21Form patientId={patient.id} />
-            </TabsContent>
-          </Tabs>
+        <TabsContent value="checkup" className="m-0 print:hidden animate-fade-in space-y-6">
+          <PatientVerifiedCheckup patientId={patient.id} />
         </TabsContent>
 
         <TabsContent value="digitization" className="m-0 print:block animate-fade-in">

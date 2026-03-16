@@ -1,0 +1,223 @@
+import { useMemo } from 'react'
+import { ShieldCheck, Brain, Lock, CheckCircle2, Clock, Map as MapIcon, Play } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import useAppStore, { CheckupStageId } from '@/stores/useAppStore'
+import { PatientDailyFeedbackForm } from './PatientDailyFeedbackForm'
+import { PatientPHQ9Form } from './PatientPHQ9Form'
+import { PatientGAD7Form } from './PatientGAD7Form'
+import { PatientWHO5Form } from './PatientWHO5Form'
+import { PatientDASS21Form } from './PatientDASS21Form'
+
+const STAGES: { id: CheckupStageId; title: string; subtitle: string }[] = [
+  { id: 'daily', title: 'Sondagem Inicial', subtitle: 'Diário de Sintomas' },
+  { id: 'phq9', title: 'Espectro Depressivo', subtitle: 'Escala PHQ-9' },
+  { id: 'gad7', title: 'Espectro Ansioso', subtitle: 'Escala GAD-7' },
+  { id: 'who5', title: 'Índice de Bem-Estar', subtitle: 'Escala WHO-5' },
+  { id: 'dass21', title: 'Mapeamento Multidimensional', subtitle: 'Escala DASS-21' },
+]
+
+export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
+  const { patients, patientJourneys, completeJourneyStage, validateJourneyStage } = useAppStore()
+
+  const patient = useMemo(() => patients.find((p) => p.id === patientId), [patients, patientId])
+  const journey = patientJourneys[patientId]
+
+  if (!patient?.linkedProfessionals || patient.linkedProfessionals.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4 bg-muted/20 border border-dashed rounded-xl p-8 animate-fade-in">
+        <Lock className="w-16 h-16 text-muted-foreground/50 mb-2" />
+        <h2 className="text-2xl font-bold text-primary">Acesso Restrito ao Check-up</h2>
+        <p className="text-muted-foreground max-w-lg text-lg">
+          É necessária a vinculação ativa com um profissional de saúde (Médico, Psicólogo ou
+          Neuropsicólogo) para iniciar a sua jornada de avaliação.
+        </p>
+      </div>
+    )
+  }
+
+  const activeIndex = STAGES.findIndex((s) => journey?.stages[s.id] !== 'validated')
+  const isComplete = activeIndex === -1
+  const activeStage = isComplete ? null : STAGES[activeIndex]
+  const activeStatus = activeStage ? journey?.stages[activeStage.id] : null
+  const professional = patient.linkedProfessionals[0]
+
+  const renderActiveContent = () => {
+    if (isComplete) {
+      return (
+        <Card className="border-t-4 border-t-emerald-500 bg-emerald-50/50">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <Brain className="w-20 h-20 text-emerald-500 mb-6" />
+            <h3 className="text-2xl font-bold text-emerald-800">
+              Arquitetura Mental Mapeada com Sucesso
+            </h3>
+            <p className="text-emerald-700 mt-3 max-w-md text-lg">
+              Você completou todas as etapas do Check-up Mental Verificado. Seus resultados foram
+              validados pela equipe clínica.
+            </p>
+          </CardContent>
+        </Card>
+      )
+    }
+
+    if (activeStatus === 'pending_validation') {
+      return (
+        <Card className="border-t-4 border-t-amber-500 bg-amber-50/50">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <Clock className="w-20 h-20 text-amber-500 mb-6" />
+            <h3 className="text-2xl font-bold text-amber-800">Aguardando Validação Clínica</h3>
+            <p className="text-amber-700 mt-3 max-w-md text-lg">
+              Sua avaliação ({activeStage?.title}) foi enviada. A próxima etapa será liberada assim
+              que recebermos a validação do seu profissional.
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full border border-amber-200">
+              <ShieldCheck className="w-4 h-4" />
+              <span className="text-sm font-medium">Profissional: {professional.name}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-8 opacity-50 hover:opacity-100 transition-opacity bg-white"
+              onClick={() => validateJourneyStage(patientId, activeStage!.id, professional.name)}
+            >
+              [Demo] Simular Validação do Profissional
+            </Button>
+          </CardContent>
+        </Card>
+      )
+    }
+
+    if (activeStage?.id === 'daily')
+      return (
+        <PatientDailyFeedbackForm
+          patientId={patientId}
+          onComplete={() => completeJourneyStage(patientId, 'daily')}
+        />
+      )
+    if (activeStage?.id === 'phq9')
+      return (
+        <PatientPHQ9Form
+          patientId={patientId}
+          onComplete={() => completeJourneyStage(patientId, 'phq9')}
+        />
+      )
+    if (activeStage?.id === 'gad7')
+      return (
+        <PatientGAD7Form
+          patientId={patientId}
+          onComplete={() => completeJourneyStage(patientId, 'gad7')}
+        />
+      )
+    if (activeStage?.id === 'who5')
+      return (
+        <PatientWHO5Form
+          patientId={patientId}
+          onComplete={() => completeJourneyStage(patientId, 'who5')}
+        />
+      )
+    if (activeStage?.id === 'dass21')
+      return (
+        <PatientDASS21Form
+          patientId={patientId}
+          onComplete={() => completeJourneyStage(patientId, 'dass21')}
+        />
+      )
+
+    return null
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in mt-6">
+      <div className="bg-gradient-to-r from-primary/10 to-transparent border-l-4 border-l-primary p-6 rounded-r-lg shadow-sm flex items-center gap-4">
+        <Brain className="w-10 h-10 text-primary shrink-0 opacity-80" />
+        <div>
+          <blockquote className="text-xl font-serif italic text-primary leading-relaxed">
+            "Aqui enquanto você se revela alguém capacitado te observa."
+          </blockquote>
+          <p className="text-sm text-muted-foreground font-medium mt-1">
+            Jornada guiada e acompanhada por: {professional.name} ({professional.role})
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-4 bg-muted/10 border rounded-xl p-6">
+          <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+            <MapIcon className="w-5 h-5 text-primary" /> Sua Arquitetura Mental
+          </h3>
+          <div className="relative border-l-2 border-muted ml-3 space-y-8 pb-4 pt-2">
+            {STAGES.map((stage, idx) => {
+              const status = journey?.stages[stage.id]
+              const isValidated = status === 'validated'
+              const isPending = status === 'pending_validation'
+              const isAvail = status === 'available'
+              const validator = journey?.validatedBy[stage.id]
+
+              return (
+                <div key={stage.id} className="pl-6 relative">
+                  <div
+                    className={cn(
+                      'absolute w-4 h-4 rounded-full -left-[9px] top-1 ring-4 ring-background flex items-center justify-center',
+                      {
+                        'bg-emerald-500': isValidated,
+                        'bg-amber-500': isPending,
+                        'bg-primary animate-pulse': isAvail,
+                        'bg-slate-300': status === 'locked',
+                      },
+                    )}
+                  >
+                    {isValidated && <CheckCircle2 className="w-2.5 h-2.5 text-white" />}
+                    {isPending && <Clock className="w-2.5 h-2.5 text-white" />}
+                    {isAvail && <Play className="w-2 h-2 text-white ml-0.5" />}
+                    {status === 'locked' && <Lock className="w-2.5 h-2.5 text-white" />}
+                  </div>
+
+                  <div
+                    className={cn(
+                      'transition-opacity',
+                      status === 'locked' ? 'opacity-50' : 'opacity-100',
+                    )}
+                  >
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                      Etapa {idx + 1}
+                    </div>
+                    <p
+                      className={cn(
+                        'font-bold text-base leading-tight',
+                        isAvail ? 'text-primary' : 'text-foreground',
+                      )}
+                    >
+                      {stage.title}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{stage.subtitle}</p>
+
+                    {isValidated && validator && (
+                      <Badge
+                        variant="outline"
+                        className="mt-2 text-[10px] bg-emerald-50 text-emerald-700 border-emerald-200"
+                      >
+                        <CheckCircle2 className="w-3 h-3 mr-1" /> Verificado por {validator}
+                      </Badge>
+                    )}
+                    {isPending && (
+                      <Badge
+                        variant="secondary"
+                        className="mt-2 text-[10px] bg-amber-50 text-amber-700"
+                      >
+                        Em análise
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="lg:col-span-8">{renderActiveContent()}</div>
+      </div>
+    </div>
+  )
+}

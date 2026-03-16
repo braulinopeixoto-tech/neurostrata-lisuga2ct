@@ -8,7 +8,13 @@ import { toast } from '@/components/ui/use-toast'
 import { CheckCircle2, MessageSquare } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 
-export function PatientDailyFeedbackForm({ patientId }: { patientId: string }) {
+export function PatientDailyFeedbackForm({
+  patientId,
+  onComplete,
+}: {
+  patientId: string
+  onComplete?: () => void
+}) {
   const { patientFeedbacks, addPatientFeedback } = useAppStore()
   const feedbacks = patientFeedbacks[patientId] || []
 
@@ -32,6 +38,7 @@ export function PatientDailyFeedbackForm({ patientId }: { patientId: string }) {
       description: 'Sua autoavaliação de hoje foi registrada com sucesso.',
       action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
     })
+    onComplete?.()
   }
 
   if (hasSubmittedToday) {

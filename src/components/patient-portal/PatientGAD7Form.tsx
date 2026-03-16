@@ -26,7 +26,13 @@ const OPTIONS = [
   { value: 3, label: '3 - Quase todos os dias' },
 ]
 
-export function PatientGAD7Form({ patientId }: { patientId: string }) {
+export function PatientGAD7Form({
+  patientId,
+  onComplete,
+}: {
+  patientId: string
+  onComplete?: () => void
+}) {
   const { patientGAD7, addPatientGAD7 } = useAppStore()
   const history = patientGAD7[patientId] || []
 
@@ -92,6 +98,7 @@ export function PatientGAD7Form({ patientId }: { patientId: string }) {
       description: 'Sua escala GAD-7 foi processada e enviada ao seu profissional.',
       action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
     })
+    onComplete?.()
   }
 
   if (hasSubmittedToday) {

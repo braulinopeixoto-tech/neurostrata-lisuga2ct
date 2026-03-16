@@ -8,6 +8,7 @@ export const MOCK_PATIENTS = [
     status: 'Ativo',
     score: 85,
     education: 'Superior Completo',
+    linkedProfessionals: [{ id: 'NS-P001', name: 'Dr. Renato Alves', role: 'Médico' }],
   },
   {
     id: 'P002',
@@ -28,6 +29,7 @@ export const MOCK_PATIENTS = [
     status: 'Alta programada',
     score: 91,
     education: 'Ensino Médio',
+    linkedProfessionals: [{ id: 'NS-P002', name: 'Dra. Camila Rocha', role: 'Psiquiatra' }],
   },
 ]
 
