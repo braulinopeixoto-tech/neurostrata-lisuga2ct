@@ -26,6 +26,9 @@ import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRada
 import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
 import { PatientDailyFeedbackForm } from '@/components/patient-portal/PatientDailyFeedbackForm'
 import { PatientDASS21Form } from '@/components/patient-portal/PatientDASS21Form'
+import { PatientPHQ9Form } from '@/components/patient-portal/PatientPHQ9Form'
+import { PatientGAD7Form } from '@/components/patient-portal/PatientGAD7Form'
+import { PatientWHO5Form } from '@/components/patient-portal/PatientWHO5Form'
 
 export default function PatientPortal() {
   const { patients, patientFeedbacks } = useAppStore()
@@ -193,7 +196,7 @@ export default function PatientPortal() {
             value="feedback"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap relative pr-6"
           >
-            <MessageSquare className="w-4 h-4" /> Autoavaliação de Sintomas
+            <MessageSquare className="w-4 h-4" /> Autoavaliação e Escalas
             {patientFeedbacks &&
               !patientFeedbacks[patient.id]?.some((f: any) =>
                 f.date.startsWith(new Date().toISOString().split('T')[0]),
@@ -290,10 +293,56 @@ export default function PatientPortal() {
           </div>
         </TabsContent>
 
-        {/* TAB: FEEDBACK */}
+        {/* TAB: FEEDBACK & SCALES */}
         <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in space-y-6">
-          <PatientDailyFeedbackForm patientId={patient.id} />
-          <PatientDASS21Form patientId={patient.id} />
+          <div className="bg-muted/50 p-4 rounded-lg border flex items-center gap-3">
+            <MessageSquare className="w-6 h-6 text-primary" />
+            <div>
+              <h3 className="font-semibold text-foreground text-lg">
+                Central de Avaliações Clínicas
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Selecione o questionário ou escala que deseja responder hoje. Os dados serão
+                enviados de forma segura.
+              </p>
+            </div>
+          </div>
+
+          <Tabs defaultValue="daily" className="w-full">
+            <TabsList className="w-full flex flex-wrap h-auto p-1 bg-muted rounded-lg mb-6">
+              <TabsTrigger value="daily" className="flex-1 min-w-[100px] py-2">
+                Diário de Sintomas
+              </TabsTrigger>
+              <TabsTrigger value="phq9" className="flex-1 min-w-[100px] py-2">
+                PHQ-9 (Humor)
+              </TabsTrigger>
+              <TabsTrigger value="gad7" className="flex-1 min-w-[100px] py-2">
+                GAD-7 (Ansiedade)
+              </TabsTrigger>
+              <TabsTrigger value="who5" className="flex-1 min-w-[100px] py-2">
+                WHO-5 (Bem-Estar)
+              </TabsTrigger>
+              <TabsTrigger value="dass21" className="flex-1 min-w-[100px] py-2">
+                DASS-21
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="daily" className="mt-0 focus-visible:outline-none">
+              <PatientDailyFeedbackForm patientId={patient.id} />
+            </TabsContent>
+            <TabsContent value="phq9" className="mt-0 focus-visible:outline-none">
+              <PatientPHQ9Form patientId={patient.id} />
+            </TabsContent>
+            <TabsContent value="gad7" className="mt-0 focus-visible:outline-none">
+              <PatientGAD7Form patientId={patient.id} />
+            </TabsContent>
+            <TabsContent value="who5" className="mt-0 focus-visible:outline-none">
+              <PatientWHO5Form patientId={patient.id} />
+            </TabsContent>
+            <TabsContent value="dass21" className="mt-0 focus-visible:outline-none">
+              <PatientDASS21Form patientId={patient.id} />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
 
         {/* TAB: BIOGRAM */}

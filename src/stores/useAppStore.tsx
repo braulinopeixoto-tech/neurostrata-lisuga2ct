@@ -92,6 +92,12 @@ interface AppState {
   ) => void
   patientDASS21: Record<string, any[]>
   addPatientDASS21: (patientId: string, assessment: any) => void
+  patientPHQ9: Record<string, any[]>
+  addPatientPHQ9: (patientId: string, assessment: any) => void
+  patientGAD7: Record<string, any[]>
+  addPatientGAD7: (patientId: string, assessment: any) => void
+  patientWHO5: Record<string, any[]>
+  addPatientWHO5: (patientId: string, assessment: any) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -161,6 +167,44 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         date: new Date(Date.now() - 7 * 86400000).toISOString(),
         scores: { depression: 14, anxiety: 16, stress: 22 },
         classification: { depression: 'Moderado', anxiety: 'Severo', stress: 'Moderado' },
+      },
+    ],
+  })
+
+  const [patientPHQ9, setPatientPHQ9] = useState<Record<string, any[]>>({
+    P001: [
+      {
+        id: 'phq9-1',
+        date: new Date(Date.now() - 7 * 86400000).toISOString(),
+        score: 12,
+        classification: 'Moderada',
+        hasCriticalAlert: false,
+        rawAnswers: {},
+      },
+    ],
+  })
+
+  const [patientGAD7, setPatientGAD7] = useState<Record<string, any[]>>({
+    P001: [
+      {
+        id: 'gad7-1',
+        date: new Date(Date.now() - 7 * 86400000).toISOString(),
+        score: 15,
+        classification: 'Severa',
+        rawAnswers: {},
+      },
+    ],
+  })
+
+  const [patientWHO5, setPatientWHO5] = useState<Record<string, any[]>>({
+    P001: [
+      {
+        id: 'who5-1',
+        date: new Date(Date.now() - 7 * 86400000).toISOString(),
+        score: 10,
+        percentage: 40,
+        classification: 'Baixo Bem-Estar',
+        rawAnswers: {},
       },
     ],
   })
@@ -271,6 +315,36 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  const addPatientPHQ9 = (patientId: string, assessment: any) => {
+    setPatientPHQ9((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...assessment, id: `phq9-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
+
+  const addPatientGAD7 = (patientId: string, assessment: any) => {
+    setPatientGAD7((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...assessment, id: `gad7-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
+
+  const addPatientWHO5 = (patientId: string, assessment: any) => {
+    setPatientWHO5((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...assessment, id: `who5-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
+
   const updatePatientPortalAccess = (
     patientId: string,
     access: boolean,
@@ -320,6 +394,12 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         updatePatientPortalAccess,
         patientDASS21,
         addPatientDASS21,
+        patientPHQ9,
+        addPatientPHQ9,
+        patientGAD7,
+        addPatientGAD7,
+        patientWHO5,
+        addPatientWHO5,
       }}
     >
       {children}
