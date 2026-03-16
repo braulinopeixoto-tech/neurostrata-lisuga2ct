@@ -47,6 +47,34 @@ export const defaultReportState = {
   ],
   conclusion:
     'Com base no mapeamento multidimensional de 17 blocos, atesta-se vulnerabilidade significativa nos eixos emocionais com risco de 65%. O elevado Score de Plasticidade indica forte potencial de remodelação neural através de intervenções neuromodulatórias. O paciente apresenta aptidão para início imediato do protocolo terapêutico sugerido.',
+  historicalAssessments: [
+    {
+      date: '10/05/2023',
+      radarData: [
+        { subject: 'Ameaça', value: 95 },
+        { subject: 'Recompensa', value: 40 },
+        { subject: 'Cog. Exec.', value: 50 },
+        { subject: 'Consciência', value: 65 },
+        { subject: 'Social', value: 45 },
+        { subject: 'Regulatório', value: 20 },
+        { subject: 'E. Neural', value: 30 },
+        { subject: 'Integrativo', value: 45 },
+      ],
+    },
+    {
+      date: '15/01/2023',
+      radarData: [
+        { subject: 'Ameaça', value: 90 },
+        { subject: 'Recompensa', value: 45 },
+        { subject: 'Cog. Exec.', value: 55 },
+        { subject: 'Consciência', value: 70 },
+        { subject: 'Social', value: 50 },
+        { subject: 'Regulatório', value: 30 },
+        { subject: 'E. Neural', value: 35 },
+        { subject: 'Integrativo', value: 50 },
+      ],
+    },
+  ],
 }
 
 export type ReportState = typeof defaultReportState
