@@ -4,6 +4,7 @@ import { BrainCircuit, CheckCircle2 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import useAppStore from '@/stores/useAppStore'
 import useReportStore from '@/stores/useReportStore'
+import { RDOC_DOMAINS, BIG_FIVE_DOMAINS } from '@/lib/mock-data'
 
 export function StepProcessing({
   patientId,
@@ -44,12 +45,36 @@ export function StepProcessing({
         setStatus(step.text)
         if (index === sequence.length - 1) {
           setTimeout(() => {
-            const pf = currentAssessmentData.psychicFunctions || {}
+            const { psychicFunctions, rdoc, bigFive } = currentAssessmentData
+
+            // Psychic Func
+            const pf = psychicFunctions || {}
             let pfReport = 'Mapeamento das 18 Funções Psíquicas:\n\n'
             Object.entries(pf).forEach(([func, val]) => {
               pfReport += `- ${func}: ${val}\n`
             })
-            updateData({ psychicFunc: pfReport })
+
+            // RDoC
+            const rd = rdoc || {}
+            let rdReport = 'Matriz Dimensional RDoC:\n\n'
+            Object.entries(rd).forEach(([id, val]) => {
+              const domain = RDOC_DOMAINS.find((d) => d.id === id)
+              if (domain) rdReport += `- ${domain.name}: ${val}\n`
+            })
+
+            // Big Five
+            const bf = bigFive || {}
+            let bfReport = 'Perfil de Personalidade (Big Five):\n\n'
+            Object.entries(bf).forEach(([id, val]) => {
+              const domain = BIG_FIVE_DOMAINS.find((d) => d.id === id)
+              if (domain) bfReport += `- ${domain.name}: ${val}\n`
+            })
+
+            updateData({
+              psychicFunc: pfReport,
+              rdoc: Object.keys(rd).length > 0 ? rdReport : undefined,
+              bigFive: Object.keys(bf).length > 0 ? bfReport : undefined,
+            })
 
             if (patientId) {
               setCurrentAssessmentId(patientId)
@@ -61,14 +86,7 @@ export function StepProcessing({
         }
       }, timer)
     })
-  }, [
-    navigate,
-    patientId,
-    setCurrentAssessmentId,
-    isComplex,
-    currentAssessmentData.psychicFunctions,
-    updateData,
-  ])
+  }, [navigate, patientId, setCurrentAssessmentId, isComplex, currentAssessmentData, updateData])
 
   return (
     <div className="py-16 flex flex-col items-center justify-center text-center animate-fade-in">

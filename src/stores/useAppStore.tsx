@@ -66,6 +66,8 @@ interface AppState {
     sleepQuality: string
     comorbidities: string
     psychicFunctions: Record<string, string>
+    rdoc: Record<string, string>
+    bigFive: Record<string, string>
   }
   setAssessmentData: (data: Partial<AppState['currentAssessmentData']>) => void
   documents: any[]
@@ -199,6 +201,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     sleepQuality: 'regular',
     comorbidities: '',
     psychicFunctions: {} as Record<string, string>,
+    rdoc: {} as Record<string, string>,
+    bigFive: {} as Record<string, string>,
   })
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
