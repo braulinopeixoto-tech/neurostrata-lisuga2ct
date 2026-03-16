@@ -5,22 +5,22 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import useAppStore, { CheckupStageId } from '@/stores/useAppStore'
-import { PatientDailyFeedbackForm } from './PatientDailyFeedbackForm'
-import { PatientPHQ9Form } from './PatientPHQ9Form'
-import { PatientGAD7Form } from './PatientGAD7Form'
-import { PatientWHO5Form } from './PatientWHO5Form'
-import { PatientDASS21Form } from './PatientDASS21Form'
+import { PatientFunctionsForm } from './PatientFunctionsForm'
+import { PatientRDoCForm } from './PatientRDoCForm'
+import { PatientBigFiveForm } from './PatientBigFiveForm'
 
 const STAGES: { id: CheckupStageId; title: string; subtitle: string }[] = [
-  { id: 'daily', title: 'Sondagem Inicial', subtitle: 'Diário de Sintomas' },
-  { id: 'phq9', title: 'Espectro Depressivo', subtitle: 'Escala PHQ-9' },
-  { id: 'gad7', title: 'Espectro Ansioso', subtitle: 'Escala GAD-7' },
-  { id: 'who5', title: 'Índice de Bem-Estar', subtitle: 'Escala WHO-5' },
-  { id: 'dass21', title: 'Mapeamento Multidimensional', subtitle: 'Escala DASS-21' },
+  {
+    id: 'psychic_functions',
+    title: '18 Funções Psíquicas',
+    subtitle: 'Mapeamento Funcional em 4 eixos',
+  },
+  { id: 'rdoc', title: 'Domínios RDoC', subtitle: 'Matriz Dimensional de Sistemas' },
+  { id: 'big_five', title: 'Perfil de Personalidade', subtitle: 'Escala Big Five' },
 ]
 
 export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
-  const { patients, patientJourneys, completeJourneyStage, validateJourneyStage } = useAppStore()
+  const { patients, patientJourneys } = useAppStore()
 
   const patient = useMemo(() => patients.find((p) => p.id === patientId), [patients, patientId])
   const journey = patientJourneys[patientId]
@@ -31,8 +31,8 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
         <Lock className="w-16 h-16 text-muted-foreground/50 mb-2" />
         <h2 className="text-2xl font-bold text-primary">Acesso Restrito ao Check-up</h2>
         <p className="text-muted-foreground max-w-lg text-lg">
-          É necessária a vinculação ativa com um profissional de saúde (Médico, Psicólogo ou
-          Neuropsicólogo) para iniciar a sua jornada de avaliação.
+          Acesso restrito: Para iniciar o Check-up Mental Verificado, você deve estar vinculado a um
+          profissional (Médico, Psicólogo ou Neuropsicólogo).
         </p>
       </div>
     )
@@ -55,7 +55,7 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
             </h3>
             <p className="text-emerald-700 mt-3 max-w-md text-lg">
               Você completou todas as etapas do Check-up Mental Verificado. Seus resultados foram
-              validados pela equipe clínica.
+              validados pela equipe clínica e integrados ao seu Biograma Longitudinal.
             </p>
           </CardContent>
         </Card>
@@ -76,54 +76,15 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
               <ShieldCheck className="w-4 h-4" />
               <span className="text-sm font-medium">Profissional: {professional.name}</span>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-8 opacity-50 hover:opacity-100 transition-opacity bg-white"
-              onClick={() => validateJourneyStage(patientId, activeStage!.id, professional.name)}
-            >
-              [Demo] Simular Validação do Profissional
-            </Button>
           </CardContent>
         </Card>
       )
     }
 
-    if (activeStage?.id === 'daily')
-      return (
-        <PatientDailyFeedbackForm
-          patientId={patientId}
-          onComplete={() => completeJourneyStage(patientId, 'daily')}
-        />
-      )
-    if (activeStage?.id === 'phq9')
-      return (
-        <PatientPHQ9Form
-          patientId={patientId}
-          onComplete={() => completeJourneyStage(patientId, 'phq9')}
-        />
-      )
-    if (activeStage?.id === 'gad7')
-      return (
-        <PatientGAD7Form
-          patientId={patientId}
-          onComplete={() => completeJourneyStage(patientId, 'gad7')}
-        />
-      )
-    if (activeStage?.id === 'who5')
-      return (
-        <PatientWHO5Form
-          patientId={patientId}
-          onComplete={() => completeJourneyStage(patientId, 'who5')}
-        />
-      )
-    if (activeStage?.id === 'dass21')
-      return (
-        <PatientDASS21Form
-          patientId={patientId}
-          onComplete={() => completeJourneyStage(patientId, 'dass21')}
-        />
-      )
+    if (activeStage?.id === 'psychic_functions')
+      return <PatientFunctionsForm patientId={patientId} />
+    if (activeStage?.id === 'rdoc') return <PatientRDoCForm patientId={patientId} />
+    if (activeStage?.id === 'big_five') return <PatientBigFiveForm patientId={patientId} />
 
     return null
   }
@@ -134,7 +95,7 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
         <Brain className="w-10 h-10 text-primary shrink-0 opacity-80" />
         <div>
           <blockquote className="text-xl font-serif italic text-primary leading-relaxed">
-            "Aqui enquanto você se revela alguém capacitado te observa."
+            "Aqui, enquanto você se revela, alguém capacitado te observa."
           </blockquote>
           <p className="text-sm text-muted-foreground font-medium mt-1">
             Jornada guiada e acompanhada por: {professional.name} ({professional.role})
@@ -208,6 +169,11 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
                       >
                         Em análise
                       </Badge>
+                    )}
+                    {status === 'locked' && (
+                      <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-medium italic">
+                        <Lock className="w-3 h-3" /> Aguardando validação do profissional
+                      </p>
                     )}
                   </div>
                 </div>

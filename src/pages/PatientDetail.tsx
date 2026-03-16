@@ -12,6 +12,7 @@ import { ComplianceTab } from '@/components/patient/ComplianceTab'
 import { ModularLibraryTab } from '@/components/protocols/ModularLibraryTab'
 import { LegalConsultationTab } from '@/components/patient/LegalConsultationTab'
 import { PatientFeedbackTab } from '@/components/patient/PatientFeedbackTab'
+import { CheckupValidationTab } from '@/components/patient/CheckupValidationTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -50,6 +51,12 @@ export default function PatientDetail() {
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
             Anamnese
+          </TabsTrigger>
+          <TabsTrigger
+            value="checkup"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-emerald-700 data-[state=active]:text-emerald-800 font-bold"
+          >
+            Check-up Validado
           </TabsTrigger>
           <TabsTrigger
             value="digitization"
@@ -103,6 +110,9 @@ export default function PatientDetail() {
 
         <TabsContent value="anamnesis" className="m-0">
           <AnamnesisTab patient={patient} />
+        </TabsContent>
+        <TabsContent value="checkup" className="m-0">
+          <CheckupValidationTab patient={patient} />
         </TabsContent>
         <TabsContent value="digitization" className="m-0">
           <DigitizationTab patientId={patient.id} />

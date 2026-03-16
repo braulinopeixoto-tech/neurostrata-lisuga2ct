@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
-export type CheckupStageId = 'daily' | 'phq9' | 'gad7' | 'who5' | 'dass21'
+export type CheckupStageId = 'psychic_functions' | 'rdoc' | 'big_five'
 export type CheckupStageStatus = 'locked' | 'available' | 'pending_validation' | 'validated'
 
 export interface CheckupJourneyState {
   stages: Record<CheckupStageId, CheckupStageStatus>
   validatedBy: Record<CheckupStageId, string | null>
+  data?: Record<string, any>
 }
 
 export interface Patient {
@@ -113,7 +114,7 @@ interface AppState {
   patientBiogram: Record<string, any[]>
   addPatientBiogramData: (patientId: string, data: any) => void
   patientJourneys: Record<string, CheckupJourneyState>
-  completeJourneyStage: (patientId: string, stageId: CheckupStageId) => void
+  submitJourneyStage: (patientId: string, stageId: CheckupStageId, data: any) => void
   validateJourneyStage: (
     patientId: string,
     stageId: CheckupStageId,
@@ -223,20 +224,29 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const defaultJourney: CheckupJourneyState = {
     stages: {
-      daily: 'available',
-      phq9: 'locked',
-      gad7: 'locked',
-      who5: 'locked',
-      dass21: 'locked',
+      psychic_functions: 'available',
+      rdoc: 'locked',
+      big_five: 'locked',
     },
-    validatedBy: { daily: null, phq9: null, gad7: null, who5: null, dass21: null },
+    validatedBy: { psychic_functions: null, rdoc: null, big_five: null },
+    data: {},
   }
 
   const [patientJourneys, setPatientJourneys] = useState<Record<string, CheckupJourneyState>>({
-    P001: defaultJourney,
+    P001: {
+      stages: { psychic_functions: 'pending_validation', rdoc: 'locked', big_five: 'locked' },
+      validatedBy: { psychic_functions: null, rdoc: null, big_five: null },
+      data: {
+        psychic_functions: {
+          'Atenção Sustentada': 'Regular',
+          'Atenção Alternada': 'Disfuncional',
+          'Labilidade Afetiva': 'Disfuncional grave',
+        },
+      },
+    },
   })
 
-  const completeJourneyStage = (patientId: string, stageId: CheckupStageId) => {
+  const submitJourneyStage = (patientId: string, stageId: CheckupStageId, data: any) => {
     setPatientJourneys((prev) => {
       const journey = prev[patientId] || defaultJourney
       return {
@@ -244,9 +254,31 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         [patientId]: {
           ...journey,
           stages: { ...journey.stages, [stageId]: 'pending_validation' },
+          data: { ...(journey.data || {}), [stageId]: data },
         },
       }
     })
+  }
+
+  const addPatientBiogramData = (patientId: string, data: any) => {
+    setPatientBiogram((prev) => ({
+      ...prev,
+      [patientId]: [...(prev[patientId] || []), { ...data, id: `bio-${Date.now()}` }],
+    }))
+  }
+
+  const addPatientAuditLog = (patientId: string, log: any) => {
+    setPatients((prev) =>
+      prev.map((p) => {
+        if (p.id === patientId) {
+          return {
+            ...p,
+            auditLogs: [{ ...log, id: `log-${Date.now()}` }, ...(p.auditLogs || [])],
+          }
+        }
+        return p
+      }),
+    )
   }
 
   const validateJourneyStage = (
@@ -254,12 +286,14 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     stageId: CheckupStageId,
     professionalName: string,
   ) => {
+    const stageData = patientJourneys[patientId]?.data?.[stageId]
+
     setPatientJourneys((prev) => {
       const journey = prev[patientId] || defaultJourney
       const newStages = { ...journey.stages, [stageId]: 'validated' as CheckupStageStatus }
       const newVal = { ...journey.validatedBy, [stageId]: professionalName }
 
-      const order: CheckupStageId[] = ['daily', 'phq9', 'gad7', 'who5', 'dass21']
+      const order: CheckupStageId[] = ['psychic_functions', 'rdoc', 'big_five']
       const currentIndex = order.indexOf(stageId)
       if (currentIndex !== -1 && currentIndex < order.length - 1) {
         const nextStage = order[currentIndex + 1]
@@ -268,7 +302,65 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      return { ...prev, [patientId]: { stages: newStages, validatedBy: newVal } }
+      return { ...prev, [patientId]: { ...journey, stages: newStages, validatedBy: newVal } }
+    })
+
+    if (stageData && stageId === 'psychic_functions') {
+      const getVal = (v: string) => {
+        if (v === 'Plenamente preservado') return 100
+        if (v === 'Preservado') return 80
+        if (v === 'Regular') return 60
+        if (v === 'Disfuncional') return 40
+        if (v === 'Disfuncional grave') return 20
+        return 50
+      }
+      let bemEstarAcc = 0,
+        focoAcc = 0,
+        energiaAcc = 0
+      let bemEstarCount = 0,
+        focoCount = 0,
+        energiaCount = 0
+      Object.entries(stageData).forEach(([key, val]) => {
+        const v = getVal(val as string)
+        if (
+          [
+            'Reatividade ao Estresse',
+            'Labilidade Afetiva',
+            'Controle de Impulsos',
+            'Tolerância à Frustração',
+          ].includes(key)
+        ) {
+          bemEstarAcc += v
+          bemEstarCount++
+        } else if (
+          [
+            'Atenção Sustentada',
+            'Atenção Alternada',
+            'Atenção Dividida',
+            'Memória de Trabalho',
+          ].includes(key)
+        ) {
+          focoAcc += v
+          focoCount++
+        } else {
+          energiaAcc += v
+          energiaCount++
+        }
+      })
+      const newPoint = {
+        date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+        bemEstar: bemEstarCount ? Math.round(bemEstarAcc / bemEstarCount) : 60,
+        foco: focoCount ? Math.round(focoAcc / focoCount) : 60,
+        energia: energiaCount ? Math.round(energiaAcc / energiaCount) : 60,
+      }
+      addPatientBiogramData(patientId, newPoint)
+    }
+
+    addPatientAuditLog(patientId, {
+      date: new Date().toISOString(),
+      action: `Validação Profissional do Check-up: ${stageId}`,
+      user: professionalName,
+      details: 'A etapa foi clinicamente avaliada e integrada ao Biograma.',
     })
   }
 
@@ -296,20 +388,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       },
       ...prev,
     ])
-
-  const addPatientAuditLog = (patientId: string, log: any) => {
-    setPatients((prev) =>
-      prev.map((p) => {
-        if (p.id === patientId) {
-          return {
-            ...p,
-            auditLogs: [{ ...log, id: `log-${Date.now()}` }, ...(p.auditLogs || [])],
-          }
-        }
-        return p
-      }),
-    )
-  }
 
   const addProfessional = (professional: any) =>
     setProfessionals((prev) => [{ ...professional, id: `NS-P${Date.now()}` }, ...prev])
@@ -354,13 +432,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         { ...feedback, id: `fb-${Date.now()}`, date: new Date().toISOString() },
         ...(prev[patientId] || []),
       ],
-    }))
-  }
-
-  const addPatientBiogramData = (patientId: string, data: any) => {
-    setPatientBiogram((prev) => ({
-      ...prev,
-      [patientId]: [...(prev[patientId] || []), { ...data, id: `bio-${Date.now()}` }],
     }))
   }
 
@@ -462,7 +533,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         patientBiogram,
         addPatientBiogramData,
         patientJourneys,
-        completeJourneyStage,
+        submitJourneyStage,
         validateJourneyStage,
       }}
     >
