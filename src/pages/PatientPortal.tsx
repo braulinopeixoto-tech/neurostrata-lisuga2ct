@@ -15,6 +15,7 @@ import {
   Eye,
   Map as MapIcon,
   MessageSquare,
+  UploadCloud,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -29,11 +30,11 @@ import { PatientDASS21Form } from '@/components/patient-portal/PatientDASS21Form
 import { PatientPHQ9Form } from '@/components/patient-portal/PatientPHQ9Form'
 import { PatientGAD7Form } from '@/components/patient-portal/PatientGAD7Form'
 import { PatientWHO5Form } from '@/components/patient-portal/PatientWHO5Form'
+import { PatientDigitizationTab } from '@/components/patient-portal/PatientDigitizationTab'
 
 export default function PatientPortal() {
   const { patients, patientFeedbacks } = useAppStore()
   const { toast } = useToast()
-  // Ensure we have a patient, fallback to a safe mock if not
   const patient = patients[0] || {
     name: 'Paciente Modelo',
     id: 'P001',
@@ -63,13 +64,12 @@ export default function PatientPortal() {
   }
 
   const handleDownloadPDF = (certName: string) => {
-    // Simulate PDF generation and download
     const dummyContent = `--- NEUROSTRATA DOCUMENTO OFICIAL ---\n\nPaciente: ${patient.name}\nDocumento: ${certName}\nData: ${new Date().toLocaleDateString('pt-BR')}\n\n[Assinatura Digital Verificada]`
     const blob = new Blob([dummyContent], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${certName.replace(/\s+/g, '_')}_${patient.name.replace(/\s+/g, '')}.txt` // using .txt for demo purposes
+    a.download = `${certName.replace(/\s+/g, '_')}_${patient.name.replace(/\s+/g, '')}.txt`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -156,7 +156,6 @@ export default function PatientPortal() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-10">
-      {/* Secure Session Banner */}
       <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-medium shadow-sm print:hidden">
         <Lock className="w-4 h-4" />
         Ambiente Seguro e Criptografado do Paciente
@@ -205,6 +204,12 @@ export default function PatientPortal() {
               )}
           </TabsTrigger>
           <TabsTrigger
+            value="digitization"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <UploadCloud className="w-4 h-4" /> Digitalização Validada
+          </TabsTrigger>
+          <TabsTrigger
             value="biogram"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
@@ -228,7 +233,6 @@ export default function PatientPortal() {
           )}
         </TabsList>
 
-        {/* TAB: DASHBOARD / QUICK CONSULTATION */}
         <TabsContent value="dashboard" className="m-0 space-y-6 print:block animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="md:col-span-1 shadow-sm border-t-4 border-t-accent flex flex-col">
@@ -293,7 +297,6 @@ export default function PatientPortal() {
           </div>
         </TabsContent>
 
-        {/* TAB: FEEDBACK & SCALES */}
         <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in space-y-6">
           <div className="bg-muted/50 p-4 rounded-lg border flex items-center gap-3">
             <MessageSquare className="w-6 h-6 text-primary" />
@@ -345,7 +348,10 @@ export default function PatientPortal() {
           </Tabs>
         </TabsContent>
 
-        {/* TAB: BIOGRAM */}
+        <TabsContent value="digitization" className="m-0 print:block animate-fade-in">
+          <PatientDigitizationTab patientId={patient.id} />
+        </TabsContent>
+
         <TabsContent value="biogram" className="m-0 print:block animate-fade-in">
           <Card className="shadow-sm border-t-4 border-t-primary print:shadow-none print:border-none">
             <CardHeader className="flex flex-row justify-between items-start print:pb-2">
@@ -380,7 +386,6 @@ export default function PatientPortal() {
           </Card>
         </TabsContent>
 
-        {/* TAB: CERTIFICATES / DOCUMENTS */}
         {!isSimplified && (
           <TabsContent value="certificates" className="m-0 print:block animate-fade-in">
             <div className="flex justify-between items-center mb-4 print:hidden">
@@ -467,7 +472,6 @@ export default function PatientPortal() {
           </TabsContent>
         )}
 
-        {/* TAB: HISTORY */}
         {!isSimplified && (
           <TabsContent value="history" className="m-0 print:block animate-fade-in">
             <Card className="shadow-sm">

@@ -121,7 +121,28 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     MOCK_PROFESSIONALS as Professional[],
   )
   const [formulas, setFormulas] = useState<Formula[]>(MOCK_FORMULAS as Formula[])
-  const [documents, setDocuments] = useState<any[]>([])
+
+  const [documents, setDocuments] = useState<any[]>([
+    {
+      id: 'doc-mock-1',
+      patientId: 'P001',
+      name: 'Ressonância Magnética Funcional.pdf',
+      category: 'Exames',
+      date: new Date(Date.now() - 5 * 86400000).toISOString(),
+      status: 'completed',
+      validationStatus: 'Validado',
+    },
+    {
+      id: 'doc-mock-2',
+      patientId: 'P001',
+      name: 'Relatório Neuropsicológico Prévio.pdf',
+      category: 'Relatórios',
+      date: new Date(Date.now() - 2 * 86400000).toISOString(),
+      status: 'completed',
+      validationStatus: 'Pendente',
+    },
+  ])
+
   const [patientEvidence, setPatientEvidence] = useState<Record<string, any>>({})
   const [patientCompliance, setPatientComplianceState] = useState<
     Record<string, Record<string, { status: string; observation: string }>>
