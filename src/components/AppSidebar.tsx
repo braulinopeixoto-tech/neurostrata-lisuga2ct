@@ -12,6 +12,7 @@ import {
   ShieldAlert,
   FileArchive,
   TrendingUp,
+  Activity,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -65,7 +66,8 @@ export function AppSidebar() {
   const riskStatus = activePatient ? getRiskStatus(activePatient.score) : null
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Início', path: '/', icon: LayoutDashboard },
+    { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
     { name: 'Pacientes', path: '/patients', icon: Users },
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
     { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
@@ -74,7 +76,7 @@ export function AppSidebar() {
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
     { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
     { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
-    { name: 'Linha do Tempo de Performance', path: '/performance-timeline', icon: TrendingUp },
+    { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
   ]
 
   return (

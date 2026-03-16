@@ -75,6 +75,14 @@ export const defaultReportState = {
       ],
     },
   ],
+  isSigned: false,
+  signature: null as null | {
+    name: string
+    professionalId: string
+    timestamp: string
+    hash: string
+    standard: string
+  },
 }
 
 export type ReportState = typeof defaultReportState

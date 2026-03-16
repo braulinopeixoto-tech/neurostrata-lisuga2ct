@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound'
 import { AppStoreProvider } from './stores/useAppStore'
 
 import Index from './pages/Index'
+import Dashboard from './pages/Dashboard'
 import Patients from './pages/Patients'
 import PatientDetail from './pages/PatientDetail'
 import Assessment from './pages/assessment/Assessment'
@@ -29,6 +30,7 @@ const App = () => (
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/patients/:id" element={<PatientDetail />} />
             <Route path="/professionals" element={<Professionals />} />
