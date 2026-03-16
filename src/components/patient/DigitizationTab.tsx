@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -10,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { FileText, Upload, BrainCircuit, Loader2, FileCheck } from 'lucide-react'
+import { FileText, Upload, BrainCircuit, Loader2, FileCheck, Compass } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 import { toast } from '@/components/ui/use-toast'
 
@@ -48,7 +49,6 @@ export function DigitizationTab({ patientId }: { patientId: string }) {
     setCategory('')
     setIsUploading(true)
 
-    // Simulate AI processing
     setTimeout(() => {
       updateDocument(docId, { status: 'completed' })
       setIsUploading(false)
@@ -228,8 +228,19 @@ function EvidenceGroup({ title, items, color }: { title: string; items: string[]
       <h4 className="text-xs font-semibold uppercase text-muted-foreground">{title}</h4>
       <div className="flex flex-wrap gap-2">
         {items.map((item, idx) => (
-          <Badge key={idx} variant="outline" className={`font-normal ${color}`}>
+          <Badge
+            key={idx}
+            variant="outline"
+            className={`font-normal ${color} flex items-center pr-1.5`}
+          >
             {item}
+            <Link
+              to={`/neuronavigation?q=${encodeURIComponent(item)}`}
+              className="ml-1.5 p-0.5 rounded-full hover:bg-black/10 transition-colors"
+              title="Enviar para Neuronavegação"
+            >
+              <Compass className="w-3 h-3 opacity-70" />
+            </Link>
           </Badge>
         ))}
       </div>

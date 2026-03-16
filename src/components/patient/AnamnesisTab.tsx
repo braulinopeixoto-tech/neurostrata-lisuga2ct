@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom'
+import { Compass } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 export function AnamnesisTab({ patient }: { patient: any }) {
   return (
@@ -25,9 +28,25 @@ export function AnamnesisTab({ patient }: { patient: any }) {
             </p>
           </div>
           <div className="md:col-span-2">
-            <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-              Sintomatologia Principal
-            </h4>
+            <div className="flex justify-between items-center mb-1">
+              <h4 className="font-semibold text-sm text-muted-foreground uppercase">
+                Sintomatologia Principal
+              </h4>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100"
+              >
+                <Link
+                  to={`/neuronavigation?q=${encodeURIComponent(
+                    patient.symptoms || patient.neuroHistory || '',
+                  )}`}
+                >
+                  <Compass className="w-3 h-3 mr-1" /> Neuronavegação
+                </Link>
+              </Button>
+            </div>
             <p className="text-sm bg-muted/30 border border-border/50 p-3 rounded-md min-h-[60px]">
               {patient.symptoms || patient.neuroHistory || 'Sem queixas registradas.'}
             </p>

@@ -37,6 +37,9 @@ interface AppState {
     patientId: string,
     compliance: Record<string, { status: string; observation: string }>,
   ) => void
+  quickReportDraft: string
+  setQuickReportDraft: (text: string) => void
+  appendQuickReportDraft: (text: string) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -57,6 +60,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [patientCompliance, setPatientComplianceState] = useState<
     Record<string, Record<string, { status: string; observation: string }>>
   >({})
+  const [quickReportDraft, setQuickReportDraft] = useState('')
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -71,6 +75,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
     setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
+
+  const appendQuickReportDraft = (text: string) =>
+    setQuickReportDraft((prev) => (prev ? prev + text : text))
 
   const addPatient = (patient: any) =>
     setPatients((prev) => [
@@ -158,6 +165,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         setPatientEvidence: updatePatientEvidence,
         patientCompliance,
         setPatientCompliance,
+        quickReportDraft,
+        setQuickReportDraft,
+        appendQuickReportDraft,
       }}
     >
       {children}

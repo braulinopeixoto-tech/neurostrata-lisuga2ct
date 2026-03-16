@@ -3,7 +3,7 @@ import { Sparkles, FileSignature, Stethoscope, AlertCircle, RefreshCw } from 'lu
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import useAppStore from '@/stores/useAppStore'
 
 const AI_REPORT_MOCK = [
   {
@@ -32,9 +32,9 @@ export function StepQuickReport({
   onPrev: () => void
   patientName?: string
 }) {
+  const { quickReportDraft, setQuickReportDraft } = useAppStore()
   const [isGenerating, setIsGenerating] = useState(false)
   const [isGenerated, setIsGenerated] = useState(false)
-  const [diagnosis, setDiagnosis] = useState('')
 
   const handleGenerate = () => {
     setIsGenerating(true)
@@ -81,7 +81,6 @@ export function StepQuickReport({
 
       {isGenerated && (
         <div className="space-y-6">
-          {/* AI Output Area - Open Evidence Inspired */}
           <div className="bg-slate-50 p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200">
@@ -118,20 +117,20 @@ export function StepQuickReport({
             </div>
           </div>
 
-          {/* Human Input Area */}
           <div className="pt-4 border-t">
             <Label className="text-base font-bold text-slate-800 flex items-center gap-2 mb-3">
               <Stethoscope className="w-5 h-5 text-accent" /> Definição Humana do Diagnóstico Final
             </Label>
             <p className="text-xs text-muted-foreground mb-3">
               Insira a conclusão diagnóstica final, observações adicionais e a conduta terapêutica
-              (medicação, neuromodulação, encaminhamentos).
+              (medicação, neuromodulação, encaminhamentos). As evidências enviadas via
+              Neuronavegação aparecerão aqui.
             </p>
             <Textarea
-              className="min-h-[160px] text-sm leading-relaxed bg-white border-slate-300 focus-visible:ring-accent resize-y"
-              placeholder="Ex: Confirmo a hipótese diagnóstica de TAG (CID-11 6B00). Em virtude do impacto funcional executivo documentado, prescrevo afastamento das atividades laborais por 30 dias. Início de protocolo de neuromodulação (tDCS frontal)..."
-              value={diagnosis}
-              onChange={(e) => setDiagnosis(e.target.value)}
+              className="min-h-[220px] text-sm leading-relaxed bg-white border-slate-300 focus-visible:ring-accent resize-y"
+              placeholder="Ex: Confirmo a hipótese diagnóstica de TAG (CID-11 6B00). Em virtude do impacto funcional executivo documentado, prescrevo afastamento das atividades laborais por 30 dias..."
+              value={quickReportDraft}
+              onChange={(e) => setQuickReportDraft(e.target.value)}
             />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Activity, Brain, AlertTriangle, FileEdit } from 'lucide-react'
+import { Activity, Brain, FileEdit, Compass } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -77,7 +77,7 @@ export default function Analysis() {
             <CardTitle className="text-base text-center">Topografia qEEG</CardTitle>
           </CardHeader>
           <CardContent>
-            <BrainMapVisualizer />
+            <BrainMapVisualizer variant="default" />
           </CardContent>
         </Card>
       </div>
@@ -92,9 +92,21 @@ export default function Analysis() {
           <div className="p-4 bg-muted/30 rounded-lg border">
             <div className="flex justify-between items-start mb-2">
               <h4 className="font-semibold text-sm">Déficit Executivo-Emocional</h4>
-              <Badge variant="outline" className="text-xs border-destructive text-destructive">
-                Alerta RDoC
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                >
+                  <Link to="/neuronavigation?q=D%C3%A9ficit%20Executivo-Emocional">
+                    <Compass className="w-3 h-3 mr-1" /> Neuronavegação
+                  </Link>
+                </Button>
+                <Badge variant="outline" className="text-xs border-destructive text-destructive">
+                  Alerta RDoC
+                </Badge>
+              </div>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               O domínio de <strong>Valência Negativa</strong> apresenta hiperativação funcional. Há
@@ -105,9 +117,21 @@ export default function Analysis() {
           <div className="p-4 bg-muted/30 rounded-lg border">
             <div className="flex justify-between items-start mb-2">
               <h4 className="font-semibold text-sm">Perfil Big Five Correlacionado</h4>
-              <Badge variant="secondary" className="text-xs">
-                Observação
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+                >
+                  <Link to="/neuronavigation?q=Neuroticismo">
+                    <Compass className="w-3 h-3 mr-1" /> Neuronavegação
+                  </Link>
+                </Button>
+                <Badge variant="secondary" className="text-xs">
+                  Observação
+                </Badge>
+              </div>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               O traço de <strong>Neuroticismo</strong> elevado cruza clinicamente com os achados de
