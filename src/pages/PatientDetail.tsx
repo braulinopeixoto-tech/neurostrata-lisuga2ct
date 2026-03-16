@@ -11,6 +11,7 @@ import { DigitizationTab } from '@/components/patient/DigitizationTab'
 import { ComplianceTab } from '@/components/patient/ComplianceTab'
 import { ModularLibraryTab } from '@/components/protocols/ModularLibraryTab'
 import { LegalConsultationTab } from '@/components/patient/LegalConsultationTab'
+import { PatientFeedbackTab } from '@/components/patient/PatientFeedbackTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -69,6 +70,12 @@ export default function PatientDetail() {
             Evolução
           </TabsTrigger>
           <TabsTrigger
+            value="feedback"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
+          >
+            Feedback Diário
+          </TabsTrigger>
+          <TabsTrigger
             value="reports"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
@@ -105,6 +112,9 @@ export default function PatientDetail() {
         </TabsContent>
         <TabsContent value="evolution" className="m-0">
           <EvolutionTab />
+        </TabsContent>
+        <TabsContent value="feedback" className="m-0">
+          <PatientFeedbackTab patient={patient} />
         </TabsContent>
         <TabsContent value="reports" className="m-0">
           <ReportsTab />

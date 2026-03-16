@@ -11,6 +11,8 @@ export interface Patient {
   score: number
   education?: string
   auditLogs?: any[]
+  hasPortalAccess?: boolean
+  portalVisibility?: 'Simplified' | 'Detailed'
   [key: string]: any
 }
 
@@ -81,6 +83,13 @@ interface AppState {
   citations: Citation[]
   addCitation: (cit: Omit<Citation, 'id' | 'dateSaved'>) => void
   removeCitation: (id: string) => void
+  patientFeedbacks: Record<string, any[]>
+  addPatientFeedback: (patientId: string, feedback: any) => void
+  updatePatientPortalAccess: (
+    patientId: string,
+    access: boolean,
+    visibility: 'Simplified' | 'Detailed',
+  ) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -92,7 +101,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     role: 'Médico',
     registrationId: 'CRM 12345-SP',
   })
-  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS as Patient[])
+  const [patients, setPatients] = useState<Patient[]>(
+    MOCK_PATIENTS.map((p) => ({
+      ...p,
+      hasPortalAccess: true,
+      portalVisibility: 'Detailed',
+    })) as Patient[],
+  )
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null)
   const [professionals, setProfessionals] = useState<Professional[]>(
     MOCK_PROFESSIONALS as Professional[],
@@ -113,6 +128,29 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       dateSaved: new Date().toISOString(),
     },
   ])
+
+  const [patientFeedbacks, setPatientFeedbacks] = useState<Record<string, any[]>>({
+    P001: [
+      {
+        id: 'f1',
+        date: new Date(Date.now() - 86400000).toISOString(),
+        mood: 3,
+        focus: 4,
+        sleep: 2,
+        anxiety: 4,
+        notes: 'Dormi mal, mas consegui focar no trabalho.',
+      },
+      {
+        id: 'f2',
+        date: new Date(Date.now() - 172800000).toISOString(),
+        mood: 4,
+        focus: 3,
+        sleep: 4,
+        anxiety: 2,
+        notes: 'Me senti mais relaxado hoje.',
+      },
+    ],
+  })
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -136,6 +174,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       {
         id: Date.now().toString(),
         ...patient,
+        hasPortalAccess: true,
+        portalVisibility: 'Detailed',
         auditLogs: [
           {
             id: Date.now().toString(),
@@ -198,6 +238,28 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     ])
   const removeCitation = (id: string) => setCitations((prev) => prev.filter((c) => c.id !== id))
 
+  const addPatientFeedback = (patientId: string, feedback: any) => {
+    setPatientFeedbacks((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...feedback, id: `fb-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
+
+  const updatePatientPortalAccess = (
+    patientId: string,
+    access: boolean,
+    visibility: 'Simplified' | 'Detailed',
+  ) => {
+    setPatients((prev) =>
+      prev.map((p) =>
+        p.id === patientId ? { ...p, hasPortalAccess: access, portalVisibility: visibility } : p,
+      ),
+    )
+  }
+
   return (
     <AppStateContext.Provider
       value={{
@@ -230,6 +292,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         citations,
         addCitation,
         removeCitation,
+        patientFeedbacks,
+        addPatientFeedback,
+        updatePatientPortalAccess,
       }}
     >
       {children}

@@ -14,6 +14,7 @@ import {
   Calendar,
   Eye,
   Map as MapIcon,
+  MessageSquare,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -23,13 +24,35 @@ import { useToast } from '@/hooks/use-toast'
 import useAppStore from '@/stores/useAppStore'
 import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRadarChart'
 import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
+import { PatientDailyFeedbackForm } from '@/components/patient-portal/PatientDailyFeedbackForm'
 
 export default function PatientPortal() {
-  const { patients } = useAppStore()
+  const { patients, patientFeedbacks } = useAppStore()
   const { toast } = useToast()
   // Ensure we have a patient, fallback to a safe mock if not
-  const patient = patients[0] || { name: 'Paciente Modelo', id: '000', status: 'Ativo' }
+  const patient = patients[0] || {
+    name: 'Paciente Modelo',
+    id: 'P001',
+    status: 'Ativo',
+    hasPortalAccess: true,
+    portalVisibility: 'Detailed',
+  }
   const [activeTab, setActiveTab] = useState('dashboard')
+
+  if (!patient.hasPortalAccess) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 text-center animate-fade-in">
+        <Lock className="w-16 h-16 text-muted-foreground opacity-50" />
+        <h2 className="text-2xl font-bold text-primary">Acesso Restrito</h2>
+        <p className="text-muted-foreground max-w-md">
+          Seu acesso ao Portal do Paciente está temporariamente suspenso ou ainda não foi liberado
+          pelo seu profissional de saúde.
+        </p>
+      </div>
+    )
+  }
+
+  const isSimplified = patient.portalVisibility === 'Simplified'
 
   const handlePrint = () => {
     window.print()
@@ -166,23 +189,39 @@ export default function PatientPortal() {
             <Activity className="w-4 h-4" /> Consulta Rápida
           </TabsTrigger>
           <TabsTrigger
+            value="feedback"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap relative pr-6"
+          >
+            <MessageSquare className="w-4 h-4" /> Autoavaliação Diária
+            {patientFeedbacks &&
+              !patientFeedbacks[patient.id]?.some((f: any) =>
+                f.date.startsWith(new Date().toISOString().split('T')[0]),
+              ) && (
+                <span className="flex h-2 w-2 rounded-full bg-rose-500 absolute top-3 right-1.5 animate-pulse" />
+              )}
+          </TabsTrigger>
+          <TabsTrigger
             value="biogram"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <TrendingUp className="w-4 h-4" /> Biograma Longitudinal
           </TabsTrigger>
-          <TabsTrigger
-            value="certificates"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <FileText className="w-4 h-4" /> Documentos Oficiais
-          </TabsTrigger>
-          <TabsTrigger
-            value="history"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <History className="w-4 h-4" /> Histórico Clínico
-          </TabsTrigger>
+          {!isSimplified && (
+            <>
+              <TabsTrigger
+                value="certificates"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+              >
+                <FileText className="w-4 h-4" /> Documentos Oficiais
+              </TabsTrigger>
+              <TabsTrigger
+                value="history"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+              >
+                <History className="w-4 h-4" /> Histórico Clínico
+              </TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         {/* TAB: DASHBOARD / QUICK CONSULTATION */}
@@ -250,6 +289,11 @@ export default function PatientPortal() {
           </div>
         </TabsContent>
 
+        {/* TAB: FEEDBACK */}
+        <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in">
+          <PatientDailyFeedbackForm patientId={patient.id} />
+        </TabsContent>
+
         {/* TAB: BIOGRAM */}
         <TabsContent value="biogram" className="m-0 print:block animate-fade-in">
           <Card className="shadow-sm border-t-4 border-t-primary print:shadow-none print:border-none">
@@ -265,141 +309,147 @@ export default function PatientPortal() {
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-3">
-                <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-semibold text-blue-900">
-                    Documento de Valor Clínico Validado
-                  </h4>
-                  <p className="text-xs text-blue-800 mt-1 leading-relaxed">
-                    Este gráfico representa a consolidação auditável das suas melhoras em
-                    métricas-chave de saúde neurofuncional. Os dados são gerados pelo motor NSI e
-                    certificados pelo seu médico assistente.
-                  </p>
+              {!isSimplified && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-blue-900">
+                      Documento de Valor Clínico Validado
+                    </h4>
+                    <p className="text-xs text-blue-800 mt-1 leading-relaxed">
+                      Este gráfico representa a consolidação auditável das suas melhoras em
+                      métricas-chave de saúde neurofuncional. Os dados são gerados pelo motor NSI e
+                      certificados pelo seu médico assistente.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
               <PatientBiogramChart data={biogramData} />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* TAB: CERTIFICATES / DOCUMENTS */}
-        <TabsContent value="certificates" className="m-0 print:block animate-fade-in">
-          <div className="flex justify-between items-center mb-4 print:hidden">
-            <div>
-              <h2 className="text-lg font-semibold text-primary">Documentos Oficiais e Laudos</h2>
-              <p className="text-sm text-muted-foreground">
-                Arquivos com validade clínica e verificação criptográfica ICP-Brasil.
-              </p>
+        {!isSimplified && (
+          <TabsContent value="certificates" className="m-0 print:block animate-fade-in">
+            <div className="flex justify-between items-center mb-4 print:hidden">
+              <div>
+                <h2 className="text-lg font-semibold text-primary">Documentos Oficiais e Laudos</h2>
+                <p className="text-sm text-muted-foreground">
+                  Arquivos com validade clínica e verificação criptográfica ICP-Brasil.
+                </p>
+              </div>
+              <Button variant="outline" onClick={handlePrint}>
+                <Printer className="w-4 h-4 mr-2" /> Imprimir Lista
+              </Button>
             </div>
-            <Button variant="outline" onClick={handlePrint}>
-              <Printer className="w-4 h-4 mr-2" /> Imprimir Lista
-            </Button>
-          </div>
-          <div className="space-y-4">
-            {certificates.map((cert) => (
-              <Card
-                key={cert.id}
-                className="shadow-sm overflow-hidden border-l-4 border-l-emerald-500 hover:border-l-emerald-600 transition-colors print:break-inside-avoid print:shadow-none print:border-l-0 print:border-y print:border-r print:border-border"
-              >
-                <CardContent className="p-0">
-                  <div className="flex flex-col sm:flex-row justify-between p-5 gap-6">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          className="border-emerald-200 text-emerald-700 bg-emerald-50"
-                        >
-                          <CheckCircle2 className="w-3 h-3 mr-1" /> Assinado Digitalmente
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="border-blue-200 text-blue-700 bg-blue-50"
-                        >
-                          <ShieldCheck className="w-3 h-3 mr-1" /> ICP-Brasil
-                        </Badge>
-                        <Badge variant="secondary" className="bg-muted text-muted-foreground">
-                          {cert.type}
-                        </Badge>
-                      </div>
+            <div className="space-y-4">
+              {certificates.map((cert) => (
+                <Card
+                  key={cert.id}
+                  className="shadow-sm overflow-hidden border-l-4 border-l-emerald-500 hover:border-l-emerald-600 transition-colors print:break-inside-avoid print:shadow-none print:border-l-0 print:border-y print:border-r print:border-border"
+                >
+                  <CardContent className="p-0">
+                    <div className="flex flex-col sm:flex-row justify-between p-5 gap-6">
+                      <div className="space-y-3 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className="border-emerald-200 text-emerald-700 bg-emerald-50"
+                          >
+                            <CheckCircle2 className="w-3 h-3 mr-1" /> Assinado Digitalmente
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="border-blue-200 text-blue-700 bg-blue-50"
+                          >
+                            <ShieldCheck className="w-3 h-3 mr-1" /> ICP-Brasil
+                          </Badge>
+                          <Badge variant="secondary" className="bg-muted text-muted-foreground">
+                            {cert.type}
+                          </Badge>
+                        </div>
 
-                      <div>
-                        <h3 className="font-bold text-lg text-primary">{cert.name}</h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" /> Emitido em: {cert.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Stethoscope className="w-4 h-4" /> {cert.doctor} ({cert.crm})
+                        <div>
+                          <h3 className="font-bold text-lg text-primary">{cert.name}</h3>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" /> Emitido em: {cert.date}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Stethoscope className="w-4 h-4" /> {cert.doctor} ({cert.crm})
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="bg-muted/40 p-2.5 rounded text-xs border border-border/50">
+                          <div className="text-muted-foreground font-semibold uppercase mb-1 flex items-center gap-1">
+                            <Lock className="w-3 h-3" /> Hash de Autenticidade (SHA-256):
+                          </div>
+                          <span className="font-mono text-slate-600 break-all select-all">
+                            {cert.hash}
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-muted/40 p-2.5 rounded text-xs border border-border/50">
-                        <div className="text-muted-foreground font-semibold uppercase mb-1 flex items-center gap-1">
-                          <Lock className="w-3 h-3" /> Hash de Autenticidade (SHA-256):
-                        </div>
-                        <span className="font-mono text-slate-600 break-all select-all">
-                          {cert.hash}
-                        </span>
+                      <div className="flex flex-row sm:flex-col items-center justify-end gap-3 print:hidden shrink-0 border-t sm:border-t-0 sm:border-l pt-4 sm:pt-0 sm:pl-6">
+                        <Button
+                          variant="default"
+                          className="w-full sm:w-auto"
+                          onClick={() => handleDownloadPDF(cert.name)}
+                        >
+                          <Download className="w-4 h-4 mr-2" /> Baixar PDF
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full sm:w-auto bg-transparent"
+                          onClick={() => handleDownloadPDF(cert.name)}
+                        >
+                          <Eye className="w-4 h-4 mr-2" /> Visualizar
+                        </Button>
                       </div>
                     </div>
-
-                    <div className="flex flex-row sm:flex-col items-center justify-end gap-3 print:hidden shrink-0 border-t sm:border-t-0 sm:border-l pt-4 sm:pt-0 sm:pl-6">
-                      <Button
-                        variant="default"
-                        className="w-full sm:w-auto"
-                        onClick={() => handleDownloadPDF(cert.name)}
-                      >
-                        <Download className="w-4 h-4 mr-2" /> Baixar PDF
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full sm:w-auto bg-transparent"
-                        onClick={() => handleDownloadPDF(cert.name)}
-                      >
-                        <Eye className="w-4 h-4 mr-2" /> Visualizar
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        )}
 
         {/* TAB: HISTORY */}
-        <TabsContent value="history" className="m-0 print:block animate-fade-in">
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Linha do Tempo Clínica</CardTitle>
-              <CardDescription>
-                Registro de todos os seus eventos, avaliações e procedimentos realizados.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="relative border-l-2 border-muted ml-3 space-y-6 pb-4 pt-2">
-                {history.map((item, idx) => (
-                  <div key={idx} className="pl-6 relative group">
-                    <div className="absolute w-3 h-3 bg-primary rounded-full -left-[7px] top-1.5 ring-4 ring-background group-hover:scale-125 transition-transform" />
-                    <div className="bg-white p-4 rounded-lg border shadow-sm group-hover:border-primary/30 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5" /> {item.date}
-                        </span>
-                        <Badge variant="secondary" className="text-[10px]">
-                          {item.type}
-                        </Badge>
+        {!isSimplified && (
+          <TabsContent value="history" className="m-0 print:block animate-fade-in">
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Linha do Tempo Clínica</CardTitle>
+                <CardDescription>
+                  Registro de todos os seus eventos, avaliações e procedimentos realizados.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="relative border-l-2 border-muted ml-3 space-y-6 pb-4 pt-2">
+                  {history.map((item, idx) => (
+                    <div key={idx} className="pl-6 relative group">
+                      <div className="absolute w-3 h-3 bg-primary rounded-full -left-[7px] top-1.5 ring-4 ring-background group-hover:scale-125 transition-transform" />
+                      <div className="bg-white p-4 rounded-lg border shadow-sm group-hover:border-primary/30 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" /> {item.date}
+                          </span>
+                          <Badge variant="secondary" className="text-[10px]">
+                            {item.type}
+                          </Badge>
+                        </div>
+                        <p className="font-semibold text-foreground text-base">{item.event}</p>
+                        <p className="text-sm text-muted-foreground mt-1.5">{item.desc}</p>
                       </div>
-                      <p className="font-semibold text-foreground text-base">{item.event}</p>
-                      <p className="text-sm text-muted-foreground mt-1.5">{item.desc}</p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )

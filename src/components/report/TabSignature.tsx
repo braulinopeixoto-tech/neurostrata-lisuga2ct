@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import useReportStore from '@/stores/useReportStore'
 import useAppStore from '@/stores/useAppStore'
+import { toast } from '@/components/ui/use-toast'
 
 export function TabSignature() {
   const { data, updateData } = useReportStore()
@@ -34,6 +35,12 @@ export function TabSignature() {
         },
       })
       setIsSigning(false)
+
+      // Automated Notification System Toast
+      toast({
+        title: 'Laudo Assinado e Publicado',
+        description: `Notificações automatizadas com acesso seguro enviadas ao paciente via Email e WhatsApp. (Dr(a). ${currentUser.fullName})`,
+      })
     }, 2000)
   }
 

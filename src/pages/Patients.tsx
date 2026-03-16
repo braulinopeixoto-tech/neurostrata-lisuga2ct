@@ -13,6 +13,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import useAppStore from '@/stores/useAppStore'
 import { AddPatientModal } from '@/components/AddPatientModal'
+import { PortalAccessModal } from '@/components/patient/PortalAccessModal'
 
 export default function Patients() {
   const { patients } = useAppStore()
@@ -24,11 +25,14 @@ export default function Patients() {
           <h1 className="text-3xl font-bold tracking-tight text-primary">Pacientes</h1>
           <p className="text-muted-foreground mt-1">Gerenciamento de base clínica e históricos.</p>
         </div>
-        <AddPatientModal>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" /> Novo Paciente
-          </Button>
-        </AddPatientModal>
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <PortalAccessModal />
+          <AddPatientModal>
+            <Button className="flex-1 sm:flex-none">
+              <Plus className="w-4 h-4 mr-2" /> Novo Paciente
+            </Button>
+          </AddPatientModal>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg border shadow-sm p-4">
