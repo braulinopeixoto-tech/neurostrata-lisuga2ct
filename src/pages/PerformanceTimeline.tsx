@@ -13,6 +13,7 @@ import {
   BookMarked,
   Copy,
   Trash2,
+  Layers,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
@@ -23,6 +24,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import {
   Line,
   LineChart,
@@ -402,65 +411,126 @@ export default function PerformanceTimeline() {
             </Card>
           </TabsContent>
 
-          {/* Motor de Sugestões de Protocolos IA */}
-          <Card className="mt-8 border-t-4 border-t-accent shadow-sm animate-fade-in-up">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Bot className="w-6 h-6 text-accent" /> Motor de Sugestão de Protocolos
-              </CardTitle>
-              <CardDescription>
-                A IA cruzou os achados da avaliação com a "Biblioteca Inteligente" para recomendar
-                os seguintes direcionamentos clínicos.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
-                    <div>
-                      <h4 className="font-bold text-primary flex items-center gap-2">
-                        tACS Alpha (10Hz) Parietal + rTMS Medial PFC
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
-                        <strong className="text-slate-700 font-semibold">
-                          Justificativa Clínica:
-                        </strong>{' '}
-                        Identificada hiperatividade na DMN (Default Mode Network) no mapeamento da
-                        linha de base. Este protocolo favorece a supressão de ritmos acelerados e
-                        induz relaxamento cortical, o que se correlaciona intimamente com a melhora
-                        de 60% observada na métrica de "Estabilidade".
-                      </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 animate-fade-in-up">
+            {/* Motor de Sugestões de Protocolos IA */}
+            <Card className="lg:col-span-2 border-t-4 border-t-accent shadow-sm flex flex-col">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Bot className="w-6 h-6 text-accent" /> Motor de Sugestão de Protocolos
+                </CardTitle>
+                <CardDescription>
+                  A IA cruzou os achados da avaliação com a "Biblioteca Inteligente" para recomendar
+                  os seguintes direcionamentos clínicos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <div className="space-y-4">
+                  <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+                      <div>
+                        <h4 className="font-bold text-primary flex items-center gap-2">
+                          tACS Alpha (10Hz) Parietal + rTMS Medial PFC
+                        </h4>
+                        <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
+                          <strong className="text-slate-700 font-semibold">
+                            Justificativa Clínica:
+                          </strong>{' '}
+                          Identificada hiperatividade na DMN (Default Mode Network) no mapeamento da
+                          linha de base. Este protocolo favorece a supressão de ritmos acelerados e
+                          induz relaxamento cortical, o que se correlaciona intimamente com a
+                          melhora de 60% observada na métrica de "Estabilidade".
+                        </p>
+                      </div>
+                      <Badge className="shrink-0 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">
+                        Evidência Alta
+                      </Badge>
                     </div>
-                    <Badge className="shrink-0 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">
-                      Evidência Alta
-                    </Badge>
                   </div>
-                </div>
 
-                <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
-                    <div>
-                      <h4 className="font-bold text-primary flex items-center gap-2">
-                        Neurofeedback Específico + Treinamento ERP
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
-                        <strong className="text-slate-700 font-semibold">
-                          Justificativa Clínica:
-                        </strong>{' '}
-                        Como o paciente atingiu um platô sustentável na Fase 2 (Score de Performance
-                        estabilizado em 85%), sugere-se a transição direta para o Módulo de
-                        Treinamento Funcional para fixação definitiva da neuroplasticidade
-                        alcançada.
-                      </p>
+                  <div className="p-5 bg-muted/30 border rounded-xl hover:bg-white hover:border-accent/40 transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+                      <div>
+                        <h4 className="font-bold text-primary flex items-center gap-2">
+                          Neurofeedback Específico + Treinamento ERP
+                        </h4>
+                        <p className="text-sm text-muted-foreground mt-2 leading-relaxed max-w-3xl">
+                          <strong className="text-slate-700 font-semibold">
+                            Justificativa Clínica:
+                          </strong>{' '}
+                          Como o paciente atingiu um platô sustentável na Fase 2 (Score de
+                          Performance estabilizado em 85%), sugere-se a transição direta para o
+                          Módulo de Treinamento Funcional para fixação definitiva da
+                          neuroplasticidade alcançada.
+                        </p>
+                      </div>
+                      <Badge className="shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">
+                        Evidência Média
+                      </Badge>
                     </div>
-                    <Badge className="shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">
-                      Evidência Média
-                    </Badge>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Integração NeuroStrata Panel */}
+            <Card className="lg:col-span-1 border-t-4 border-t-primary shadow-sm flex flex-col">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Layers className="w-6 h-6 text-primary" /> Integração NeuroStrata
+                </CardTitle>
+                <CardDescription>
+                  Framework clínico e neurocientífico que fundamenta a análise longitudinal e a
+                  conectividade.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <div className="rounded-md border overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-muted/50">
+                      <TableRow>
+                        <TableHead className="font-semibold text-foreground">Camada</TableHead>
+                        <TableHead className="font-semibold text-foreground">Função</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">DSM</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          Validação regulatória
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">RDoC</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          Arquitetura dimensional
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Big Five</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          Estratificação comportamental
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">18 Funções</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          Operacionalização clínica
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Network Neuroscience</TableCell>
+                        <TableCell className="text-muted-foreground">Base biológica</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Neurodireitos</TableCell>
+                        <TableCell className="text-muted-foreground">Governança ética</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </Tabs>
       ) : (
         <Card className="bg-muted/30 border-dashed">
