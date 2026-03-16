@@ -65,6 +65,7 @@ interface AppState {
     medications: string
     sleepQuality: string
     comorbidities: string
+    psychicFunctions: Record<string, string>
   }
   setAssessmentData: (data: Partial<AppState['currentAssessmentData']>) => void
   documents: any[]
@@ -98,6 +99,8 @@ interface AppState {
   addPatientGAD7: (patientId: string, assessment: any) => void
   patientWHO5: Record<string, any[]>
   addPatientWHO5: (patientId: string, assessment: any) => void
+  patientBiogram: Record<string, any[]>
+  addPatientBiogramData: (patientId: string, data: any) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -169,66 +172,22 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         anxiety: 4,
         notes: 'Dormi mal, mas consegui focar no trabalho.',
       },
-      {
-        id: 'f2',
-        date: new Date(Date.now() - 172800000).toISOString(),
-        mood: 4,
-        focus: 3,
-        sleep: 4,
-        anxiety: 2,
-        notes: 'Me senti mais relaxado hoje.',
-      },
     ],
   })
 
-  const [patientDASS21, setPatientDASS21] = useState<Record<string, any[]>>({
+  const [patientBiogram, setPatientBiogram] = useState<Record<string, any[]>>({
     P001: [
-      {
-        id: 'dass-1',
-        date: new Date(Date.now() - 7 * 86400000).toISOString(),
-        scores: { depression: 14, anxiety: 16, stress: 22 },
-        classification: { depression: 'Moderado', anxiety: 'Severo', stress: 'Moderado' },
-      },
+      { id: 'b1', date: '10 Jan', bemEstar: 60, foco: 55, energia: 45 },
+      { id: 'b2', date: '15 Fev', bemEstar: 65, foco: 60, energia: 50 },
+      { id: 'b3', date: '20 Mar', bemEstar: 70, foco: 65, energia: 60 },
+      { id: 'b4', date: '05 Abr', bemEstar: 80, foco: 75, energia: 65 },
     ],
   })
 
-  const [patientPHQ9, setPatientPHQ9] = useState<Record<string, any[]>>({
-    P001: [
-      {
-        id: 'phq9-1',
-        date: new Date(Date.now() - 7 * 86400000).toISOString(),
-        score: 12,
-        classification: 'Moderada',
-        hasCriticalAlert: false,
-        rawAnswers: {},
-      },
-    ],
-  })
-
-  const [patientGAD7, setPatientGAD7] = useState<Record<string, any[]>>({
-    P001: [
-      {
-        id: 'gad7-1',
-        date: new Date(Date.now() - 7 * 86400000).toISOString(),
-        score: 15,
-        classification: 'Severa',
-        rawAnswers: {},
-      },
-    ],
-  })
-
-  const [patientWHO5, setPatientWHO5] = useState<Record<string, any[]>>({
-    P001: [
-      {
-        id: 'who5-1',
-        date: new Date(Date.now() - 7 * 86400000).toISOString(),
-        score: 10,
-        percentage: 40,
-        classification: 'Baixo Bem-Estar',
-        rawAnswers: {},
-      },
-    ],
-  })
+  const [patientDASS21, setPatientDASS21] = useState<Record<string, any[]>>({})
+  const [patientPHQ9, setPatientPHQ9] = useState<Record<string, any[]>>({})
+  const [patientGAD7, setPatientGAD7] = useState<Record<string, any[]>>({})
+  const [patientWHO5, setPatientWHO5] = useState<Record<string, any[]>>({})
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -239,6 +198,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     medications: '',
     sleepQuality: 'regular',
     comorbidities: '',
+    psychicFunctions: {} as Record<string, string>,
   })
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
@@ -323,6 +283,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         { ...feedback, id: `fb-${Date.now()}`, date: new Date().toISOString() },
         ...(prev[patientId] || []),
       ],
+    }))
+  }
+
+  const addPatientBiogramData = (patientId: string, data: any) => {
+    setPatientBiogram((prev) => ({
+      ...prev,
+      [patientId]: [...(prev[patientId] || []), { ...data, id: `bio-${Date.now()}` }],
     }))
   }
 
@@ -421,6 +388,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         addPatientGAD7,
         patientWHO5,
         addPatientWHO5,
+        patientBiogram,
+        addPatientBiogramData,
       }}
     >
       {children}

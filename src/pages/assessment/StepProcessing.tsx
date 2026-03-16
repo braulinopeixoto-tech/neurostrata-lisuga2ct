@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { BrainCircuit, CheckCircle2 } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import useAppStore from '@/stores/useAppStore'
+import useReportStore from '@/stores/useReportStore'
 
 export function StepProcessing({
   patientId,
@@ -14,7 +15,8 @@ export function StepProcessing({
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('Inicializando NSI Engine...')
   const navigate = useNavigate()
-  const { setCurrentAssessmentId } = useAppStore()
+  const { setCurrentAssessmentId, currentAssessmentData } = useAppStore()
+  const { updateData } = useReportStore()
 
   useEffect(() => {
     const fullSequence = [
@@ -42,6 +44,13 @@ export function StepProcessing({
         setStatus(step.text)
         if (index === sequence.length - 1) {
           setTimeout(() => {
+            const pf = currentAssessmentData.psychicFunctions || {}
+            let pfReport = 'Mapeamento das 18 Funções Psíquicas:\n\n'
+            Object.entries(pf).forEach(([func, val]) => {
+              pfReport += `- ${func}: ${val}\n`
+            })
+            updateData({ psychicFunc: pfReport })
+
             if (patientId) {
               setCurrentAssessmentId(patientId)
               navigate(`/analysis/${patientId}`)
@@ -52,7 +61,14 @@ export function StepProcessing({
         }
       }, timer)
     })
-  }, [navigate, patientId, setCurrentAssessmentId, isComplex])
+  }, [
+    navigate,
+    patientId,
+    setCurrentAssessmentId,
+    isComplex,
+    currentAssessmentData.psychicFunctions,
+    updateData,
+  ])
 
   return (
     <div className="py-16 flex flex-col items-center justify-center text-center animate-fade-in">

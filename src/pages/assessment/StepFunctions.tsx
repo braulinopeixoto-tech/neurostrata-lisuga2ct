@@ -12,42 +12,49 @@ import {
 import { PSYCHIC_FUNCTIONS_CATEGORIZED } from '@/lib/mock-data'
 import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import useAppStore from '@/stores/useAppStore'
+import { toast } from 'sonner'
 
 const SCALE_OPTIONS = [
   {
-    value: 'disfuncional_grave',
-    label: 'Disfuncional Grave',
+    value: 'Disfuncional grave',
+    label: 'Disfuncional grave',
     colorClass: 'border-rose-500 text-rose-600',
     mobileBgClass: 'bg-rose-50 border-rose-200',
     mobileTextClass: 'text-rose-700',
+    indicatorClass: 'bg-rose-500',
   },
   {
-    value: 'disfuncional',
+    value: 'Disfuncional',
     label: 'Disfuncional',
     colorClass: 'border-orange-500 text-orange-600',
     mobileBgClass: 'bg-orange-50 border-orange-200',
     mobileTextClass: 'text-orange-700',
+    indicatorClass: 'bg-orange-500',
   },
   {
-    value: 'regular',
+    value: 'Regular',
     label: 'Regular',
     colorClass: 'border-amber-500 text-amber-600',
     mobileBgClass: 'bg-amber-50 border-amber-200',
     mobileTextClass: 'text-amber-700',
+    indicatorClass: 'bg-amber-500',
   },
   {
-    value: 'preservado',
+    value: 'Preservado',
     label: 'Preservado',
     colorClass: 'border-emerald-500 text-emerald-600',
     mobileBgClass: 'bg-emerald-50 border-emerald-200',
     mobileTextClass: 'text-emerald-700',
+    indicatorClass: 'bg-emerald-500',
   },
   {
-    value: 'plenamente_preservado',
-    label: 'Plenamente Preservado',
+    value: 'Plenamente preservado',
+    label: 'Plenamente preservado',
     colorClass: 'border-blue-500 text-blue-600',
     mobileBgClass: 'bg-blue-50 border-blue-200',
     mobileTextClass: 'text-blue-700',
+    indicatorClass: 'bg-blue-500',
   },
 ]
 
@@ -60,7 +67,100 @@ export function StepFunctions({
   nextLabel?: string
   patientSelected?: boolean
 }) {
-  const [scores, setScores] = useState<Record<string, string>>({})
+  const {
+    currentAssessmentData,
+    setAssessmentData,
+    currentAssessmentId,
+    addPatientBiogramData,
+    addPatientAuditLog,
+    currentUser,
+  } = useAppStore()
+
+  const scores = currentAssessmentData.psychicFunctions || {}
+
+  const handleScoreChange = (fn: string, val: string) => {
+    setAssessmentData({
+      psychicFunctions: {
+        ...scores,
+        [fn]: val,
+      },
+    })
+  }
+
+  const handleNextClick = () => {
+    let filledCount = 0
+    PSYCHIC_FUNCTIONS_CATEGORIZED.forEach((cat) => {
+      cat.items.forEach((fn) => {
+        if (scores[fn]) filledCount++
+      })
+    })
+
+    if (filledCount < 18) {
+      toast.error('Preenchimento obrigatório', {
+        description: 'Por favor, avalie todas as 18 funções psíquicas antes de avançar.',
+      })
+      return
+    }
+
+    if (currentAssessmentId) {
+      const getVal = (v: string) => {
+        if (v === 'Plenamente preservado') return 100
+        if (v === 'Preservado') return 80
+        if (v === 'Regular') return 60
+        if (v === 'Disfuncional') return 40
+        if (v === 'Disfuncional grave') return 20
+        return 0
+      }
+
+      let bemEstarAcc = 0,
+        focoAcc = 0,
+        energiaAcc = 0
+      let bemEstarCount = 0,
+        focoCount = 0,
+        energiaCount = 0
+
+      PSYCHIC_FUNCTIONS_CATEGORIZED.forEach((cat) => {
+        cat.items.forEach((fn) => {
+          if (scores[fn]) {
+            const v = getVal(scores[fn])
+            if (cat.category === 'Regulação Emocional') {
+              bemEstarAcc += v
+              bemEstarCount++
+            } else if (
+              cat.category === 'Atenção e Foco' ||
+              cat.category === 'Memória e Aprendizagem'
+            ) {
+              focoAcc += v
+              focoCount++
+            } else if (cat.category === 'Funções Executivas') {
+              energiaAcc += v
+              energiaCount++
+            }
+          }
+        })
+      })
+
+      const newBiogramPoint = {
+        date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+        bemEstar: bemEstarCount ? Math.round(bemEstarAcc / bemEstarCount) : 50,
+        foco: focoCount ? Math.round(focoAcc / focoCount) : 50,
+        energia: energiaCount ? Math.round(energiaAcc / energiaCount) : 50,
+      }
+
+      addPatientBiogramData(currentAssessmentId, newBiogramPoint)
+      addPatientAuditLog(currentAssessmentId, {
+        date: new Date().toISOString(),
+        action: 'Mapeamento de 18 Funções Psíquicas Salvo',
+        user: currentUser.fullName,
+      })
+
+      toast.success('Mapeamento funcional salvo com sucesso', {
+        description: 'Os dados foram integrados ao Biograma Longitudinal.',
+      })
+    }
+
+    onNext()
+  }
 
   return (
     <div className="space-y-10 animate-fade-in">
@@ -100,12 +200,22 @@ export function StepFunctions({
                 <TableBody>
                   {cat.items.map((fn) => (
                     <TableRow key={fn} className="hover:bg-muted/20 transition-colors">
-                      <TableCell className="font-medium text-foreground text-sm">{fn}</TableCell>
+                      <TableCell className="font-medium text-foreground text-sm flex items-center gap-2">
+                        {scores[fn] && (
+                          <div
+                            className={cn(
+                              'w-2 h-2 rounded-full shrink-0',
+                              SCALE_OPTIONS.find((o) => o.value === scores[fn])?.indicatorClass,
+                            )}
+                          />
+                        )}
+                        {fn}
+                      </TableCell>
                       {SCALE_OPTIONS.map((opt) => (
                         <TableCell key={opt.value} className="text-center p-3">
                           <RadioGroup
                             value={scores[fn]}
-                            onValueChange={(val) => setScores({ ...scores, [fn]: val })}
+                            onValueChange={(val) => handleScoreChange(fn, val)}
                             className="flex justify-center"
                           >
                             <RadioGroupItem
@@ -131,10 +241,20 @@ export function StepFunctions({
             <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
               {cat.items.map((fn) => (
                 <div key={fn} className="bg-white p-5 rounded-xl border shadow-sm space-y-4">
-                  <div className="font-semibold text-primary">{fn}</div>
+                  <div className="font-semibold text-primary flex items-center gap-2">
+                    {scores[fn] && (
+                      <div
+                        className={cn(
+                          'w-2 h-2 rounded-full shrink-0',
+                          SCALE_OPTIONS.find((o) => o.value === scores[fn])?.indicatorClass,
+                        )}
+                      />
+                    )}
+                    {fn}
+                  </div>
                   <RadioGroup
                     value={scores[fn]}
-                    onValueChange={(val) => setScores({ ...scores, [fn]: val })}
+                    onValueChange={(val) => handleScoreChange(fn, val)}
                     className="flex flex-col gap-2"
                   >
                     {SCALE_OPTIONS.map((opt) => (
@@ -177,7 +297,11 @@ export function StepFunctions({
       </div>
 
       <div className="flex justify-end pt-6 border-t mt-10">
-        <Button onClick={onNext} disabled={!patientSelected} className="px-8 h-11 text-base">
+        <Button
+          onClick={handleNextClick}
+          disabled={!patientSelected}
+          className="px-8 h-11 text-base"
+        >
           Avançar para {nextLabel}
         </Button>
       </div>

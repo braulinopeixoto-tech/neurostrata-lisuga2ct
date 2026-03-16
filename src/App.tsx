@@ -5,6 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import Layout from '@/components/Layout'
 import NotFound from '@/pages/NotFound'
 import { AppStoreProvider } from '@/stores/useAppStore'
+import { ReportStoreProvider } from '@/stores/useReportStore'
 
 import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
@@ -26,34 +27,36 @@ import PatientPortal from '@/pages/PatientPortal'
 
 const App = () => (
   <AppStoreProvider>
-    <BrowserRouter>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/medical" element={<MedicalArea />} />
-            <Route path="/patients" element={<Patients />} />
-            <Route path="/patients/:id" element={<PatientDetail />} />
-            <Route path="/professionals" element={<Professionals />} />
-            <Route path="/assessment" element={<Assessment />} />
-            <Route path="/pharmacopeia" element={<Pharmacopeia />} />
-            <Route path="/neuronavigation" element={<Neuronavigation />} />
-            <Route path="/analysis/:id" element={<Analysis />} />
-            <Route path="/report/:id" element={<Report />} />
-            <Route path="/protocols" element={<Protocols />} />
-            <Route path="/auditor-portal" element={<AuditorPortal />} />
-            <Route path="/defensor-portal" element={<DefensorPortal />} />
-            <Route path="/report-center" element={<ReportCenter />} />
-            <Route path="/performance-timeline" element={<PerformanceTimeline />} />
-            <Route path="/patient-portal" element={<PatientPortal />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </TooltipProvider>
-    </BrowserRouter>
+    <ReportStoreProvider>
+      <BrowserRouter>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/medical" element={<MedicalArea />} />
+              <Route path="/patients" element={<Patients />} />
+              <Route path="/patients/:id" element={<PatientDetail />} />
+              <Route path="/professionals" element={<Professionals />} />
+              <Route path="/assessment" element={<Assessment />} />
+              <Route path="/pharmacopeia" element={<Pharmacopeia />} />
+              <Route path="/neuronavigation" element={<Neuronavigation />} />
+              <Route path="/analysis/:id" element={<Analysis />} />
+              <Route path="/report/:id" element={<Report />} />
+              <Route path="/protocols" element={<Protocols />} />
+              <Route path="/auditor-portal" element={<AuditorPortal />} />
+              <Route path="/defensor-portal" element={<DefensorPortal />} />
+              <Route path="/report-center" element={<ReportCenter />} />
+              <Route path="/performance-timeline" element={<PerformanceTimeline />} />
+              <Route path="/patient-portal" element={<PatientPortal />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TooltipProvider>
+      </BrowserRouter>
+    </ReportStoreProvider>
   </AppStoreProvider>
 )
 
