@@ -14,6 +14,7 @@ import {
   Copy,
   Trash2,
   Layers,
+  Grid,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
@@ -57,8 +58,12 @@ import {
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Slider } from '@/components/ui/slider'
 import { toast } from '@/components/ui/use-toast'
 import { BrainMapVisualizer } from '@/components/charts/BrainMapVisualizer'
+import { NeurofunctionalMatrix } from '@/components/matrix/NeurofunctionalMatrix'
+import { RDOC_DOMAINS } from '@/lib/mock-data'
+import { cn } from '@/lib/utils'
 import useAppStore from '@/stores/useAppStore'
 
 export default function PerformanceTimeline() {
@@ -79,6 +84,9 @@ export default function PerformanceTimeline() {
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [citationsModalOpen, setCitationsModalOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState('progress')
+
+  const [matrixPhaseIndex, setMatrixPhaseIndex] = useState(0)
+  const [highlightedRDoC, setHighlightedRDoC] = useState<string | null>(null)
 
   const patient = patients.find((p) => p.id === selectedPatientId)
   const evidence = patient ? patientEvidence[patient.id] : null
@@ -103,6 +111,14 @@ export default function PerformanceTimeline() {
       { metric: 'Conectividade', pre: first.connectivity, post: last.connectivity },
     ]
   }, [timelineData])
+
+  const rdocToDomainMap: Record<string, string> = {
+    nv: 'd1', // Valência Negativa -> Sist. Ameaça
+    pv: 'd2', // Valência Positiva -> Sist. Recompensa
+    cs: 'd3', // Sist. Cognitivos -> Sist. Cognitivo Executivo
+    sp: 'd5', // Processos Sociais -> Sist. Social
+    ar: 'd6', // Excitação/Regulação -> Sist. Regulatório
+  }
 
   const chartConfig = {
     performance: { label: 'Performance', color: 'hsl(var(--chart-1))' },
@@ -213,18 +229,108 @@ export default function PerformanceTimeline() {
       </Card>
 
       {selectedPatientId ? (
-        <Tabs defaultValue="longitudinal" className="w-full">
-          <TabsList className="w-full sm:w-auto grid grid-cols-1 sm:grid-cols-3 mb-4 h-auto p-1 bg-muted rounded-lg">
+        <Tabs defaultValue="matrix" className="w-full">
+          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4 mb-4 h-auto p-1 bg-muted rounded-lg">
             <TabsTrigger value="longitudinal" className="flex-1 flex items-center gap-2 py-2">
-              <Activity className="w-4 h-4" /> Evolução Longitudinal
+              <Activity className="w-4 h-4" /> Evolução
+            </TabsTrigger>
+            <TabsTrigger value="matrix" className="flex-1 flex items-center gap-2 py-2">
+              <Grid className="w-4 h-4" /> Matriz Neurofuncional
             </TabsTrigger>
             <TabsTrigger value="prepost" className="flex-1 flex items-center gap-2 py-2">
-              <ArrowRight className="w-4 h-4" /> Comparativo Pré x Pós
+              <ArrowRight className="w-4 h-4" /> Pré x Pós
             </TabsTrigger>
             <TabsTrigger value="brainmaps" className="flex-1 flex items-center gap-2 py-2">
-              <MapIcon className="w-4 h-4" /> Modo Comparativo (Mapas)
+              <MapIcon className="w-4 h-4" /> Mapas
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="matrix">
+            <Card className="shadow-sm border-t-4 border-t-indigo-500 animate-fade-in">
+              <CardHeader>
+                <CardTitle className="text-xl">
+                  Matriz Universal dos Estados Neurofuncionais
+                </CardTitle>
+                <CardDescription>
+                  Acompanhamento térmico da transição do paciente entre os 80 estados funcionais
+                  distribuídos em 8 domínios neurobiológicos.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col space-y-8">
+                  <div className="flex flex-col md:flex-row justify-between gap-8 bg-slate-50/80 p-5 rounded-xl border border-slate-200">
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <Label className="text-base text-primary font-bold flex items-center gap-2">
+                          <Activity className="w-4 h-4" /> Assinatura Funcional (Linha do Tempo)
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Deslize para comparar as fases de tratamento e visualizar o shift de
+                          estados de sofrimento para estados adaptativos.
+                        </p>
+                      </div>
+                      <div className="pt-2 pb-6 px-2">
+                        <Slider
+                          max={3}
+                          step={1}
+                          value={[matrixPhaseIndex]}
+                          onValueChange={(v) => setMatrixPhaseIndex(v[0])}
+                          className="py-2"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground font-medium mt-3">
+                          {timelineData.map((t, i) => (
+                            <span
+                              key={i}
+                              className={cn(
+                                'transition-colors',
+                                matrixPhaseIndex === i && 'text-primary font-bold text-sm',
+                              )}
+                            >
+                              {t.phase}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 space-y-4 md:border-l md:pl-8 border-slate-200">
+                      <div>
+                        <Label className="text-base text-primary font-bold flex items-center gap-2">
+                          <Layers className="w-4 h-4" /> Integração Dimensional RDoC
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Selecione um domínio RDoC crítico para destacar o sistema e os circuitos
+                          correspondentes na matriz.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {RDOC_DOMAINS.map((rdoc) => (
+                          <Badge
+                            key={rdoc.id}
+                            variant={highlightedRDoC === rdoc.id ? 'default' : 'outline'}
+                            className={cn(
+                              'cursor-pointer hover:bg-primary/90 hover:text-white transition-colors py-1.5',
+                              highlightedRDoC === rdoc.id ? 'shadow-md ring-2 ring-primary/20' : '',
+                            )}
+                            onClick={() =>
+                              setHighlightedRDoC((h) => (h === rdoc.id ? null : rdoc.id))
+                            }
+                          >
+                            {rdoc.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <NeurofunctionalMatrix
+                    phaseIndex={matrixPhaseIndex}
+                    highlightedDomainId={rdocToDomainMap[highlightedRDoC || '']}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="longitudinal">
             <Card className="shadow-sm border-t-4 border-t-primary animate-fade-in">
@@ -412,7 +518,6 @@ export default function PerformanceTimeline() {
           </TabsContent>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 animate-fade-in-up">
-            {/* Motor de Sugestões de Protocolos IA */}
             <Card className="lg:col-span-2 border-t-4 border-t-accent shadow-sm flex flex-col">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -472,7 +577,6 @@ export default function PerformanceTimeline() {
               </CardContent>
             </Card>
 
-            {/* Integração NeuroStrata Panel */}
             <Card className="lg:col-span-1 border-t-4 border-t-primary shadow-sm flex flex-col">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-xl">
