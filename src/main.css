@@ -103,11 +103,11 @@
     0%,
     100% {
       opacity: 1;
-      filter: drop-shadow(0 0 5px rgba(var(--primary), 0.5));
+      filter: drop-shadow(0 0 5px hsl(var(--primary) / 0.5));
     }
     50% {
       opacity: 0.7;
-      filter: drop-shadow(0 0 15px rgba(var(--primary), 0.8));
+      filter: drop-shadow(0 0 15px hsl(var(--primary) / 0.8));
     }
   }
 
@@ -116,7 +116,7 @@
   }
 
   .shadow-elevation {
-    @apply shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+    @apply shadow-[0_8px_30px_rgba(0,0,0,0.04)];
   }
 
   .hide-scrollbar::-webkit-scrollbar {

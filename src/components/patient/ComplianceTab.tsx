@@ -133,7 +133,7 @@ export function ComplianceTab({ patientId }: { patientId: string }) {
           </div>
           <div className="shrink-0">
             {progress === 100 ? (
-              <Badge className="bg-success hover:bg-success text-success-foreground px-3 py-1 text-sm">
+              <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 text-sm">
                 Totalmente Conforme
               </Badge>
             ) : (

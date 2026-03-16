@@ -151,12 +151,12 @@ export default function PatientPortal() {
                       cy="50"
                       r="45"
                       fill="none"
-                      stroke="hsl(var(--emerald-500))"
+                      stroke="currentColor"
                       strokeWidth="8"
                       strokeDasharray="283"
                       strokeDashoffset="56"
                       strokeLinecap="round"
-                      className="animate-pulse"
+                      className="text-emerald-500 animate-pulse"
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center">

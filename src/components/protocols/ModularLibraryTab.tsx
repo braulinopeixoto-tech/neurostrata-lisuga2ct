@@ -1,219 +1,174 @@
+import { useState } from 'react'
+import { Search, Info, Plus, ChevronRight, Layers } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ExternalLink, Zap, Brain, Activity, Network } from 'lucide-react'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { cn } from '@/lib/utils'
 
 const MODULES = [
   {
-    id: 'initial',
-    name: 'Módulo de Regulação Inicial',
-    objective: 'Estabilização do sistema nervoso e reestruturação basal.',
-    theme: { bar: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-    items: [
-      {
-        name: 'REAC NPO / NPPO',
-        network: 'Global/Autonômico',
-        evidence: 'Alta',
-        response: '78%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7065907/',
-      },
-      {
-        name: 'tDCS Anódica DLPFC Esquerdo',
-        network: 'CEN (Rede Executiva)',
-        evidence: 'Alta',
-        response: '65%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7065907/',
-      },
-      {
-        name: 'Neurofeedback SMR',
-        network: 'Tálamo-Cortical',
-        evidence: 'Média',
-        response: '60%',
-        link: 'https://www.nature.com/articles/nrn.2016.162',
-      },
-    ],
+    id: 'm1',
+    category: 'Neuromodulação (tDCS/tACS)',
+    title: 'Protocolo de Regulação Frontal',
+    target: 'Córtex Pré-Frontal Dorsolateral (F3/F4)',
+    indication: 'Déficit Executivo, Desregulação Emocional',
+    level: 'Avançado',
+    duration: '20 min / 2mA',
   },
   {
-    id: 'cortical',
-    name: 'Módulo de Reorganização Cortical',
-    objective: 'Correção de padrões de rede e oscilações aberrantes.',
-    theme: { bar: 'bg-accent', badge: 'bg-orange-50 text-accent border-orange-200' },
-    items: [
-      {
-        name: 'tACS (Estimulação AC)',
-        network: 'Oscilações de Rede',
-        evidence: 'Alta',
-        response: '72%',
-        link: 'https://www.nature.com/articles/nrn.2016.162',
-      },
-      {
-        name: 'tDCS Focal HD',
-        network: 'Rede de Saliência',
-        evidence: 'Média',
-        response: '68%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3145200/',
-      },
-      {
-        name: 'TMS (Estimulação Magnética)',
-        network: 'DMN',
-        evidence: 'Muito Alta',
-        response: '80%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7065907/',
-      },
-    ],
+    id: 'm2',
+    category: 'Neuromodulação (tDCS/tACS)',
+    title: 'Supressão de Hiperativação Límbica',
+    target: 'Córtex Orbitofrontal / Temporal',
+    indication: 'Ansiedade Generalizada, Ruminacão',
+    level: 'Intermediário',
+    duration: '15 min / 1.5mA',
   },
   {
-    id: 'functional',
-    name: 'Módulo de Treinamento Funcional',
-    objective: 'Consolidação de plasticidade e fixação de aprendizado.',
-    theme: { bar: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-    items: [
-      {
-        name: 'Neurofeedback Específico',
-        network: 'Redes-Alvo',
-        evidence: 'Alta',
-        response: '70%',
-        link: 'https://www.nature.com/articles/nrn.2016.162',
-      },
-      {
-        name: 'Tarefas Cognitivas (CC)',
-        network: 'CEN',
-        evidence: 'Média',
-        response: '55%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3145200/',
-      },
-      {
-        name: 'Treinamento ERP',
-        network: 'Processamento',
-        evidence: 'Média',
-        response: '62%',
-        link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7065907/',
-      },
-    ],
+    id: 'm3',
+    category: 'Neurofeedback',
+    title: 'Treinamento SMR (Ritmo Sensoriomotor)',
+    target: 'Córtex Sensoriomotor (C3/C4)',
+    indication: 'TDAH, Impulsividade Motora',
+    level: 'Básico',
+    duration: '30 min',
+  },
+  {
+    id: 'm4',
+    category: 'Reabilitação Cognitiva',
+    title: 'Treino de Memória de Trabalho (N-Back)',
+    target: 'Rede Executiva Central',
+    indication: 'Declínio Cognitivo Leve',
+    level: 'Básico',
+    duration: '45 min',
   },
 ]
 
 export function ModularLibraryTab() {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  const categories = Array.from(new Set(MODULES.map((m) => m.category)))
+
+  const filtered = MODULES.filter((m) => {
+    const matchesSearch =
+      m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.indication.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory ? m.category === selectedCategory : true
+    return matchesSearch && matchesCategory
+  })
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {MODULES.map((mod) => (
-          <Card key={mod.id} className="shadow-sm hover:shadow-md transition-all">
-            <div className={`h-2 w-full ${mod.theme.bar} rounded-t-lg`} />
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">{mod.name}</CardTitle>
-              <CardDescription className="font-medium text-primary mt-1">
-                Objetivo: {mod.objective}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {mod.items.map((item, i) => (
-                <div
-                  key={i}
-                  className="p-3 bg-muted/30 rounded-lg border border-border/50 hover:bg-white hover:border-accent/30 transition-colors group"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-sm leading-tight pr-2">{item.name}</h4>
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] whitespace-nowrap ${mod.theme.badge}`}
-                    >
-                      {item.evidence}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground mb-3">
-                    <div className="flex flex-col">
-                      <span className="uppercase text-[10px] font-bold">Alvo de Rede</span>
-                      <span className="truncate text-foreground font-medium">{item.network}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="uppercase text-[10px] font-bold">Taxa de Resposta</span>
-                      <span className="font-mono text-primary font-medium">{item.response}</span>
-                    </div>
-                  </div>
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-accent hover:underline inline-flex items-center gap-1 opacity-80 group-hover:opacity-100"
-                  >
-                    Evidência Científica <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por protocolo, indicação ou alvo neural..."
+            className="pl-9 bg-white"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
-      <Card className="border-t-4 border-t-violet-500 shadow-sm bg-violet-50/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-violet-800">
-            <Network className="w-5 h-5" /> Intervenções Orientadas por Redes Neurais
-          </CardTitle>
-          <CardDescription>
-            Guias diretos de intervenção para as principais disfunções de rede mapeadas.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Activity className="w-5 h-5 text-rose-500" />
-              <h3 className="font-bold text-lg">Hiperatividade DMN</h3>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Default Mode Network excessivamente ativa (ruminação, depressão).
-            </p>
-            <div className="space-y-2">
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Zap className="w-4 h-4 mr-2 text-accent" /> tACS Alpha (10Hz)
-              </Badge>
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Brain className="w-4 h-4 mr-2 text-accent" /> Neurofeedback Alpha
-              </Badge>
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Zap className="w-4 h-4 mr-2 text-accent" /> TMS em Córtex Pré-Frontal Medial
-              </Badge>
-            </div>
-            <a
-              href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3145200/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-accent mt-4 inline-block underline"
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="md:col-span-1 space-y-4">
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
+            Categorias Clínicas
+          </h3>
+          <div className="flex flex-col gap-1">
+            <Button
+              variant={selectedCategory === null ? 'secondary' : 'ghost'}
+              className="justify-start"
+              onClick={() => setSelectedCategory(null)}
             >
-              Ref: Brain Networks/Menon (PMC3145200)
-            </a>
+              Todas as Categorias
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? 'secondary' : 'ghost'}
+                className="justify-start"
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </Button>
+            ))}
           </div>
+        </div>
 
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Activity className="w-5 h-5 text-blue-500" />
-              <h3 className="font-bold text-lg">Hipoatividade Rede Executiva</h3>
+        <div className="md:col-span-3 space-y-4">
+          <ScrollArea className="h-[600px] pr-4">
+            <div className="grid gap-4">
+              {filtered.map((mod) => (
+                <Card
+                  key={mod.id}
+                  className="shadow-sm hover:border-primary/40 transition-all group"
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <Badge variant="outline" className="mb-2">
+                          {mod.category}
+                        </Badge>
+                        <CardTitle className="text-lg text-primary">{mod.title}</CardTitle>
+                      </div>
+                      <Badge
+                        className={cn(
+                          'font-normal',
+                          mod.level === 'Avançado'
+                            ? 'bg-rose-100 text-rose-800 hover:bg-rose-200 border-rose-200'
+                            : mod.level === 'Intermediário'
+                              ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200'
+                              : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-200',
+                        )}
+                      >
+                        {mod.level}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-4">
+                      <div>
+                        <span className="text-muted-foreground block text-xs uppercase font-semibold mb-1">
+                          Alvo Neural
+                        </span>
+                        <span className="flex items-center gap-1.5 font-medium">
+                          <Layers className="w-3.5 h-3.5 text-accent" /> {mod.target}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-xs uppercase font-semibold mb-1">
+                          Indicação Principal
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Info className="w-3.5 h-3.5 text-blue-500" /> {mod.indication}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center pt-4 border-t border-muted/50 mt-2">
+                      <span className="text-xs text-muted-foreground font-mono bg-muted/30 px-2 py-1 rounded">
+                        Duração: {mod.duration}
+                      </span>
+                      <Button variant="ghost" size="sm" className="group-hover:text-primary">
+                        Ver Detalhes <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {filtered.length === 0 && (
+                <div className="text-center p-12 bg-white rounded-xl border border-dashed text-muted-foreground">
+                  Nenhum protocolo encontrado para os filtros selecionados.
+                </div>
+              )}
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Central Executive Network com baixa conectividade (TDAH, disfunção executiva).
-            </p>
-            <div className="space-y-2">
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Zap className="w-4 h-4 mr-2 text-accent" /> tDCS Anódica left DLPFC
-              </Badge>
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Zap className="w-4 h-4 mr-2 text-accent" /> tACS Beta (20-30Hz)
-              </Badge>
-              <Badge variant="secondary" className="w-full justify-start text-sm py-1.5">
-                <Brain className="w-4 h-4 mr-2 text-accent" /> Neurofeedback Beta
-              </Badge>
-            </div>
-            <a
-              href="https://www.nature.com/articles/nrn.2016.162"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-accent mt-4 inline-block underline"
-            >
-              Ref: tACS Cortical Rhythms (Nature)
-            </a>
-          </div>
-        </CardContent>
-      </Card>
+          </ScrollArea>
+        </div>
+      </div>
     </div>
   )
 }

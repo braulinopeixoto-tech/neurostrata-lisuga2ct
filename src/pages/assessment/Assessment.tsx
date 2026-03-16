@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Brain, Activity, User, Dna, Bot, Network, Stethoscope, BrainCircuit } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,12 +10,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { StepFunctions } from './StepFunctions'
-import { StepRDoC } from './StepRDoC'
-import { StepBigFive } from './StepBigFive'
-import { StepBiomarkers } from './StepBiomarkers'
-import { StepProcessing } from './StepProcessing'
-import { StepMultiAgent } from './StepMultiAgent'
+import { StepFunctions } from '@/pages/assessment/StepFunctions'
+import { StepRDoC } from '@/pages/assessment/StepRDoC'
+import { StepBigFive } from '@/pages/assessment/StepBigFive'
+import { StepBiomarkers } from '@/pages/assessment/StepBiomarkers'
+import { StepProcessing } from '@/pages/assessment/StepProcessing'
+import { StepMultiAgent } from '@/pages/assessment/StepMultiAgent'
 import useAppStore from '@/stores/useAppStore'
 import { cn } from '@/lib/utils'
 
@@ -37,6 +37,31 @@ export default function Assessment() {
   const selectedPatient = patients.find((p) => p.id === selectedPatientId)
   const selectedProf = professionals.find((p) => p.id === selectedProfId)
 
+  const visibleSteps = useMemo(() => {
+    const checkComplex = () => {
+      if (!selectedProf) return true
+      const fullRoles = [
+        'Médico',
+        'Neurologista',
+        'Psiquiatra',
+        'Psicólogo(a)',
+        'Neuropsicólogo(a)',
+      ]
+      return fullRoles.includes(selectedProf.specialty)
+    }
+
+    const checkMedical = () => {
+      if (!selectedProf) return true
+      return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
+    }
+
+    return ALL_STEPS.filter((s) => {
+      if (s.complex && !checkComplex()) return false
+      if (s.medicalOnly && !checkMedical()) return false
+      return true
+    })
+  }, [selectedProf])
+
   const isComplex = () => {
     if (!selectedProf) return true
     const fullRoles = ['Médico', 'Neurologista', 'Psiquiatra', 'Psicólogo(a)', 'Neuropsicólogo(a)']
@@ -48,17 +73,11 @@ export default function Assessment() {
     return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
   }
 
-  const visibleSteps = ALL_STEPS.filter((s) => {
-    if (s.complex && !isComplex()) return false
-    if (s.medicalOnly && !isMedical()) return false
-    return true
-  })
-
   useEffect(() => {
     if (!visibleSteps.find((s) => s.id === currentTab)) {
       setCurrentTab(visibleSteps[0].id)
     }
-  }, [selectedProfId, currentTab, visibleSteps])
+  }, [currentTab, visibleSteps])
 
   useEffect(() => {
     if (selectedPatientId) {

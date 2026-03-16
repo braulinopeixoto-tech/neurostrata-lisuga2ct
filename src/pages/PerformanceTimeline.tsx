@@ -113,11 +113,11 @@ export default function PerformanceTimeline() {
   }, [timelineData])
 
   const rdocToDomainMap: Record<string, string> = {
-    nv: 'd1', // Valência Negativa -> Sist. Ameaça
-    pv: 'd2', // Valência Positiva -> Sist. Recompensa
-    cs: 'd3', // Sist. Cognitivos -> Sist. Cognitivo Executivo
-    sp: 'd5', // Processos Sociais -> Sist. Social
-    ar: 'd6', // Excitação/Regulação -> Sist. Regulatório
+    nv: 'd1',
+    pv: 'd2',
+    cs: 'd3',
+    sp: 'd5',
+    ar: 'd6',
   }
 
   const chartConfig = {
@@ -135,7 +135,7 @@ export default function PerformanceTimeline() {
     toast({
       title: 'Relatório Técnico Exportado',
       description: 'O PDF assinado digitalmente foi baixado com sucesso.',
-      action: <CheckCircle className="text-success w-5 h-5" />,
+      action: <CheckCircle className="text-emerald-500 w-5 h-5" />,
     })
     setReportModalOpen(false)
   }
@@ -147,7 +147,7 @@ export default function PerformanceTimeline() {
     toast({
       title: 'Citação Inserida',
       description: 'A referência foi adicionada ao seu Quick Report de paciente.',
-      action: <CheckCircle className="text-success w-5 h-5" />,
+      action: <CheckCircle className="text-emerald-500 w-5 h-5" />,
     })
   }
 
@@ -645,7 +645,6 @@ export default function PerformanceTimeline() {
         </Card>
       )}
 
-      {/* Modal de Geração de Relatório Técnico */}
       <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
         <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 gap-0 overflow-hidden bg-muted/10">
           <DialogHeader className="p-6 pb-4 bg-background border-b z-10">
@@ -829,7 +828,7 @@ export default function PerformanceTimeline() {
 
               <section className="mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-end gap-6">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-green-700 font-bold">
+                  <div className="flex items-center gap-2 text-emerald-600 font-bold">
                     <ShieldCheck className="w-5 h-5" />
                     <span>Pronto para Assinatura ICP-Brasil</span>
                   </div>
@@ -869,7 +868,6 @@ export default function PerformanceTimeline() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal da Biblioteca de Citações */}
       <Dialog open={citationsModalOpen} onOpenChange={setCitationsModalOpen}>
         <DialogContent className="max-w-2xl bg-slate-50">
           <DialogHeader>

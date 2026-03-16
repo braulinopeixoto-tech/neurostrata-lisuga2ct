@@ -151,10 +151,7 @@ export function DigitizationTab({ patientId }: { patientId: string }) {
                       <Loader2 className="w-3 h-3 animate-spin" /> IA Analisando
                     </Badge>
                   ) : (
-                    <Badge
-                      variant="default"
-                      className="bg-success text-success-foreground flex items-center gap-1"
-                    >
+                    <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1">
                       <FileCheck className="w-3 h-3" /> Mapeado
                     </Badge>
                   )}

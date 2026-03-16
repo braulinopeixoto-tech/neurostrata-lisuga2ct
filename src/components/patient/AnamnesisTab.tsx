@@ -1,98 +1,44 @@
-import { Link } from 'react-router-dom'
-import { Compass } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { Save, AlertCircle } from 'lucide-react'
+import { toast } from '@/components/ui/use-toast'
 
 export function AnamnesisTab({ patient }: { patient: any }) {
-  return (
-    <div className="animate-fade-in space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Dados Biopsicossociais</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-              Contexto Familiar
-            </h4>
-            <p className="text-sm bg-muted/30 border border-border/50 p-3 rounded-md">
-              {patient.familyContext || 'Não informado.'}
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-              Histórico Médico
-            </h4>
-            <p className="text-sm bg-muted/30 border border-border/50 p-3 rounded-md">
-              {patient.medicalHistory || 'Não informado.'}
-            </p>
-          </div>
-          <div className="md:col-span-2">
-            <div className="flex justify-between items-center mb-1">
-              <h4 className="font-semibold text-sm text-muted-foreground uppercase">
-                Sintomatologia Principal
-              </h4>
-              <Button
-                variant="ghost"
-                size="sm"
-                asChild
-                className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 bg-blue-50/50 hover:bg-blue-100"
-              >
-                <Link
-                  to={`/neuronavigation?q=${encodeURIComponent(
-                    patient.symptoms || patient.neuroHistory || '',
-                  )}`}
-                >
-                  <Compass className="w-3 h-3 mr-1" /> Neuronavegação
-                </Link>
-              </Button>
-            </div>
-            <p className="text-sm bg-muted/30 border border-border/50 p-3 rounded-md min-h-[60px]">
-              {patient.symptoms || patient.neuroHistory || 'Sem queixas registradas.'}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+  const [notes, setNotes] = useState('')
 
+  const handleSave = () => {
+    toast({
+      title: 'Anamnese salva',
+      description: 'As anotações foram registradas com sucesso.',
+    })
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Domínios Funcionais (Histórico)</CardTitle>
+          <CardTitle className="text-lg">Anamnese e Histórico Clínico</CardTitle>
+          <CardDescription>
+            Registre as queixas principais, histórico familiar e evolução do quadro atual.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent>
           <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-                Desenvolvimento
-              </h4>
-              <p className="text-sm text-foreground bg-white border p-3 rounded-md min-h-[50px]">
-                {patient.developmentHistory || 'Normativo.'}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-                Cognição
-              </h4>
-              <p className="text-sm text-foreground bg-white border p-3 rounded-md min-h-[50px]">
-                {patient.cognition || 'Preservado em vias gerais.'}
-              </p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-                Regulação Emocional
-              </h4>
-              <p className="text-sm text-foreground bg-white border p-3 rounded-md min-h-[50px]">
-                {patient.emotionalRegulation || 'Sem alterações severas relatadas na admissão.'}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-1 text-muted-foreground uppercase">
-                Comportamento Social & Adaptativo
-              </h4>
-              <p className="text-sm text-foreground bg-white border p-3 rounded-md min-h-[50px]">
-                {patient.socialBehavior || patient.adaptiveFunctioning || 'Adequado ao contexto.'}
-              </p>
+            <Textarea
+              placeholder="Digite as observações da consulta aqui..."
+              className="min-h-[300px] resize-y"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <AlertCircle className="w-4 h-4" /> As informações são confidenciais e protegidas.
+              </div>
+              <Button onClick={handleSave}>
+                <Save className="w-4 h-4 mr-2" /> Salvar Alterações
+              </Button>
             </div>
           </div>
         </CardContent>

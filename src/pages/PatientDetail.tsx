@@ -26,12 +26,12 @@ export default function PatientDetail() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
-              {patient.name} <ShieldCheck className="w-5 h-5 text-success" />
+              {patient.name} <ShieldCheck className="w-5 h-5 text-emerald-500" />
             </h1>
             <p className="text-muted-foreground flex items-center gap-2 text-sm mt-1">
               <span>Sexo: {patient.sex}</span> •
               <span>Escolaridade: {patient.education || 'N/D'}</span> •
-              <span className="text-success font-medium">{patient.status}</span>
+              <span className="text-emerald-600 font-medium">{patient.status}</span>
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function PatientDetail() {
       </div>
 
       <Tabs defaultValue="anamnesis" className="w-full">
-        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap shrink-0 scrollbar-hide">
+        <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap shrink-0 hide-scrollbar">
           <TabsTrigger
             value="anamnesis"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
