@@ -12,6 +12,7 @@ import {
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { Link as LinkIcon, Activity } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
+import { DASS21History } from '@/components/patient/DASS21History'
 
 export function PatientFeedbackTab({ patient }: { patient: any }) {
   const { patientFeedbacks } = useAppStore()
@@ -44,6 +45,8 @@ export function PatientFeedbackTab({ patient }: { patient: any }) {
           </p>
         </div>
       </div>
+
+      <DASS21History patientId={patient.id} />
 
       <Card className="shadow-sm border-t-4 border-t-primary">
         <CardHeader>

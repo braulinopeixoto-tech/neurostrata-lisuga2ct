@@ -90,6 +90,8 @@ interface AppState {
     access: boolean,
     visibility: 'Simplified' | 'Detailed',
   ) => void
+  patientDASS21: Record<string, any[]>
+  addPatientDASS21: (patientId: string, assessment: any) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -148,6 +150,17 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         sleep: 4,
         anxiety: 2,
         notes: 'Me senti mais relaxado hoje.',
+      },
+    ],
+  })
+
+  const [patientDASS21, setPatientDASS21] = useState<Record<string, any[]>>({
+    P001: [
+      {
+        id: 'dass-1',
+        date: new Date(Date.now() - 7 * 86400000).toISOString(),
+        scores: { depression: 14, anxiety: 16, stress: 22 },
+        classification: { depression: 'Moderado', anxiety: 'Severo', stress: 'Moderado' },
       },
     ],
   })
@@ -248,6 +261,16 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     }))
   }
 
+  const addPatientDASS21 = (patientId: string, assessment: any) => {
+    setPatientDASS21((prev) => ({
+      ...prev,
+      [patientId]: [
+        { ...assessment, id: `dass-${Date.now()}`, date: new Date().toISOString() },
+        ...(prev[patientId] || []),
+      ],
+    }))
+  }
+
   const updatePatientPortalAccess = (
     patientId: string,
     access: boolean,
@@ -295,6 +318,8 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         patientFeedbacks,
         addPatientFeedback,
         updatePatientPortalAccess,
+        patientDASS21,
+        addPatientDASS21,
       }}
     >
       {children}

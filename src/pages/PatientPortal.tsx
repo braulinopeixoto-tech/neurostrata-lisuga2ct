@@ -25,6 +25,7 @@ import useAppStore from '@/stores/useAppStore'
 import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRadarChart'
 import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
 import { PatientDailyFeedbackForm } from '@/components/patient-portal/PatientDailyFeedbackForm'
+import { PatientDASS21Form } from '@/components/patient-portal/PatientDASS21Form'
 
 export default function PatientPortal() {
   const { patients, patientFeedbacks } = useAppStore()
@@ -192,7 +193,7 @@ export default function PatientPortal() {
             value="feedback"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap relative pr-6"
           >
-            <MessageSquare className="w-4 h-4" /> Autoavaliação Diária
+            <MessageSquare className="w-4 h-4" /> Autoavaliação de Sintomas
             {patientFeedbacks &&
               !patientFeedbacks[patient.id]?.some((f: any) =>
                 f.date.startsWith(new Date().toISOString().split('T')[0]),
@@ -290,8 +291,9 @@ export default function PatientPortal() {
         </TabsContent>
 
         {/* TAB: FEEDBACK */}
-        <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in">
+        <TabsContent value="feedback" className="m-0 print:hidden animate-fade-in space-y-6">
           <PatientDailyFeedbackForm patientId={patient.id} />
+          <PatientDASS21Form patientId={patient.id} />
         </TabsContent>
 
         {/* TAB: BIOGRAM */}
