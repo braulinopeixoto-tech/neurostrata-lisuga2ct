@@ -66,19 +66,40 @@ export const MOCK_FORMULAS = [
 export const PSYCHIC_FUNCTIONS_CATEGORIZED = [
   {
     category: 'Atenção e Foco',
-    items: ['Atenção Sustentada', 'Atenção Alternada', 'Controle Inibitório'],
+    color: 'bg-blue-500',
+    items: [
+      'Atenção Sustentada',
+      'Atenção Alternada',
+      'Atenção Dividida',
+      'Controle Inibitório',
+      'Velocidade de Processamento',
+    ],
   },
   {
     category: 'Memória e Aprendizagem',
-    items: ['Memória de Trabalho', 'Memória Episódica', 'Curva de Retenção'],
+    color: 'bg-emerald-500',
+    items: ['Memória de Trabalho', 'Memória Episódica', 'Memória Semântica', 'Curva de Retenção'],
   },
   {
     category: 'Funções Executivas',
-    items: ['Planejamento', 'Flexibilidade Cognitiva', 'Tomada de Decisão'],
+    color: 'bg-purple-500',
+    items: [
+      'Planejamento',
+      'Flexibilidade Cognitiva',
+      'Tomada de Decisão',
+      'Fluência Verbal',
+      'Categorização',
+    ],
   },
   {
     category: 'Regulação Emocional',
-    items: ['Reatividade ao Estresse', 'Labilidade Afetiva', 'Controle de Impulsos'],
+    color: 'bg-rose-500',
+    items: [
+      'Reatividade ao Estresse',
+      'Labilidade Afetiva',
+      'Controle de Impulsos',
+      'Tolerância à Frustração',
+    ],
   },
 ]
 
