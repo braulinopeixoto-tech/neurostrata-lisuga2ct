@@ -40,6 +40,18 @@ export interface Patient {
   hasPortalAccess?: boolean
   portalVisibility?: 'Simplified' | 'Detailed'
   linkedProfessionals?: { id: string; name: string; role: string }[]
+  dimensions?: {
+    cognition: { status: string; label: string }
+    emotion: { status: string; label: string }
+    behavior: { status: string; label: string }
+  }
+  functionalAreas?: {
+    neuropsychology: { status: string; summary: string }
+    pharmacy: { status: string; summary: string }
+    nutrition: { status: string; summary: string }
+    speechTherapy: { status: string; summary: string }
+    psychopedagogy: { status: string; summary: string }
+  }
   [key: string]: any
 }
 
@@ -95,7 +107,6 @@ export interface NutritionTracking {
   timestamp: string
 }
 
-// --- NEW TYPES FOR TRUST LAYER & BIOGRAMA ---
 export type DiagnosisStatus = 'Draft' | 'Pending Validation' | 'Validated' | 'Finalized'
 
 export interface DiagnosisWorkflow {
@@ -125,12 +136,12 @@ export interface BiogramaDimension {
   description: string
   contributors: TraceabilityContributor[]
 }
-// --------------------------------------------
 
 interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: Patient[]
   addPatient: (patient: any) => void
+  updatePatient: (id: string, data: Partial<Patient>) => void
   addPatientAuditLog: (patientId: string, log: any) => void
   currentAssessmentId: string | null
   setCurrentAssessmentId: (id: string | null) => void
@@ -210,14 +221,11 @@ interface AppState {
   ) => void
   patientCheckins: Record<string, any[]>
   addPatientCheckin: (patientId: string, checkin: any) => void
-
   nutritionProfiles: NutritionProfile[]
   nutritionProtocols: NutritionProtocol[]
   nutritionTracking: NutritionTracking[]
   addNutritionProfile: (profile: NutritionProfile) => void
   addNutritionTracking: (tracking: NutritionTracking) => void
-
-  // --- NEW TRUST LAYER STATE ---
   diagnosisWorkflows: Record<string, DiagnosisWorkflow>
   updateDiagnosisWorkflow: (patientId: string, updates: Partial<DiagnosisWorkflow>) => void
   biogramaTraceability: Record<string, BiogramaDimension[]>
@@ -297,16 +305,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   const [patientJourneys, setPatientJourneys] = useState<Record<string, CheckupJourneyState>>({})
 
-  // --- NEW MOCK DATA FOR BIOGRAMA TRACEABILITY & WORKFLOW ---
   const [diagnosisWorkflows, setDiagnosisWorkflows] = useState<Record<string, DiagnosisWorkflow>>({
     P001: {
       status: 'Pending Validation',
-      criteriaMet: {
-        qEEG: true,
-        RDoC: true,
-        Neuropsychology: true,
-        SpeechTherapy: false,
-      },
+      criteriaMet: { qEEG: true, RDoC: true, Neuropsychology: true, SpeechTherapy: false },
       signature: null,
       dataHash: 'a1b2c3d4e5f6g7h8i9j0',
       isDataCompromised: false,
@@ -322,111 +324,20 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         name: 'Foco e Cognição',
         score: 65,
         status: 'Alerta',
-        description:
-          'Capacidade de sustentar e alternar atenção, memória operacional e controle inibitório.',
-        contributors: [
-          {
-            source: 'Laudo qEEG',
-            module: 'Mapeamento Cerebral',
-            metric: 'Latência P300',
-            value: '345ms (Atrasada)',
-            impact: 'High',
-            date: '2023-10-12',
-          },
-          {
-            source: 'Avaliação Neuropsicológica',
-            module: 'Psicometria',
-            metric: 'Atenção Sustentada (TMT)',
-            value: 'Escore Z: -1.5',
-            impact: 'High',
-            date: '2023-10-14',
-          },
-          {
-            source: 'Autoavaliação (Portal)',
-            module: 'Feedback Paciente',
-            metric: 'Foco Subjetivo',
-            value: '2/5 (Baixo)',
-            impact: 'Medium',
-            date: '2023-10-18',
-          },
-        ],
-      },
-      {
-        id: 'bem_estar',
-        name: 'Bem-estar Emocional',
-        score: 42,
-        status: 'Crítico',
-        description: 'Regulação afetiva, reatividade ao estresse e valência emocional.',
-        contributors: [
-          {
-            source: 'Matriz RDoC',
-            module: 'Neuropsicologia',
-            metric: 'Valência Negativa (Ameaça Aguda)',
-            value: 'Hiperativação',
-            impact: 'High',
-            date: '2023-10-10',
-          },
-          {
-            source: 'DASS-21',
-            module: 'Portal do Paciente',
-            metric: 'Ansiedade',
-            value: 'Severa (18 pts)',
-            impact: 'High',
-            date: '2023-10-15',
-          },
-          {
-            source: 'Perfil Nutricional',
-            module: 'Nutrição Funcional',
-            metric: 'Marcador Inflamatório',
-            value: 'Elevado (Score 85)',
-            impact: 'Medium',
-            date: '2023-10-11',
-          },
-        ],
-      },
-      {
-        id: 'energia',
-        name: 'Energia Vital',
-        score: 78,
-        status: 'Preservado',
-        description: 'Tônus autonômico, qualidade do sono e disposição física.',
-        contributors: [
-          {
-            source: 'Avaliação Clínica',
-            module: 'Médico',
-            metric: 'Qualidade do Sono',
-            value: 'Adequada (7h/noite)',
-            impact: 'High',
-            date: '2023-10-05',
-          },
-          {
-            source: 'Perfil Big Five',
-            module: 'Neuropsicologia',
-            metric: 'Extroversão',
-            value: 'Alta (Percentil 80)',
-            impact: 'Medium',
-            date: '2023-10-10',
-          },
-        ],
+        description: 'Capacidade de sustentar e alternar atenção, memória operacional.',
+        contributors: [],
       },
     ],
   })
 
+  const updatePatient = (id: string, data: Partial<Patient>) => {
+    setPatients((prev) => prev.map((p) => (p.id === id ? { ...p, ...data } : p)))
+  }
+
   const updateDiagnosisWorkflow = (patientId: string, updates: Partial<DiagnosisWorkflow>) => {
     setDiagnosisWorkflows((prev) => ({
       ...prev,
-      [patientId]: {
-        ...(prev[patientId] || {
-          status: 'Draft',
-          criteriaMet: {},
-          signature: null,
-          dataHash: '',
-          isDataCompromised: false,
-          validatedAt: null,
-          validatedBy: null,
-        }),
-        ...updates,
-      },
+      [patientId]: { ...(prev[patientId] || {}), ...updates } as DiagnosisWorkflow,
     }))
   }
 
@@ -442,7 +353,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       return prev
     })
   }
-  // --------------------------------------------------------
 
   const setPatientOnboarded = (patientId: string, status: boolean) => {
     setPatientOnboardedState((prev) => ({ ...prev, [patientId]: status }))
@@ -452,10 +362,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setPatients((prev) =>
       prev.map((p) => {
         if (p.id === patientId) {
-          return {
-            ...p,
-            linkedProfessionals: [...(p.linkedProfessionals || []), professional],
-          }
+          return { ...p, linkedProfessionals: [...(p.linkedProfessionals || []), professional] }
         }
         return p
       }),
@@ -472,10 +379,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       date: new Date().toISOString(),
       status: 'pending',
     }
-    setPatientAlerts((prev) => ({
-      ...prev,
-      [patientId]: [newAlert, ...(prev[patientId] || [])],
-    }))
+    setPatientAlerts((prev) => ({ ...prev, [patientId]: [newAlert, ...(prev[patientId] || [])] }))
   }
 
   const resolvePatientAlert = (
@@ -532,10 +436,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setPatients((prev) =>
       prev.map((p) => {
         if (p.id === patientId) {
-          return {
-            ...p,
-            auditLogs: [{ ...log, id: `log-${Date.now()}` }, ...(p.auditLogs || [])],
-          }
+          return { ...p, auditLogs: [{ ...log, id: `log-${Date.now()}` }, ...(p.auditLogs || [])] }
         }
         return p
       }),
@@ -547,9 +448,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     stageId: CheckupStageId,
     professionalName: string,
     notes?: string,
-  ) => {
-    // simplified for brevity
-  }
+  ) => {}
 
   const setAssessmentData = (data: Partial<typeof currentAssessmentData>) =>
     setCurrentAssessmentData((prev) => ({ ...prev, ...data }))
@@ -620,6 +519,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         currentUser,
         patients,
         addPatient,
+        updatePatient,
         addPatientAuditLog,
         currentAssessmentId,
         setCurrentAssessmentId,
@@ -675,7 +575,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         nutritionTracking,
         addNutritionProfile,
         addNutritionTracking,
-        // --- NEW ---
         diagnosisWorkflows,
         updateDiagnosisWorkflow,
         biogramaTraceability,

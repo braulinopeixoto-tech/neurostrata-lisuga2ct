@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import {
   Brain,
   Heart,
@@ -21,22 +22,32 @@ import {
   ArrowUp,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { MOCK_PATIENTS } from '@/lib/mock-data'
 
 interface PatientDashboardTabProps {
   patient: any
   onTabChange: (tab: string) => void
 }
 
+const getBadgeStyles = (status: string) => {
+  if (['Normal'].includes(status)) return 'bg-emerald-50 text-emerald-800 border-emerald-200'
+  if (['Moderado', 'Instável', 'Atenção'].includes(status))
+    return 'bg-amber-50 text-amber-800 border-amber-200'
+  if (['Alterado', 'Crítico'].includes(status)) return 'bg-rose-50 text-rose-800 border-rose-200'
+  return 'bg-slate-50 text-slate-800 border-slate-200'
+}
+
 export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTabProps) {
-  // Ensure we have a score fallback
   const score = patient.score || 62
   const scoreColor =
     score >= 75 ? 'text-emerald-500' : score >= 50 ? 'text-amber-500' : 'text-rose-500'
   const offset = 283 - (283 * score) / 100
 
+  const dim = patient.dimensions || MOCK_PATIENTS[0].dimensions
+  const fa = patient.functionalAreas || MOCK_PATIENTS[0].functionalAreas
+
   return (
     <div className="space-y-8 animate-fade-in pb-8">
-      {/* Strategic Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-xl border shadow-sm border-l-4 border-l-primary">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">{patient.name}</h2>
@@ -67,7 +78,6 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
         </div>
       </div>
 
-      {/* Automatic Insights */}
       <div className="bg-accent/5 border border-accent/20 rounded-xl p-4 flex gap-4 items-start shadow-sm">
         <div className="bg-accent/10 p-2 rounded-full shrink-0">
           <Sparkles className="w-5 h-5 text-accent" />
@@ -82,7 +92,6 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
         </div>
       </div>
 
-      {/* Current State Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 shadow-sm border-t-4 border-t-primary">
           <CardHeader className="pb-4 border-b">
@@ -129,35 +138,74 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100">
                 <span className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                  <Brain className="w-4 h-4 text-amber-500" /> Cognição
+                  <Brain
+                    className={cn(
+                      'w-4 h-4',
+                      dim.cognition.status === 'Normal'
+                        ? 'text-emerald-500'
+                        : dim.cognition.status === 'Moderado'
+                          ? 'text-amber-500'
+                          : 'text-rose-500',
+                    )}
+                  />{' '}
+                  Cognição
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-amber-50 text-amber-800 border-amber-200 uppercase tracking-wider text-[10px]"
+                  className={cn(
+                    getBadgeStyles(dim.cognition.status),
+                    'uppercase tracking-wider text-[10px]',
+                  )}
                 >
-                  🟡 Moderado
+                  {dim.cognition.label}
                 </Badge>
               </div>
               <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100">
                 <span className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                  <Heart className="w-4 h-4 text-rose-500" /> Emoção
+                  <Heart
+                    className={cn(
+                      'w-4 h-4',
+                      dim.emotion.status === 'Normal'
+                        ? 'text-emerald-500'
+                        : dim.emotion.status === 'Moderado'
+                          ? 'text-amber-500'
+                          : 'text-rose-500',
+                    )}
+                  />{' '}
+                  Emoção
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-rose-50 text-rose-800 border-rose-200 uppercase tracking-wider text-[10px]"
+                  className={cn(
+                    getBadgeStyles(dim.emotion.status),
+                    'uppercase tracking-wider text-[10px]',
+                  )}
                 >
-                  🔴 Alterado
+                  {dim.emotion.label}
                 </Badge>
               </div>
               <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded border border-slate-100">
                 <span className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                  <Activity className="w-4 h-4 text-amber-500" /> Comportamento
+                  <Activity
+                    className={cn(
+                      'w-4 h-4',
+                      dim.behavior.status === 'Normal'
+                        ? 'text-emerald-500'
+                        : dim.behavior.status === 'Instável'
+                          ? 'text-amber-500'
+                          : 'text-rose-500',
+                    )}
+                  />{' '}
+                  Comportamento
                 </span>
                 <Badge
                   variant="outline"
-                  className="bg-amber-50 text-amber-800 border-amber-200 uppercase tracking-wider text-[10px]"
+                  className={cn(
+                    getBadgeStyles(dim.behavior.status),
+                    'uppercase tracking-wider text-[10px]',
+                  )}
                 >
-                  🟡 Instável
+                  {dim.behavior.label}
                 </Badge>
               </div>
             </div>
@@ -208,7 +256,6 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
         </Card>
       </div>
 
-      {/* Integrated Functional Areas */}
       <div className="space-y-4 pt-4 border-t">
         <h3 className="text-lg font-bold text-slate-800">Áreas Funcionais Integradas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -218,13 +265,26 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <Brain className="w-4 h-4 text-purple-600" /> Neuropsicologia
                 </div>
-                <div className="flex items-center gap-1.5 bg-rose-50 px-2 py-1 rounded text-[10px] font-bold text-rose-700 uppercase">
-                  <div className="w-2 h-2 rounded-full bg-rose-500" /> Crítico
+                <div
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase',
+                    getBadgeStyles(fa.neuropsychology.status),
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      fa.neuropsychology.status === 'Crítico'
+                        ? 'bg-rose-500'
+                        : fa.neuropsychology.status === 'Atenção'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500',
+                    )}
+                  />{' '}
+                  {fa.neuropsychology.status}
                 </div>
               </div>
-              <p className="text-sm text-slate-600 flex-1">
-                déficit em atenção e memória de trabalho
-              </p>
+              <p className="text-sm text-slate-600 flex-1">{fa.neuropsychology.summary}</p>
               <Button
                 variant="ghost"
                 size="sm"
@@ -242,11 +302,26 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <Pill className="w-4 h-4 text-blue-600" /> Farmacêutico
                 </div>
-                <div className="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded text-[10px] font-bold text-amber-700 uppercase">
-                  <div className="w-2 h-2 rounded-full bg-amber-500" /> Atenção
+                <div
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase',
+                    getBadgeStyles(fa.pharmacy.status),
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      fa.pharmacy.status === 'Crítico'
+                        ? 'bg-rose-500'
+                        : fa.pharmacy.status === 'Atenção'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500',
+                    )}
+                  />{' '}
+                  {fa.pharmacy.status}
                 </div>
               </div>
-              <p className="text-sm text-slate-600 flex-1">uso de fórmula para foco</p>
+              <p className="text-sm text-slate-600 flex-1">{fa.pharmacy.summary}</p>
               <Button
                 variant="ghost"
                 size="sm"
@@ -266,13 +341,27 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <Apple className="w-4 h-4 text-green-600" /> Nutrição
                 </div>
-                <div className="flex items-center gap-1.5 bg-rose-50 px-2 py-1 rounded text-[10px] font-bold text-rose-700 uppercase">
-                  <div className="w-2 h-2 rounded-full bg-rose-500" /> Crítico
+                <div
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase',
+                    getBadgeStyles(fa.nutrition.status),
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      fa.nutrition.status === 'Crítico'
+                        ? 'bg-rose-500'
+                        : fa.nutrition.status === 'Atenção'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500',
+                    )}
+                  />{' '}
+                  {fa.nutrition.status}
                 </div>
               </div>
-              <p className="text-sm text-slate-600 flex-1">padrão alimentar inflamatório</p>
+              <p className="text-sm text-slate-600 flex-1">{fa.nutrition.summary}</p>
               <div className="h-8"></div>
-              {/* Spacer to match buttons height */}
             </CardContent>
           </Card>
 
@@ -282,11 +371,26 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <MessageSquare className="w-4 h-4 text-sky-500" /> Fonoaudiologia
                 </div>
-                <div className="flex items-center gap-1.5 bg-amber-50 px-2 py-1 rounded text-[10px] font-bold text-amber-700 uppercase">
-                  <div className="w-2 h-2 rounded-full bg-amber-500" /> Atenção
+                <div
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase',
+                    getBadgeStyles(fa.speechTherapy.status),
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      fa.speechTherapy.status === 'Crítico'
+                        ? 'bg-rose-500'
+                        : fa.speechTherapy.status === 'Atenção'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500',
+                    )}
+                  />{' '}
+                  {fa.speechTherapy.status}
                 </div>
               </div>
-              <p className="text-sm text-slate-600 flex-1">dificuldade de processamento auditivo</p>
+              <p className="text-sm text-slate-600 flex-1">{fa.speechTherapy.summary}</p>
             </CardContent>
           </Card>
 
@@ -296,19 +400,31 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <GraduationCap className="w-4 h-4 text-indigo-500" /> Psicopedagogia
                 </div>
-                <div className="flex items-center gap-1.5 bg-rose-50 px-2 py-1 rounded text-[10px] font-bold text-rose-700 uppercase">
-                  <div className="w-2 h-2 rounded-full bg-rose-500" /> Crítico
+                <div
+                  className={cn(
+                    'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase',
+                    getBadgeStyles(fa.psychopedagogy.status),
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      fa.psychopedagogy.status === 'Crítico'
+                        ? 'bg-rose-500'
+                        : fa.psychopedagogy.status === 'Atenção'
+                          ? 'bg-amber-500'
+                          : 'bg-emerald-500',
+                    )}
+                  />{' '}
+                  {fa.psychopedagogy.status}
                 </div>
               </div>
-              <p className="text-sm text-slate-600 flex-1">
-                dificuldade em leitura e atenção escolar
-              </p>
+              <p className="text-sm text-slate-600 flex-1">{fa.psychopedagogy.summary}</p>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Neurofunctional Data */}
       <div className="space-y-4 pt-4 border-t">
         <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
           <BrainCircuit className="w-5 h-5 text-violet-600" /> Dados Neurofuncionais
@@ -343,7 +459,6 @@ export function PatientDashboardTab({ patient, onTabChange }: PatientDashboardTa
         </Card>
       </div>
 
-      {/* Clinical Timeline */}
       <div className="space-y-4 pt-4 border-t">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="text-lg font-bold text-slate-800">Linha do Tempo Clínica</h3>

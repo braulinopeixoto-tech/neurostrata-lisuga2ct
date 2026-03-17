@@ -6,9 +6,21 @@ export const MOCK_PATIENTS = [
     sex: 'Masculino',
     lastAssessment: '2023-08-10',
     status: 'Ativo',
-    score: 85,
+    score: 62,
     education: 'Superior Completo',
     linkedProfessionals: [{ id: 'NS-P001', name: 'Dr. Renato Alves', role: 'Médico' }],
+    dimensions: {
+      cognition: { status: 'Moderado', label: '🟡 Moderado' },
+      emotion: { status: 'Alterado', label: '🔴 Alterado' },
+      behavior: { status: 'Instável', label: '🟡 Instável' },
+    },
+    functionalAreas: {
+      neuropsychology: { status: 'Crítico', summary: 'déficit em atenção e memória de trabalho' },
+      pharmacy: { status: 'Atenção', summary: 'uso de fórmula para foco' },
+      nutrition: { status: 'Crítico', summary: 'padrão alimentar inflamatório' },
+      speechTherapy: { status: 'Atenção', summary: 'dificuldade de processamento auditivo' },
+      psychopedagogy: { status: 'Crítico', summary: 'dificuldade em leitura e atenção escolar' },
+    },
   },
   {
     id: 'P002',
@@ -19,6 +31,18 @@ export const MOCK_PATIENTS = [
     status: 'Em observação',
     score: 72,
     education: 'Pós-graduação',
+    dimensions: {
+      cognition: { status: 'Normal', label: '🟢 Normal' },
+      emotion: { status: 'Moderado', label: '🟡 Moderado' },
+      behavior: { status: 'Normal', label: '🟢 Estável' },
+    },
+    functionalAreas: {
+      neuropsychology: { status: 'Normal', summary: 'funções executivas preservadas' },
+      pharmacy: { status: 'Normal', summary: 'sem prescrição atual' },
+      nutrition: { status: 'Atenção', summary: 'necessidade de modulação intestinal' },
+      speechTherapy: { status: 'Normal', summary: 'comunicação preservada' },
+      psychopedagogy: { status: 'Normal', summary: 'desenvolvimento adequado' },
+    },
   },
   {
     id: 'P003',
@@ -30,6 +54,18 @@ export const MOCK_PATIENTS = [
     score: 91,
     education: 'Ensino Médio',
     linkedProfessionals: [{ id: 'NS-P002', name: 'Dra. Camila Rocha', role: 'Psiquiatra' }],
+    dimensions: {
+      cognition: { status: 'Normal', label: '🟢 Normal' },
+      emotion: { status: 'Normal', label: '🟢 Estável' },
+      behavior: { status: 'Normal', label: '🟢 Normal' },
+    },
+    functionalAreas: {
+      neuropsychology: { status: 'Normal', summary: 'desempenho excelente' },
+      pharmacy: { status: 'Normal', summary: 'desmame concluído' },
+      nutrition: { status: 'Normal', summary: 'metabolismo otimizado' },
+      speechTherapy: { status: 'Normal', summary: 'fluência normal' },
+      psychopedagogy: { status: 'Normal', summary: 'n/a' },
+    },
   },
 ]
 
@@ -53,16 +89,8 @@ export const MOCK_PROFESSIONALS = [
 ]
 
 export const MOCK_FORMULAS = [
-  {
-    id: 'F001',
-    name: 'Otimização Cognitiva Alpha',
-    createdAt: '2023-05-12',
-  },
-  {
-    id: 'F002',
-    name: 'Regulação Circadiana Beta',
-    createdAt: '2023-06-20',
-  },
+  { id: 'F001', name: 'Otimização Cognitiva Alpha', createdAt: '2023-05-12' },
+  { id: 'F002', name: 'Regulação Circadiana Beta', createdAt: '2023-06-20' },
 ]
 
 export const PSYCHIC_FUNCTIONS_CATEGORIZED = [
