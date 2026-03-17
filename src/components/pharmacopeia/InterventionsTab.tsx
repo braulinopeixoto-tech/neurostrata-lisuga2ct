@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { FileSignature, Plus } from 'lucide-react'
+import { FileSignature, Plus, CheckCircle2 } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 import usePharmacyStore from '@/stores/usePharmacyStore'
 import useTrustStore from '@/stores/useTrustStore'
@@ -56,7 +56,7 @@ export function InterventionsTab() {
       evento: 'Validação de Intervenção Funcional',
       profissional: currentUser.fullName,
       data: new Date().toISOString(),
-      origem: 'Pharmacopeia - Intervenções',
+      origem: 'Gestão Metabólica - Intervenções',
       decisao_validada: true,
     })
 
@@ -211,5 +211,3 @@ export function InterventionsTab() {
     </div>
   )
 }
-// Adding missing import CheckCircle2 manually since it's used
-import { CheckCircle2 } from 'lucide-react'

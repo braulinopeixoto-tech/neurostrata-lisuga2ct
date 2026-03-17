@@ -82,7 +82,7 @@ export function AppSidebar() {
     { name: 'Pacientes', path: '/patients', icon: Users },
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
     { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
-    { name: 'Farmacopeia', path: '/pharmacopeia', icon: FlaskConical },
+    { name: 'Gestão Metabólica', path: '/gestao-metabolica', icon: FlaskConical },
     { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
     { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },

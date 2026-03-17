@@ -61,7 +61,7 @@ export function ExamsTab() {
       evento: 'Solicitação de Exame Funcional',
       profissional: currentUser.fullName,
       data: new Date().toISOString(),
-      origem: 'Pharmacopeia - Exames',
+      origem: 'Gestão Metabólica - Exames',
       decisao_validada: true,
     })
 
@@ -87,7 +87,7 @@ export function ExamsTab() {
       evento: 'Upload de Resultado de Exame',
       profissional: currentUser.fullName,
       data: new Date().toISOString(),
-      origem: 'Pharmacopeia - Exames',
+      origem: 'Gestão Metabólica - Exames',
       decisao_validada: true,
     })
   }

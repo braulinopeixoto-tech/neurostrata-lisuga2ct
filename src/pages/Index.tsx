@@ -25,7 +25,7 @@ export default function Index() {
     { name: 'Área Neuropsicológica', icon: Brain, path: '/neuropsychology' },
     { name: 'Área Nutrição Funcional', icon: Apple, path: '/nutrition' },
     { name: 'Área Fono', icon: MessageSquare, path: '/speech-therapy' },
-    { name: 'Área Farmaco Clínico', icon: FlaskConical, path: '/pharmacopeia' },
+    { name: 'Gestão Metabólica', icon: FlaskConical, path: '/gestao-metabolica' },
     { name: 'Área Psicopedagogia', icon: GraduationCap, path: '/psychopedagogy' },
   ]
 

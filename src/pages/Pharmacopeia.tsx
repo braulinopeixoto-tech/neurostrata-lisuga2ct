@@ -19,7 +19,7 @@ export default function Pharmacopeia() {
     <div className="space-y-6 animate-fade-in-up pb-10 max-w-6xl mx-auto">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-3">
-          <FlaskConical className="w-8 h-8 text-accent" /> Gestão Metabólica e Rede Parceira
+          <FlaskConical className="w-8 h-8 text-accent" /> Gestão Metabólica
         </h1>
         <p className="text-muted-foreground mt-1">
           Integração avançada entre correlação neuro-metabólica, validação de exames funcionais e
