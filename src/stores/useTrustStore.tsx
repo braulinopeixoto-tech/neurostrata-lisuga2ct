@@ -29,11 +29,22 @@ export interface VerificationLog {
   status: 'Valid' | 'Invalid'
 }
 
+export interface TrustAuditLog {
+  id: string
+  evento: string
+  profissional: string
+  data: string
+  origem: string
+  decisao_validada: boolean
+}
+
 interface TrustState {
   documents: TrustDocument[]
   verificationLogs: VerificationLog[]
+  auditLogs: TrustAuditLog[]
   addDocument: (doc: TrustDocument) => void
   addLog: (log: Omit<VerificationLog, 'id'>) => void
+  addAuditLog: (log: Omit<TrustAuditLog, 'id'>) => void
 }
 
 const TrustStateContext = createContext<TrustState | undefined>(undefined)
@@ -70,6 +81,8 @@ export function TrustStoreProvider({ children }: { children: ReactNode }) {
     },
   ])
 
+  const [auditLogs, setAuditLogs] = useState<TrustAuditLog[]>([])
+
   const addDocument = useCallback((doc: TrustDocument) => {
     setDocuments((prev) => [doc, ...prev])
   }, [])
@@ -78,8 +91,14 @@ export function TrustStoreProvider({ children }: { children: ReactNode }) {
     setVerificationLogs((prev) => [{ ...log, id: `log-${Date.now()}` }, ...prev])
   }, [])
 
+  const addAuditLog = useCallback((log: Omit<TrustAuditLog, 'id'>) => {
+    setAuditLogs((prev) => [{ ...log, id: `audit-${Date.now()}` }, ...prev])
+  }, [])
+
   return (
-    <TrustStateContext.Provider value={{ documents, verificationLogs, addDocument, addLog }}>
+    <TrustStateContext.Provider
+      value={{ documents, verificationLogs, auditLogs, addDocument, addLog, addAuditLog }}
+    >
       {children}
     </TrustStateContext.Provider>
   )

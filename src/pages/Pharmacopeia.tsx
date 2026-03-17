@@ -1,84 +1,92 @@
-import { FlaskConical, Stethoscope, Activity, Users, FileText, AlertTriangle } from 'lucide-react'
+import {
+  FlaskConical,
+  Activity,
+  BriefcaseMedical,
+  TestTube,
+  Network,
+  ShieldCheck,
+} from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { BaselineTab } from '@/components/pharmacopeia/BaselineTab'
-import { BuilderTab } from '@/components/pharmacopeia/BuilderTab'
-import { MonitoringTab } from '@/components/pharmacopeia/MonitoringTab'
-import { CollaborationTab } from '@/components/pharmacopeia/CollaborationTab'
-import { ReportTab } from '@/components/pharmacopeia/ReportTab'
+import { MetabolicAxisTab } from '@/components/pharmacopeia/MetabolicAxisTab'
+import { ExamsTab } from '@/components/pharmacopeia/ExamsTab'
+import { InterventionsTab } from '@/components/pharmacopeia/InterventionsTab'
+import { PartnerNetworkTab } from '@/components/pharmacopeia/PartnerNetworkTab'
+import { IntegratedReportTab } from '@/components/pharmacopeia/IntegratedReportTab'
 
 export default function Pharmacopeia() {
   return (
     <div className="space-y-6 animate-fade-in-up pb-10 max-w-6xl mx-auto">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-3">
-          <FlaskConical className="w-8 h-8 text-accent" /> Fármaco Clínico & Formulações
+          <FlaskConical className="w-8 h-8 text-accent" /> Gestão Metabólica e Rede Parceira
         </h1>
         <p className="text-muted-foreground mt-1">
-          Ambiente dedicado para desenvolvimento de fórmulas magistrais e integração neurofuncional.
+          Integração avançada entre correlação neuro-metabólica, validação de exames funcionais e
+          encaminhamento neutro de parceiros de saúde.
         </p>
       </div>
 
-      <Alert variant="default" className="bg-amber-50 border-amber-200 text-amber-800 shadow-sm">
-        <AlertTriangle className="h-5 w-5 text-amber-600" />
-        <AlertTitle className="font-bold">
-          Ferramenta de Suporte Clínico Multidisciplinar
+      <Alert variant="default" className="bg-blue-50/50 border-blue-200 text-blue-900 shadow-sm">
+        <ShieldCheck className="h-5 w-5 text-blue-600" />
+        <AlertTitle className="font-bold text-blue-800">
+          Garantia de Neutralidade e Rastreabilidade
         </AlertTitle>
         <AlertDescription className="text-sm">
-          Este módulo é destinado ao suporte à decisão da equipe. Todas as fórmulas magistrais e
-          condutas terapêuticas geradas aqui exigem validação rigorosa e prescrição oficial pelo
-          profissional médico habilitado antes do uso pelo paciente.
+          Este módulo promove uma ponte segura entre a validação metabólica e a execução
+          terapêutica. A escolha da entidade parceira (laboratório ou farmácia) permanece
+          exclusivamente do paciente, garantindo compliance integral com o fluxo clínico.
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="baseline" className="w-full">
+      <Tabs defaultValue="metabolic" className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap hide-scrollbar">
           <TabsTrigger
-            value="baseline"
+            value="metabolic"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <Stethoscope className="w-4 h-4" /> Baseline Funcional
+            <Activity className="w-4 h-4" /> Eixo Metabólico
           </TabsTrigger>
           <TabsTrigger
-            value="builder"
+            value="exams"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <FlaskConical className="w-4 h-4" /> Construtor de Fórmulas
+            <TestTube className="w-4 h-4" /> Exames
           </TabsTrigger>
           <TabsTrigger
-            value="monitoring"
+            value="interventions"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <Activity className="w-4 h-4" /> Monitoramento & qEEG
+            <BriefcaseMedical className="w-4 h-4" /> Intervenções Funcionais
           </TabsTrigger>
           <TabsTrigger
-            value="collaboration"
+            value="network"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <Users className="w-4 h-4" /> Integração Interprofissional
+            <Network className="w-4 h-4" /> Rede Parceira
           </TabsTrigger>
           <TabsTrigger
             value="report"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <FileText className="w-4 h-4" /> Quick Report
+            <ShieldCheck className="w-4 h-4" /> Relatório Dossiê
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="baseline" className="m-0 focus-visible:outline-none">
-          <BaselineTab />
+        <TabsContent value="metabolic" className="m-0 focus-visible:outline-none">
+          <MetabolicAxisTab />
         </TabsContent>
-        <TabsContent value="builder" className="m-0 focus-visible:outline-none">
-          <BuilderTab />
+        <TabsContent value="exams" className="m-0 focus-visible:outline-none">
+          <ExamsTab />
         </TabsContent>
-        <TabsContent value="monitoring" className="m-0 focus-visible:outline-none">
-          <MonitoringTab />
+        <TabsContent value="interventions" className="m-0 focus-visible:outline-none">
+          <InterventionsTab />
         </TabsContent>
-        <TabsContent value="collaboration" className="m-0 focus-visible:outline-none">
-          <CollaborationTab />
+        <TabsContent value="network" className="m-0 focus-visible:outline-none">
+          <PartnerNetworkTab />
         </TabsContent>
         <TabsContent value="report" className="m-0 focus-visible:outline-none">
-          <ReportTab />
+          <IntegratedReportTab />
         </TabsContent>
       </Tabs>
     </div>
