@@ -1,5 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
-import { Brain, Activity, User, Dna, Bot, Network, Stethoscope, BrainCircuit } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -10,158 +9,107 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { StepFunctions } from '@/pages/assessment/StepFunctions'
-import { StepRDoC } from '@/pages/assessment/StepRDoC'
-import { StepBigFive } from '@/pages/assessment/StepBigFive'
-import { StepBiomarkers } from '@/pages/assessment/StepBiomarkers'
-import { StepProcessing } from '@/pages/assessment/StepProcessing'
-import { StepMultiAgent } from '@/pages/assessment/StepMultiAgent'
+import {
+  ShieldCheck,
+  Brain,
+  Mic,
+  BookOpen,
+  History,
+  User,
+  LayoutDashboard,
+  Clock,
+} from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Badge } from '@/components/ui/badge'
 
-const ALL_STEPS = [
-  { id: '1', title: 'Funções Psíquicas', icon: Brain, complex: false, medicalOnly: false },
-  { id: '2', title: 'Matriz RDoC', icon: Activity, complex: true, medicalOnly: false },
-  { id: '3', title: 'Big Five', icon: Network, complex: true, medicalOnly: false },
-  { id: '4', title: 'Biomarcadores', icon: Dna, complex: true, medicalOnly: false },
-  { id: 'ma', title: 'Motor Multi-Agente', icon: BrainCircuit, complex: true, medicalOnly: true },
-  { id: '5', title: 'Processamento', icon: Bot, complex: false, medicalOnly: false },
-]
+import ComplianceOverviewTab from './tabs/ComplianceOverviewTab'
+import NeuropsychologyTab from './tabs/NeuropsychologyTab'
+import SpeechTherapyTab from './tabs/SpeechTherapyTab'
+import PsychopedagogyTab from './tabs/PsychopedagogyTab'
+import AuditTrailTab from './tabs/AuditTrailTab'
 
 export default function Assessment() {
-  const [currentTab, setCurrentTab] = useState('1')
-  const { patients, professionals, setCurrentAssessmentId } = useAppStore()
+  const [currentTab, setCurrentTab] = useState('overview')
+  const { patients } = useAppStore()
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
-  const [selectedProfId, setSelectedProfId] = useState<string>('')
 
   const selectedPatient = patients.find((p) => p.id === selectedPatientId)
-  const selectedProf = professionals.find((p) => p.id === selectedProfId)
-
-  const visibleSteps = useMemo(() => {
-    const checkComplex = () => {
-      if (!selectedProf) return true
-      const fullRoles = [
-        'Médico',
-        'Neurologista',
-        'Psiquiatra',
-        'Psicólogo(a)',
-        'Neuropsicólogo(a)',
-      ]
-      return fullRoles.includes(selectedProf.specialty)
-    }
-
-    const checkMedical = () => {
-      if (!selectedProf) return true
-      return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
-    }
-
-    return ALL_STEPS.filter((s) => {
-      if (s.complex && !checkComplex()) return false
-      if (s.medicalOnly && !checkMedical()) return false
-      return true
-    })
-  }, [selectedProf])
-
-  const isComplex = () => {
-    if (!selectedProf) return true
-    const fullRoles = ['Médico', 'Neurologista', 'Psiquiatra', 'Psicólogo(a)', 'Neuropsicólogo(a)']
-    return fullRoles.includes(selectedProf.specialty)
-  }
-
-  const isMedical = () => {
-    if (!selectedProf) return true
-    return ['Médico', 'Neurologista', 'Psiquiatra'].includes(selectedProf.specialty)
-  }
 
   useEffect(() => {
-    if (!visibleSteps.find((s) => s.id === currentTab)) {
-      setCurrentTab(visibleSteps[0].id)
+    if (!selectedPatientId && patients.length > 0) {
+      setSelectedPatientId(patients[0].id)
     }
-  }, [currentTab, visibleSteps])
-
-  useEffect(() => {
-    if (selectedPatientId) {
-      setCurrentAssessmentId(selectedPatientId)
-    }
-  }, [selectedPatientId, setCurrentAssessmentId])
-
-  const goNext = (id: string) => {
-    const idx = visibleSteps.findIndex((s) => s.id === id)
-    if (idx >= 0 && idx < visibleSteps.length - 1) {
-      setCurrentTab(visibleSteps[idx + 1].id)
-    }
-  }
-
-  const goPrev = (id: string) => {
-    const idx = visibleSteps.findIndex((s) => s.id === id)
-    if (idx > 0) {
-      setCurrentTab(visibleSteps[idx - 1].id)
-    }
-  }
-
-  const getNextLabel = (id: string) => {
-    const idx = visibleSteps.findIndex((s) => s.id === id)
-    if (idx >= 0 && idx < visibleSteps.length - 1) {
-      return visibleSteps[idx + 1].title
-    }
-    return ''
-  }
+  }, [patients, selectedPatientId])
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary">
-          Avaliação Neurofuncional Multidimensional
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Sistematização de avaliação clínica com módulos adaptáveis por especialidade.
-        </p>
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
+            <ShieldCheck className="w-6 h-6" /> Compliance Study Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Unified interface for inter-professional data validation and Biogram methodology
+            auditing.
+          </p>
+        </div>
+        {selectedPatient && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2 bg-white shadow-sm hover:bg-slate-50">
+                <Clock className="w-4 h-4" /> Timeline of Changes
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Audit Timeline - {selectedPatient.name}</DialogTitle>
+              </DialogHeader>
+              <ScrollArea className="h-[300px] mt-4">
+                <div className="space-y-4">
+                  <div className="pl-4 border-l-2 border-primary pb-4">
+                    <span className="text-xs text-muted-foreground">Today, 09:30 AM</span>
+                    <p className="text-sm font-medium">Biogram Methodology Validated</p>
+                    <p className="text-xs text-slate-500">by Dr. Renato Alves</p>
+                  </div>
+                  <div className="pl-4 border-l-2 border-muted pb-4">
+                    <span className="text-xs text-muted-foreground">Yesterday, 14:15 PM</span>
+                    <p className="text-sm font-medium">Psychopedagogy Data Updated</p>
+                    <p className="text-xs text-slate-500">by Maria Silva</p>
+                  </div>
+                  <div className="pl-4 border-l-2 border-muted pb-4">
+                    <span className="text-xs text-muted-foreground">Oct 12, 10:00 AM</span>
+                    <p className="text-sm font-medium">Speech Therapy Waveforms Verified</p>
+                    <p className="text-xs text-slate-500">by System Bot</p>
+                  </div>
+                </div>
+              </ScrollArea>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
-      <Card className="border-t-4 border-t-primary shadow-sm animate-fade-in">
+      <Card className="shadow-sm border-t-4 border-t-primary">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <Label
-                htmlFor="prof-select"
-                className="text-base font-semibold flex items-center gap-2 text-primary"
-              >
-                <Stethoscope className="w-5 h-5" /> Profissional Responsável
-              </Label>
-              <Select value={selectedProfId} onValueChange={setSelectedProfId}>
-                <SelectTrigger id="prof-select" className="w-full bg-white">
-                  <SelectValue placeholder="Selecione o profissional logado..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {professionals.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.fullName} ({p.specialty})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedProf && (
-                <div className="text-sm text-muted-foreground flex flex-col sm:flex-row sm:items-center gap-2 bg-muted/30 p-2.5 rounded-md border border-border/50 w-max">
-                  <span>Acesso ao Template de Avaliação:</span>
-                  <span
-                    className={cn('font-semibold', isComplex() ? 'text-primary' : 'text-amber-600')}
-                  >
-                    {isComplex() ? 'Completo (Avançado)' : 'Limitado (Simplificado)'}
-                  </span>
-                </div>
-              )}
-            </div>
-
             <div className="space-y-4">
               <Label
                 htmlFor="patient-select"
                 className="text-base font-semibold flex items-center gap-2 text-primary"
               >
-                <User className="w-5 h-5" /> Paciente Associado
+                <User className="w-5 h-5" /> Patient Context
               </Label>
               <Select value={selectedPatientId} onValueChange={setSelectedPatientId}>
                 <SelectTrigger id="patient-select" className="w-full bg-white">
-                  <SelectValue placeholder="Selecione um paciente..." />
+                  <SelectValue placeholder="Select a patient..." />
                 </SelectTrigger>
                 <SelectContent>
                   {patients.map((p) => (
@@ -171,71 +119,82 @@ export default function Assessment() {
                   ))}
                 </SelectContent>
               </Select>
-              {selectedPatient && (
-                <div className="px-4 py-2 bg-primary/10 text-primary rounded-md text-sm font-medium border border-primary/20 flex items-center gap-2 w-max">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" /> Em avaliação:{' '}
-                  {selectedPatient.name}
-                </div>
-              )}
             </div>
+            {selectedPatient && (
+              <div className="flex items-center gap-6 sm:justify-end">
+                <div className="space-y-1">
+                  <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
+                    Trust Layer Status
+                  </div>
+                  <Badge className="bg-amber-100 text-amber-800 border-amber-300">
+                    Pending Validation
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
+                    Biogram Integrity
+                  </div>
+                  <span className="text-2xl font-black text-emerald-600">98%</span>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full mt-8">
-        <TabsList
-          className={cn(
-            'grid w-full h-auto p-1 bg-muted/50 gap-1 rounded-xl transition-all',
-            visibleSteps.length === 6
-              ? 'grid-cols-3 md:grid-cols-6 max-w-full'
-              : visibleSteps.length === 5
-                ? 'grid-cols-2 md:grid-cols-5 max-w-4xl mx-auto'
-                : 'grid-cols-2 max-w-xl mx-auto',
-          )}
-        >
-          {visibleSteps.map((step) => (
+      {selectedPatient && (
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full mt-8">
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full h-auto p-1 bg-muted/50 gap-1 rounded-xl transition-all">
             <TabsTrigger
-              key={step.id}
-              value={step.id}
-              className="flex flex-col items-center gap-2 py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:text-accent transition-all"
+              value="overview"
+              className="flex flex-col items-center gap-2 py-3 rounded-lg"
             >
-              <step.icon className="w-5 h-5" />
-              <span className="text-xs font-medium hidden sm:block">{step.title}</span>
+              <LayoutDashboard className="w-5 h-5" />
+              <span className="text-xs font-medium hidden sm:block">Compliance Overview</span>
             </TabsTrigger>
-          ))}
-        </TabsList>
+            <TabsTrigger value="neuro" className="flex flex-col items-center gap-2 py-3 rounded-lg">
+              <Brain className="w-5 h-5" />
+              <span className="text-xs font-medium hidden sm:block">Neuropsychology</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="speech"
+              className="flex flex-col items-center gap-2 py-3 rounded-lg"
+            >
+              <Mic className="w-5 h-5" />
+              <span className="text-xs font-medium hidden sm:block">Speech Therapy</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="psycho"
+              className="flex flex-col items-center gap-2 py-3 rounded-lg"
+            >
+              <BookOpen className="w-5 h-5" />
+              <span className="text-xs font-medium hidden sm:block">Psychopedagogy</span>
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="flex flex-col items-center gap-2 py-3 rounded-lg">
+              <History className="w-5 h-5" />
+              <span className="text-xs font-medium hidden sm:block">Audit Trail</span>
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="mt-6 bg-card border rounded-xl shadow-sm overflow-hidden min-h-[400px]">
-          <TabsContent value="1" className="m-0 p-6 focus-visible:outline-none">
-            <StepFunctions
-              onNext={() => goNext('1')}
-              nextLabel={getNextLabel('1')}
-              patientSelected={!!selectedPatientId}
-            />
-          </TabsContent>
-          {isComplex() && (
-            <>
-              <TabsContent value="2" className="m-0 p-6 focus-visible:outline-none">
-                <StepRDoC onNext={() => goNext('2')} onPrev={() => goPrev('2')} />
-              </TabsContent>
-              <TabsContent value="3" className="m-0 p-6 focus-visible:outline-none">
-                <StepBigFive onNext={() => goNext('3')} onPrev={() => goPrev('3')} />
-              </TabsContent>
-              <TabsContent value="4" className="m-0 p-6 focus-visible:outline-none">
-                <StepBiomarkers onNext={() => goNext('4')} onPrev={() => goPrev('4')} />
-              </TabsContent>
-            </>
-          )}
-          {isMedical() && (
-            <TabsContent value="ma" className="m-0 p-6 focus-visible:outline-none">
-              <StepMultiAgent onNext={() => goNext('ma')} onPrev={() => goPrev('ma')} />
+          <div className="mt-2 min-h-[400px]">
+            <TabsContent value="overview" className="m-0 focus-visible:outline-none">
+              <ComplianceOverviewTab patient={selectedPatient} onTabChange={setCurrentTab} />
             </TabsContent>
-          )}
-          <TabsContent value="5" className="m-0 p-6 focus-visible:outline-none">
-            <StepProcessing patientId={selectedPatientId} isComplex={isComplex()} />
-          </TabsContent>
-        </div>
-      </Tabs>
+            <TabsContent value="neuro" className="m-0 focus-visible:outline-none">
+              <NeuropsychologyTab patient={selectedPatient} />
+            </TabsContent>
+            <TabsContent value="speech" className="m-0 focus-visible:outline-none">
+              <SpeechTherapyTab patient={selectedPatient} />
+            </TabsContent>
+            <TabsContent value="psycho" className="m-0 focus-visible:outline-none">
+              <PsychopedagogyTab patient={selectedPatient} />
+            </TabsContent>
+            <TabsContent value="audit" className="m-0 focus-visible:outline-none">
+              <AuditTrailTab patient={selectedPatient} />
+            </TabsContent>
+          </div>
+        </Tabs>
+      )}
     </div>
   )
 }
