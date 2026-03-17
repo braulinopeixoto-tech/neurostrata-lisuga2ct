@@ -22,11 +22,12 @@ export function AIInsightsPanel() {
   )
 
   const hasSufficientData =
-    data.rdoc.length > 20 && data.bigFive.length > 20 && data.neurophysio.length > 20
+    (data?.rdoc?.length ?? 0) > 20 &&
+    (data?.bigFive?.length ?? 0) > 20 &&
+    (data?.neurophysio?.length ?? 0) > 20
 
   const handleGenerate = () => {
     setIsGenerating(true)
-    // Simulate AI delay
     setTimeout(() => {
       setInsights({
         hypotheses:
