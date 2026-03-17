@@ -22,7 +22,7 @@ import { Button } from '@/components/ui/button'
 export default function Index() {
   const professionalAreas = [
     { name: 'Área Médica', icon: Stethoscope, path: '/medical' },
-    { name: 'Área Neuropsicológica', icon: Brain, path: '/dashboard' },
+    { name: 'Área Neuropsicológica', icon: Brain, path: '/neuropsychology' },
     { name: 'Área Nutri', icon: Apple, path: '/dashboard' },
     { name: 'Área Fono', icon: MessageSquare, path: '/dashboard' },
     { name: 'Área Farmaco Clínico', icon: FlaskConical, path: '/pharmacopeia' },

@@ -15,6 +15,7 @@ import {
   Activity,
   UserCircle,
   Scale,
+  Brain,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -70,6 +71,7 @@ export function AppSidebar() {
   const navItems = [
     { name: 'Início', path: '/', icon: LayoutDashboard },
     { name: 'Área Médica', path: '/medical', icon: Stethoscope },
+    { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
     { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
     { name: 'Pacientes', path: '/patients', icon: Users },
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
