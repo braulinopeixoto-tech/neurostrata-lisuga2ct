@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
   Select,
@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import { Textarea } from '@/components/ui/textarea'
 import { Activity } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 import usePharmacyStore from '@/stores/usePharmacyStore'
@@ -17,6 +18,17 @@ export function MetabolicAxisTab() {
   const { patients } = useAppStore()
   const { metabolicAxes, setMetabolicAxis } = usePharmacyStore()
   const [patientId, setPatientId] = useState('')
+  const [correlation, setCorrelation] = useState('')
+
+  useEffect(() => {
+    if (patientId) {
+      setCorrelation(
+        `O paciente apresenta oscilações na atenção sustentada que parecem se agravar em períodos de maior fadiga física. Há forte indicativo de que desequilíbrios na energia mitocondrial e marcadores inflamatórios sustentem esse quadro funcional crônico.`,
+      )
+    } else {
+      setCorrelation('')
+    }
+  }, [patientId])
 
   const currentAxis = metabolicAxes[patientId] || { inflamacao: 50, energia: 50, microbiota: 50 }
 
@@ -33,7 +45,8 @@ export function MetabolicAxisTab() {
             <Activity className="w-5 h-5 text-primary" /> Eixo Metabólico Funcional
           </CardTitle>
           <CardDescription>
-            Avaliação estruturada de marcadores neurofuncionais sistêmicos.
+            Avaliação e acompanhamento estruturado das áreas funcionais centrais da saúde
+            metabólica.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -57,7 +70,9 @@ export function MetabolicAxisTab() {
             <div className="space-y-8 bg-slate-50 p-6 rounded-xl border">
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <Label className="text-sm font-semibold text-rose-700">Índice Inflamatório</Label>
+                  <Label className="text-sm font-semibold text-rose-700">
+                    Inflamação Sistêmica
+                  </Label>
                   <span className="font-mono text-sm font-medium">{currentAxis.inflamacao}%</span>
                 </div>
                 <Slider
@@ -68,8 +83,8 @@ export function MetabolicAxisTab() {
                   onValueChange={(v) => handleUpdate('inflamacao', v)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Impacto direto em neuroplasticidade e síntese de BDNF. Modulação prioritária em
-                  casos de hiperativação límbica.
+                  Impacto direto em neuroplasticidade e regulação afetiva. Modulação prioritária em
+                  casos de hiperativação límbica ou fadiga cognitiva.
                 </p>
               </div>
 
@@ -88,15 +103,15 @@ export function MetabolicAxisTab() {
                   onValueChange={(v) => handleUpdate('energia', v)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Regulação de fadiga central e metabolismo oxidativo. Fundamental para suporte
-                  cognitivo basal.
+                  Regulação de fadiga central e metabolismo oxidativo. Fundamental para o suporte
+                  das funções executivas complexas.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <Label className="text-sm font-semibold text-emerald-600">
-                    Equilíbrio da Microbiota
+                    Microbiota e Eixo Intestino-Cérebro
                   </Label>
                   <span className="font-mono text-sm font-medium">{currentAxis.microbiota}%</span>
                 </div>
@@ -108,9 +123,25 @@ export function MetabolicAxisTab() {
                   onValueChange={(v) => handleUpdate('microbiota', v)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Eixo Intestino-Cérebro atuando na modulação de precursores de GABA/Serotonina
-                  essenciais.
+                  Equilíbrio da absorção de nutrientes e modulação de precursores de
+                  neurotransmissores como GABA e Serotonina.
                 </p>
+              </div>
+
+              <div className="space-y-3 pt-6 border-t border-slate-200">
+                <Label className="text-sm font-semibold text-slate-800">
+                  Correlação com Lacunas Neurofuncionais
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Descreva como os eixos metabólicos acima se relacionam com as lacunas cognitivas
+                  ou emocionais mapeadas na avaliação do paciente.
+                </p>
+                <Textarea
+                  value={correlation}
+                  onChange={(e) => setCorrelation(e.target.value)}
+                  className="bg-white min-h-[100px] resize-none"
+                  placeholder="Ex: O índice inflamatório elevado correlaciona-se clinicamente com os relatos de fadiga atencional..."
+                />
               </div>
             </div>
           )}

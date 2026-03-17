@@ -5,6 +5,7 @@ import {
   TestTube,
   Network,
   ShieldCheck,
+  History,
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -13,6 +14,7 @@ import { ExamsTab } from '@/components/pharmacopeia/ExamsTab'
 import { InterventionsTab } from '@/components/pharmacopeia/InterventionsTab'
 import { PartnerNetworkTab } from '@/components/pharmacopeia/PartnerNetworkTab'
 import { IntegratedReportTab } from '@/components/pharmacopeia/IntegratedReportTab'
+import { AuditLogTab } from '@/components/pharmacopeia/AuditLogTab'
 
 export default function Pharmacopeia() {
   return (
@@ -22,20 +24,24 @@ export default function Pharmacopeia() {
           <FlaskConical className="w-8 h-8 text-accent" /> Gestão Metabólica
         </h1>
         <p className="text-muted-foreground mt-1">
-          Integração avançada entre correlação neuro-metabólica, validação de exames funcionais e
-          encaminhamento neutro de parceiros de saúde.
+          Coordenação de evidências clínicas, resultados laboratoriais e intervenções funcionais em
+          um ambiente neutro, rastreável e auditável.
         </p>
       </div>
 
-      <Alert variant="default" className="bg-blue-50/50 border-blue-200 text-blue-900 shadow-sm">
+      <Alert
+        variant="default"
+        className="bg-blue-50/50 border-blue-200 text-blue-900 shadow-sm mt-4"
+      >
         <ShieldCheck className="h-5 w-5 text-blue-600" />
         <AlertTitle className="font-bold text-blue-800">
-          Garantia de Neutralidade e Rastreabilidade
+          Garantia de Neutralidade e Rastreabilidade (LGPD)
         </AlertTitle>
-        <AlertDescription className="text-sm">
+        <AlertDescription className="text-sm mt-1">
           Este módulo promove uma ponte segura entre a validação metabólica e a execução
-          terapêutica. A escolha da entidade parceira (laboratório ou farmácia) permanece
-          exclusivamente do paciente, garantindo compliance integral com o fluxo clínico.
+          terapêutica. A escolha da entidade parceira (laboratório ou farmácia de manipulação)
+          permanece exclusivamente de livre arbítrio do paciente/profissional. Todas as decisões são
+          imutáveis e auditadas pela Trust Layer™.
         </AlertDescription>
       </Alert>
 
@@ -57,13 +63,19 @@ export default function Pharmacopeia() {
             value="interventions"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
-            <BriefcaseMedical className="w-4 h-4" /> Intervenções Funcionais
+            <BriefcaseMedical className="w-4 h-4" /> Intervenções
           </TabsTrigger>
           <TabsTrigger
             value="network"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
           >
             <Network className="w-4 h-4" /> Rede Parceira
+          </TabsTrigger>
+          <TabsTrigger
+            value="audit"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+          >
+            <History className="w-4 h-4" /> Log de Auditoria
           </TabsTrigger>
           <TabsTrigger
             value="report"
@@ -84,6 +96,9 @@ export default function Pharmacopeia() {
         </TabsContent>
         <TabsContent value="network" className="m-0 focus-visible:outline-none">
           <PartnerNetworkTab />
+        </TabsContent>
+        <TabsContent value="audit" className="m-0 focus-visible:outline-none">
+          <AuditLogTab />
         </TabsContent>
         <TabsContent value="report" className="m-0 focus-visible:outline-none">
           <IntegratedReportTab />
