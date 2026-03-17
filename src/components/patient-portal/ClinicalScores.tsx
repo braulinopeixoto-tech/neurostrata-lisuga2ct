@@ -3,7 +3,6 @@ import { Activity, ShieldAlert, HeartPulse, BrainCircuit, TrendingUp } from 'luc
 import { cn } from '@/lib/utils'
 
 export function ClinicalScores({ data }: { data: Record<string, string> }) {
-  // Simple mock calculation based on flattened data
   const values = Object.values(data)
   let totalScore = 0
   values.forEach((v) => {
@@ -27,7 +26,7 @@ export function ClinicalScores({ data }: { data: Record<string, string> }) {
         title="VitalScore"
         value={vitalScore}
         suffix="/ 100"
-        desc="Funcionamento Mental Global"
+        desc="Índice global de funcionamento mental"
         icon={HeartPulse}
         color="text-emerald-500"
         bg="bg-emerald-50"
@@ -36,7 +35,7 @@ export function ClinicalScores({ data }: { data: Record<string, string> }) {
         title="ReserveScore"
         value={reserveScore}
         suffix="/ 100"
-        desc="Capacidade de Adaptação"
+        desc="Capacidade de adaptação ao estresse"
         icon={BrainCircuit}
         color="text-blue-500"
         bg="bg-blue-50"
@@ -45,7 +44,7 @@ export function ClinicalScores({ data }: { data: Record<string, string> }) {
         title="CrisisRadar"
         value={crisisRadar}
         suffix="%"
-        desc="Risco de Desorganização"
+        desc="Risco de desorganização aguda"
         icon={ShieldAlert}
         color={crisisRadar > 40 ? 'text-red-500' : 'text-amber-500'}
         bg={crisisRadar > 40 ? 'bg-red-50' : 'bg-amber-50'}
@@ -54,7 +53,7 @@ export function ClinicalScores({ data }: { data: Record<string, string> }) {
         title="NeuroTrajectory"
         value={trajectory}
         suffix=""
-        desc="Tendência Evolutiva"
+        desc="Tendência evolutiva atual"
         icon={TrendingUp}
         color="text-primary"
         bg="bg-primary/10"

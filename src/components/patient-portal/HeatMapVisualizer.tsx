@@ -9,9 +9,8 @@ export function HeatMapVisualizer({ data }: { data: Record<string, string> }) {
   const getColorClass = (val: string) => {
     switch (val) {
       case 'Plenamente preservado':
-        return 'bg-emerald-500 border-emerald-600'
       case 'Preservado':
-        return 'bg-emerald-400 border-emerald-500'
+        return 'bg-emerald-500 border-emerald-600'
       case 'Regular':
         return 'bg-yellow-400 border-yellow-500'
       case 'Disfuncional':
@@ -58,16 +57,16 @@ export function HeatMapVisualizer({ data }: { data: Record<string, string> }) {
 
         <div className="flex items-center gap-4 mt-6 text-xs text-muted-foreground flex-wrap">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-emerald-500 rounded-sm" /> Preservado
+            <div className="w-3 h-3 bg-emerald-500 rounded-sm" /> Verde (Estável)
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-yellow-400 rounded-sm" /> Regular
+            <div className="w-3 h-3 bg-yellow-400 rounded-sm" /> Amarelo (Alteração Leve)
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-orange-500 rounded-sm" /> Disfuncional
+            <div className="w-3 h-3 bg-orange-500 rounded-sm" /> Laranja (Alteração Moderada)
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-red-500 rounded-sm" /> Disfuncional grave
+            <div className="w-3 h-3 bg-red-500 rounded-sm" /> Vermelho (Risco Crítico)
           </div>
         </div>
       </CardContent>

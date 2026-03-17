@@ -37,7 +37,7 @@ export function PatientBigFiveForm({
       return
     }
 
-    submitJourneyStage(patientId, 'big_five', scores)
+    submitJourneyStage(patientId, 'level2_bigfive', scores)
     toast({
       title: 'Etapa Concluída',
       description: 'Sua autoavaliação de Personalidade foi enviada para validação clínica.',
@@ -49,7 +49,7 @@ export function PatientBigFiveForm({
   return (
     <Card className="shadow-sm border-t-4 border-t-primary animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-xl">Perfil de Personalidade (Big Five)</CardTitle>
+        <CardTitle className="text-xl">Nível 02: Perfil de Personalidade (Big Five)</CardTitle>
         <CardDescription>
           Avalie a intensidade de cada traço de personalidade no seu comportamento atual.
         </CardDescription>

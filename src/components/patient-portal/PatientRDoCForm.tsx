@@ -37,7 +37,7 @@ export function PatientRDoCForm({
       return
     }
 
-    submitJourneyStage(patientId, 'rdoc', scores)
+    submitJourneyStage(patientId, 'level2_rdoc', scores)
     toast({
       title: 'Etapa Concluída',
       description: 'Sua autoavaliação RDoC foi enviada para validação clínica.',
@@ -49,7 +49,7 @@ export function PatientRDoCForm({
   return (
     <Card className="shadow-sm border-t-4 border-t-primary animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-xl">Domínios RDoC</CardTitle>
+        <CardTitle className="text-xl">Nível 02: Domínios RDoC</CardTitle>
         <CardDescription>
           Avalie como você percebe o funcionamento dos seus sistemas biológicos e comportamentais.
         </CardDescription>

@@ -4,22 +4,47 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import useAppStore, { CheckupStageId } from '@/stores/useAppStore'
+import { PatientDASS21Form } from './PatientDASS21Form'
 import { PatientFunctionsForm } from './PatientFunctionsForm'
 import { PatientRDoCForm } from './PatientRDoCForm'
 import { PatientBigFiveForm } from './PatientBigFiveForm'
+import { PatientPerformanceForm } from './PatientPerformanceForm'
 import { PatientOnboardingFlow } from './PatientOnboardingFlow'
 import { HeatMapVisualizer } from './HeatMapVisualizer'
 import { ClinicalScores } from './ClinicalScores'
 import { PeriodicCheckinForm } from './PeriodicCheckinForm'
 
-const STAGES: { id: CheckupStageId; title: string; subtitle: string }[] = [
+const STAGES: { id: CheckupStageId; title: string; subtitle: string; level: number }[] = [
   {
-    id: 'psychic_functions',
-    title: '18 Funções Psíquicas',
-    subtitle: 'Mapeamento Funcional em 4 eixos',
+    id: 'level1_dass21',
+    title: 'Rastreio Inicial (DASS-21)',
+    subtitle: 'Nível 01: Linha de Base',
+    level: 1,
   },
-  { id: 'rdoc', title: 'Domínios RDoC', subtitle: 'Matriz Dimensional de Sistemas' },
-  { id: 'big_five', title: 'Perfil de Personalidade', subtitle: 'Escala Big Five' },
+  {
+    id: 'level2_functions',
+    title: '18 Funções Psíquicas',
+    subtitle: 'Nível 02: Perfil Neurofuncional',
+    level: 2,
+  },
+  {
+    id: 'level2_rdoc',
+    title: 'Domínios RDoC',
+    subtitle: 'Nível 02: Matriz Dimensional',
+    level: 2,
+  },
+  {
+    id: 'level2_bigfive',
+    title: 'Perfil de Personalidade',
+    subtitle: 'Nível 02: Big Five',
+    level: 2,
+  },
+  {
+    id: 'level3_performance',
+    title: 'Performance Mental (CFP)',
+    subtitle: 'Nível 03: Bateria Validada',
+    level: 3,
+  },
 ]
 
 export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
@@ -40,11 +65,10 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
   const professional = patient?.linkedProfessionals?.[0]
 
   if (isComplete && journey) {
-    // Flatten data for the HeatMap and Scores
     const allData = {
-      ...journey.data?.psychic_functions,
-      ...journey.data?.rdoc,
-      ...journey.data?.big_five,
+      ...journey.data?.level2_functions,
+      ...journey.data?.level2_rdoc,
+      ...journey.data?.level2_bigfive,
     }
 
     return (
@@ -102,10 +126,13 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
       )
     }
 
-    if (activeStage?.id === 'psychic_functions')
+    if (activeStage?.id === 'level1_dass21') return <PatientDASS21Form patientId={patientId} />
+    if (activeStage?.id === 'level2_functions')
       return <PatientFunctionsForm patientId={patientId} />
-    if (activeStage?.id === 'rdoc') return <PatientRDoCForm patientId={patientId} />
-    if (activeStage?.id === 'big_five') return <PatientBigFiveForm patientId={patientId} />
+    if (activeStage?.id === 'level2_rdoc') return <PatientRDoCForm patientId={patientId} />
+    if (activeStage?.id === 'level2_bigfive') return <PatientBigFiveForm patientId={patientId} />
+    if (activeStage?.id === 'level3_performance')
+      return <PatientPerformanceForm patientId={patientId} />
 
     return null
   }

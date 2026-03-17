@@ -39,7 +39,7 @@ export function PatientFunctionsForm({
       return
     }
 
-    submitJourneyStage(patientId, 'psychic_functions', scores)
+    submitJourneyStage(patientId, 'level2_functions', scores)
     toast({
       title: 'Etapa Concluída',
       description: 'Sua autoavaliação foi enviada para validação clínica.',
@@ -51,7 +51,7 @@ export function PatientFunctionsForm({
   return (
     <Card className="shadow-sm border-t-4 border-t-primary animate-fade-in">
       <CardHeader>
-        <CardTitle className="text-xl">18 Funções Psíquicas</CardTitle>
+        <CardTitle className="text-xl">Nível 02: 18 Funções Psíquicas</CardTitle>
         <CardDescription>
           Faça uma autoavaliação do seu funcionamento nas seguintes áreas.
         </CardDescription>

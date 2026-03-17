@@ -1,12 +1,19 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { MOCK_PATIENTS, MOCK_PROFESSIONALS, MOCK_FORMULAS } from '@/lib/mock-data'
 
-export type CheckupStageId = 'psychic_functions' | 'rdoc' | 'big_five'
+export type CheckupStageId =
+  | 'level1_dass21'
+  | 'level2_functions'
+  | 'level2_rdoc'
+  | 'level2_bigfive'
+  | 'level3_performance'
+
 export type CheckupStageStatus = 'locked' | 'available' | 'pending_validation' | 'validated'
 
 export interface CheckupJourneyState {
   stages: Record<CheckupStageId, CheckupStageStatus>
   validatedBy: Record<CheckupStageId, string | null>
+  notes?: Record<CheckupStageId, string | null>
   data?: Record<string, any>
 }
 
@@ -129,6 +136,7 @@ interface AppState {
     patientId: string,
     stageId: CheckupStageId,
     professionalName: string,
+    notes?: string,
   ) => void
   patientOnboarded: Record<string, boolean>
   setPatientOnboarded: (patientId: string, status: boolean) => void
@@ -155,8 +163,6 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     registrationId: 'CRM 12345-SP',
   })
 
-  // Start P001 without linked professional to show onboarding flow if needed,
-  // but MOCK_PATIENTS has it. Let's just create a specific scenario where P002 has no prof.
   const [patients, setPatients] = useState<Patient[]>(
     MOCK_PATIENTS.map((p) => ({
       ...p,
@@ -206,35 +212,74 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   })
 
   const defaultJourney: CheckupJourneyState = {
-    stages: { psychic_functions: 'available', rdoc: 'locked', big_five: 'locked' },
-    validatedBy: { psychic_functions: null, rdoc: null, big_five: null },
+    stages: {
+      level1_dass21: 'available',
+      level2_functions: 'locked',
+      level2_rdoc: 'locked',
+      level2_bigfive: 'locked',
+      level3_performance: 'locked',
+    },
+    validatedBy: {
+      level1_dass21: null,
+      level2_functions: null,
+      level2_rdoc: null,
+      level2_bigfive: null,
+      level3_performance: null,
+    },
+    notes: {
+      level1_dass21: null,
+      level2_functions: null,
+      level2_rdoc: null,
+      level2_bigfive: null,
+      level3_performance: null,
+    },
     data: {},
   }
 
   const [patientJourneys, setPatientJourneys] = useState<Record<string, CheckupJourneyState>>({
     P001: {
-      stages: { psychic_functions: 'validated', rdoc: 'validated', big_five: 'validated' },
+      stages: {
+        level1_dass21: 'validated',
+        level2_functions: 'validated',
+        level2_rdoc: 'validated',
+        level2_bigfive: 'validated',
+        level3_performance: 'validated',
+      },
       validatedBy: {
-        psychic_functions: 'Dr. Renato Alves',
-        rdoc: 'Dr. Renato Alves',
-        big_five: 'Dr. Renato Alves',
+        level1_dass21: 'Dr. Renato Alves',
+        level2_functions: 'Dr. Renato Alves',
+        level2_rdoc: 'Dr. Renato Alves',
+        level2_bigfive: 'Dr. Renato Alves',
+        level3_performance: 'Dr. Renato Alves',
+      },
+      notes: {
+        level1_dass21: 'Rastreio congruente com relato subjetivo.',
+        level2_functions: null,
+        level2_rdoc: null,
+        level2_bigfive: null,
+        level3_performance: 'Bateria CFP aponta leve redução atencional.',
       },
       data: {
-        psychic_functions: {
+        level1_dass21: { 'Achei difícil me acalmar': '1' },
+        level2_functions: {
           'Atenção Sustentada': 'Regular',
           'Atenção Alternada': 'Disfuncional',
           'Memória de Trabalho': 'Regular',
           'Controle de Impulsos': 'Preservado',
           'Reatividade ao Estresse': 'Disfuncional grave',
         },
-        rdoc: {
+        level2_rdoc: {
           nv: 'Disfuncional',
           pv: 'Regular',
           cs: 'Preservado',
         },
-        big_five: {
+        level2_bigfive: {
           neuroticism: 'Disfuncional grave',
           conscientiousness: 'Regular',
+        },
+        level3_performance: {
+          'Teste de Atenção Concentrada': 'Concluído',
+          'Memória Operacional': 'Concluído',
         },
       },
     },
@@ -342,6 +387,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     patientId: string,
     stageId: CheckupStageId,
     professionalName: string,
+    notes?: string,
   ) => {
     const stageData = patientJourneys[patientId]?.data?.[stageId]
 
@@ -349,8 +395,15 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       const journey = prev[patientId] || defaultJourney
       const newStages = { ...journey.stages, [stageId]: 'validated' as CheckupStageStatus }
       const newVal = { ...journey.validatedBy, [stageId]: professionalName }
+      const newNotes = { ...(journey.notes || {}), [stageId]: notes || null }
 
-      const order: CheckupStageId[] = ['psychic_functions', 'rdoc', 'big_five']
+      const order: CheckupStageId[] = [
+        'level1_dass21',
+        'level2_functions',
+        'level2_rdoc',
+        'level2_bigfive',
+        'level3_performance',
+      ]
       const currentIndex = order.indexOf(stageId)
       if (currentIndex !== -1 && currentIndex < order.length - 1) {
         const nextStage = order[currentIndex + 1]
@@ -359,10 +412,13 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      return { ...prev, [patientId]: { ...journey, stages: newStages, validatedBy: newVal } }
+      return {
+        ...prev,
+        [patientId]: { ...journey, stages: newStages, validatedBy: newVal, notes: newNotes },
+      }
     })
 
-    if (stageData && stageId === 'psychic_functions') {
+    if (stageData && stageId === 'level2_functions') {
       const getVal = (v: string) => {
         if (v === 'Plenamente preservado') return 100
         if (v === 'Preservado') return 80
@@ -417,7 +473,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       date: new Date().toISOString(),
       action: `Validação Profissional do Check-up: ${stageId}`,
       user: professionalName,
-      details: 'A etapa foi clinicamente avaliada e integrada ao Biograma.',
+      details: notes ? `Conduta/Anotações: ${notes}` : 'Etapa clinicamente avaliada.',
     })
   }
 

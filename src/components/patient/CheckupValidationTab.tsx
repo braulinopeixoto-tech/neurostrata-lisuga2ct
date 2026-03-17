@@ -1,23 +1,33 @@
+import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ShieldCheck, CheckCircle2, Clock, Lock, Activity } from 'lucide-react'
-import useAppStore from '@/stores/useAppStore'
+import { ShieldCheck, CheckCircle2, Clock, Lock, Activity, FileEdit } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
+import useAppStore, { CheckupStageId } from '@/stores/useAppStore'
 import { toast } from '@/components/ui/use-toast'
 import { AlertsDashboard } from './AlertsDashboard'
 
 export function CheckupValidationTab({ patient }: { patient: any }) {
   const { patientJourneys, validateJourneyStage, currentUser } = useAppStore()
   const journey = patientJourneys[patient.id]
+  const [validatingStageId, setValidatingStageId] = useState<string | null>(null)
+  const [validationNotes, setValidationNotes] = useState('')
 
   const STAGES = [
-    {
-      id: 'psychic_functions',
-      title: '18 Funções Psíquicas',
-      subtitle: 'Autoavaliação do paciente',
-    },
-    { id: 'rdoc', title: 'Domínios RDoC', subtitle: 'Autoavaliação do paciente' },
-    { id: 'big_five', title: 'Perfil de Personalidade', subtitle: 'Autoavaliação do paciente' },
+    { id: 'level1_dass21', title: 'Rastreio Inicial (DASS-21)', subtitle: 'Nível 01' },
+    { id: 'level2_functions', title: '18 Funções Psíquicas', subtitle: 'Nível 02' },
+    { id: 'level2_rdoc', title: 'Domínios RDoC', subtitle: 'Nível 02' },
+    { id: 'level2_bigfive', title: 'Perfil de Personalidade', subtitle: 'Nível 02' },
+    { id: 'level3_performance', title: 'Performance Mental (CFP)', subtitle: 'Nível 03' },
   ]
 
   if (!journey) {
@@ -32,14 +42,23 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
     )
   }
 
-  const handleValidate = (stageId: any) => {
-    validateJourneyStage(patient.id, stageId, currentUser.fullName)
-    toast({
-      title: 'Etapa Validada com Sucesso',
-      description:
-        'A próxima etapa foi liberada para o paciente e os dados foram consolidados no Biograma.',
-      action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
-    })
+  const handleConfirmValidation = () => {
+    if (validatingStageId) {
+      validateJourneyStage(
+        patient.id,
+        validatingStageId as CheckupStageId,
+        currentUser.fullName,
+        validationNotes,
+      )
+      toast({
+        title: 'Etapa Validada com Sucesso',
+        description:
+          'A próxima etapa foi liberada para o paciente e a auditoria foi registrada com sua conduta.',
+        action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
+      })
+      setValidatingStageId(null)
+      setValidationNotes('')
+    }
   }
 
   return (
@@ -50,8 +69,8 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
             <ShieldCheck className="w-5 h-5 text-primary" /> Supervisão Profissional (Check-up)
           </h2>
           <p className="text-sm text-muted-foreground">
-            Acompanhe o progresso longitudinal do paciente, valide autoavaliações e gerencie
-            alertas.
+            Acompanhe o progresso do paciente por níveis, valide resultados e registre condutas para
+            desbloquear a Arquitetura Mental Mapeada.
           </p>
         </div>
       </div>
@@ -62,6 +81,7 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
           const status = journey.stages[stage.id as keyof typeof journey.stages]
           const data = journey.data?.[stage.id as keyof typeof journey.data]
           const validator = journey.validatedBy?.[stage.id as keyof typeof journey.validatedBy]
+          const notes = journey.notes?.[stage.id as keyof typeof journey.notes]
 
           return (
             <Card
@@ -107,7 +127,7 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
                     {data && (
                       <div className="mt-4 ml-11 bg-muted/30 p-4 rounded-lg border text-sm">
                         <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Activity className="w-4 h-4 text-primary" /> Respostas do Paciente:
+                          <Activity className="w-4 h-4 text-primary" /> Respostas / Resultados:
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {Object.entries(data)
@@ -138,20 +158,29 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
                     )}
 
                     {status === 'validated' && validator && (
-                      <p className="text-sm text-emerald-600 mt-4 ml-11 flex items-center gap-1.5 font-medium bg-emerald-50 w-max px-3 py-1.5 rounded-full border border-emerald-100">
-                        <ShieldCheck className="w-4 h-4" /> Validado por {validator}
-                      </p>
+                      <div className="mt-4 ml-11 flex flex-col gap-2">
+                        <span className="text-sm text-emerald-600 flex items-center gap-1.5 font-medium bg-emerald-50 w-max px-3 py-1.5 rounded-full border border-emerald-100">
+                          <ShieldCheck className="w-4 h-4" /> Validado por {validator}
+                        </span>
+                        {notes && (
+                          <div className="bg-slate-50 border border-slate-200 p-3 rounded-md text-sm text-slate-700 italic border-l-4 border-l-slate-400">
+                            <strong>Anotações Clínicas:</strong> {notes}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
 
                   {status === 'pending_validation' && (
                     <div className="flex flex-col justify-center border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6 shrink-0 md:min-w-[280px]">
-                      <Button onClick={() => handleValidate(stage.id)} className="w-full h-12">
-                        <CheckCircle2 className="w-4 h-4 mr-2" /> Validar Etapa e Liberar Próxima
+                      <Button
+                        onClick={() => setValidatingStageId(stage.id)}
+                        className="w-full h-12"
+                      >
+                        <FileEdit className="w-4 h-4 mr-2" /> Revisar e Validar
                       </Button>
                       <p className="text-xs text-muted-foreground mt-3 text-center">
-                        Ao validar, os dados serão consolidados no Biograma Longitudinal do
-                        paciente.
+                        Ao validar, a próxima etapa é desbloqueada para o paciente.
                       </p>
                     </div>
                   )}
@@ -161,6 +190,40 @@ export function CheckupValidationTab({ patient }: { patient: any }) {
           )
         })}
       </div>
+
+      <Dialog
+        open={!!validatingStageId}
+        onOpenChange={(open) => !open && setValidatingStageId(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Validar Etapa do Check-up</DialogTitle>
+            <DialogDescription>
+              Revise os dados enviados pelo paciente e registre sua conduta clínica para liberar a
+              próxima fase da avaliação estratificada.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Conduta / Anotações Clínicas</label>
+              <Textarea
+                placeholder="Ex: Resultados congruentes com o relato subjetivo. Sem indicativos de risco agudo..."
+                value={validationNotes}
+                onChange={(e) => setValidationNotes(e.target.value)}
+                className="min-h-[120px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setValidatingStageId(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmValidation}>
+              <CheckCircle2 className="w-4 h-4 mr-2" /> Validar e Liberar Próxima
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertsDashboard patientId={patient.id} />
     </div>
