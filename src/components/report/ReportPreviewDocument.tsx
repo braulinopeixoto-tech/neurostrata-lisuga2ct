@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
-import { Activity, Brain, Network, ShieldCheck } from 'lucide-react'
+import { Activity, Brain, Network, ShieldCheck, QrCode } from 'lucide-react'
 import useReportStore from '@/stores/useReportStore'
 import useAppStore from '@/stores/useAppStore'
 
@@ -18,8 +18,8 @@ export function ReportPreviewDocument() {
           Laudo de Avaliação Neurofuncional Multidimensional
         </p>
         {data.isSigned && (
-          <div className="absolute top-0 right-0 hidden sm:flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-bold">
-            <ShieldCheck className="w-4 h-4" /> Selo ICP-Brasil
+          <div className="absolute top-0 right-0 hidden sm:flex items-center gap-2 text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-300 text-xs font-bold shadow-sm">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" /> Trust Layer™ Verified
           </div>
         )}
       </div>
@@ -129,24 +129,47 @@ export function ReportPreviewDocument() {
         </div>
       </section>
 
-      {/* SIGNATURE AREA */}
-      <section className="flex flex-col items-center justify-center pt-16 border-t border-slate-200 mt-12">
+      {/* SIGNATURE & AUTHENTICITY AREA */}
+      <section className="flex flex-col items-center justify-center pt-16 border-t border-slate-200 mt-12 relative">
         <div className="w-64 border-b border-slate-800 mb-4"></div>
         <p className="font-bold text-slate-900 text-base">{currentUser.fullName}</p>
         <p className="text-xs text-slate-500 mt-1">{currentUser.registrationId}</p>
 
         {data.isSigned && data.signature && (
-          <div className="mt-6 flex flex-col items-center text-center bg-slate-50 border p-3 rounded-lg w-full max-w-sm">
-            <ShieldCheck className="w-5 h-5 text-emerald-500 mb-1" />
-            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
-              Documento Assinado Digitalmente
-            </span>
-            <span className="text-[10px] text-slate-500 mt-1 font-mono break-all px-2">
-              Hash: {data.signature.hash}
-            </span>
-            <span className="text-[10px] text-slate-400 mt-1">
-              {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
-            </span>
+          <div className="mt-12 flex flex-col md:flex-row items-center justify-between w-full bg-slate-50 border border-slate-200 p-6 rounded-xl gap-6">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="bg-emerald-100 p-3 rounded-full text-emerald-600 shrink-0">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-emerald-800 uppercase tracking-widest flex items-center gap-1.5">
+                  Autenticidade Criptográfica (Trust Layer™)
+                </span>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  Este documento foi assinado digitalmente e imutavelmente registrado na
+                  infraestrutura NeuroStrata. Qualquer alteração invalida o selo abaixo.
+                </p>
+                <div className="mt-2 bg-white px-2 py-1 border rounded text-[10px] font-mono text-slate-600 break-all w-full max-w-sm">
+                  {data.signature.hash}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-1">
+                  Emitido em: {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center shrink-0 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
+              <div className="bg-white p-2 border border-slate-200 rounded-lg shadow-sm">
+                {/* Placeholder for QR Code */}
+                <QrCode className="w-16 h-16 text-slate-800" strokeWidth={1.5} />
+              </div>
+              <span className="text-[9px] uppercase font-bold text-slate-500 mt-2 tracking-widest">
+                Escaneie para Validar
+              </span>
+              <a href="#" className="text-[10px] text-blue-600 hover:underline mt-0.5">
+                neurostrata.app/verify
+              </a>
+            </div>
           </div>
         )}
       </section>

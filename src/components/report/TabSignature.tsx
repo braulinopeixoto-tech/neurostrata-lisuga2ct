@@ -20,13 +20,13 @@ export function TabSignature() {
           hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
           timestamp: new Date().toISOString(),
           ip: '187.45.22.11',
-          standard: 'ICP-Brasil Nível A3',
+          standard: 'NeuroStrata Trust Layer™ / ICP-Brasil A3',
         },
       })
       setSigning(false)
       toast({
         title: 'Documento Assinado',
-        description: 'Laudo selado criptograficamente com sucesso.',
+        description: 'Laudo selado criptograficamente com sucesso na Trust Layer™.',
         action: <CheckCircle2 className="w-4 h-4 text-emerald-500" />,
       })
     }, 2000)
@@ -48,7 +48,7 @@ export function TabSignature() {
           </CardTitle>
           <CardDescription>
             Finalize e sele o laudo utilizando seu certificado digital para conferir validade
-            clínica e jurídica irrefutável.
+            clínica e jurídica irrefutável, vinculando-o ao Biograma validado.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -57,7 +57,7 @@ export function TabSignature() {
               <Fingerprint className="w-16 h-16 text-slate-300 mb-4" />
               <p className="text-slate-600 mb-6 text-center max-w-sm">
                 Ao assinar este documento, ele será bloqueado para edições e um Hash criptográfico
-                será gerado, integrando-o ao Biograma EHR do paciente.
+                será gerado e associado à Validação Diagnóstica (Biograma) do paciente.
               </p>
               <Button
                 onClick={handleSign}
@@ -66,7 +66,7 @@ export function TabSignature() {
                 className="bg-slate-800 hover:bg-slate-700 text-white w-full sm:w-auto"
               >
                 {signing
-                  ? 'Conectando ao HSM...'
+                  ? 'Processando Criptografia...'
                   : `Assinar Digitalmente como ${currentUser.fullName}`}
               </Button>
             </div>

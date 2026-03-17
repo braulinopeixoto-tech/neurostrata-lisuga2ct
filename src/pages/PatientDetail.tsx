@@ -14,6 +14,8 @@ import { LegalConsultationTab } from '@/components/patient/LegalConsultationTab'
 import { PatientFeedbackTab } from '@/components/patient/PatientFeedbackTab'
 import { CheckupValidationTab } from '@/components/patient/CheckupValidationTab'
 import { PatientNutritionTab } from '@/components/patient/PatientNutritionTab'
+import { BiogramaMethodologyTab } from '@/components/patient/BiogramaMethodologyTab'
+import { DiagnosisValidationTab } from '@/components/patient/DiagnosisValidationTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -45,8 +47,20 @@ export default function PatientDetail() {
         </Button>
       </div>
 
-      <Tabs defaultValue="anamnesis" className="w-full">
+      <Tabs defaultValue="biograma" className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap shrink-0 hide-scrollbar">
+          <TabsTrigger
+            value="biograma"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-purple-700 data-[state=active]:text-purple-800 font-bold"
+          >
+            Metodologia Biograma
+          </TabsTrigger>
+          <TabsTrigger
+            value="validation"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-rose-700 data-[state=active]:text-rose-800 font-bold"
+          >
+            Validação Diagnóstica
+          </TabsTrigger>
           <TabsTrigger
             value="anamnesis"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
@@ -55,7 +69,7 @@ export default function PatientDetail() {
           </TabsTrigger>
           <TabsTrigger
             value="checkup"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-emerald-700 data-[state=active]:text-emerald-800 font-bold"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
             Check-up Validado
           </TabsTrigger>
@@ -64,6 +78,12 @@ export default function PatientDetail() {
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
             Digitalização
+          </TabsTrigger>
+          <TabsTrigger
+            value="audit"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-slate-700 data-[state=active]:text-slate-900 font-bold"
+          >
+            Auditoria Trust Layer™
           </TabsTrigger>
           <TabsTrigger
             value="compliance"
@@ -90,12 +110,6 @@ export default function PatientDetail() {
             Laudos
           </TabsTrigger>
           <TabsTrigger
-            value="audit"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
-          >
-            Auditoria EHR
-          </TabsTrigger>
-          <TabsTrigger
             value="protocols"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap"
           >
@@ -115,6 +129,12 @@ export default function PatientDetail() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="biograma" className="m-0">
+          <BiogramaMethodologyTab patient={patient} />
+        </TabsContent>
+        <TabsContent value="validation" className="m-0">
+          <DiagnosisValidationTab patient={patient} />
+        </TabsContent>
         <TabsContent value="anamnesis" className="m-0">
           <AnamnesisTab patient={patient} />
         </TabsContent>
