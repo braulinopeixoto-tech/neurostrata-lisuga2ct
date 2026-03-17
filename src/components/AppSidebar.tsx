@@ -18,6 +18,7 @@ import {
   Brain,
   Apple,
   MessageSquare,
+  GraduationCap,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -76,6 +77,7 @@ export function AppSidebar() {
     { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
     { name: 'Área Nutricional', path: '/nutrition', icon: Apple },
     { name: 'Área Fono', path: '/speech-therapy', icon: MessageSquare },
+    { name: 'Área Psicopedagogia', path: '/psychopedagogy', icon: GraduationCap },
     { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
     { name: 'Pacientes', path: '/patients', icon: Users },
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },

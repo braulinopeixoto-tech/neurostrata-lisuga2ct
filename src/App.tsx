@@ -15,6 +15,7 @@ import MedicalArea from '@/pages/MedicalArea'
 import NeuropsychologyArea from '@/pages/NeuropsychologyArea'
 import NutritionArea from '@/pages/NutritionArea'
 import SpeechTherapyArea from '@/pages/SpeechTherapyArea'
+import PsychopedagogyArea from '@/pages/PsychopedagogyArea'
 import Patients from '@/pages/Patients'
 import PatientDetail from '@/pages/PatientDetail'
 import Assessment from '@/pages/assessment/Assessment'
@@ -49,6 +50,7 @@ const App = () => (
                   <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
                   <Route path="/nutrition" element={<NutritionArea />} />
                   <Route path="/speech-therapy" element={<SpeechTherapyArea />} />
+                  <Route path="/psychopedagogy" element={<PsychopedagogyArea />} />
                   <Route path="/patients" element={<Patients />} />
                   <Route path="/patients/:id" element={<PatientDetail />} />
                   <Route path="/professionals" element={<Professionals />} />
