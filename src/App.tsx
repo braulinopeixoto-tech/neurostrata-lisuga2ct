@@ -6,6 +6,7 @@ import Layout from '@/components/Layout'
 import NotFound from '@/pages/NotFound'
 import { AppStoreProvider } from '@/stores/useAppStore'
 import { ReportStoreProvider } from '@/stores/useReportStore'
+import { TrustStoreProvider } from '@/stores/useTrustStore'
 
 import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
@@ -25,39 +26,43 @@ import DefensorPortal from '@/pages/DefensorPortal'
 import ReportCenter from '@/pages/ReportCenter'
 import PerformanceTimeline from '@/pages/PerformanceTimeline'
 import PatientPortal from '@/pages/PatientPortal'
+import VerifyDocument from '@/pages/VerifyDocument'
 
 const App = () => (
   <AppStoreProvider>
     <ReportStoreProvider>
-      <BrowserRouter>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/medical" element={<MedicalArea />} />
-              <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
-              <Route path="/patients" element={<Patients />} />
-              <Route path="/patients/:id" element={<PatientDetail />} />
-              <Route path="/professionals" element={<Professionals />} />
-              <Route path="/assessment" element={<Assessment />} />
-              <Route path="/pharmacopeia" element={<Pharmacopeia />} />
-              <Route path="/neuronavigation" element={<Neuronavigation />} />
-              <Route path="/analysis/:id" element={<Analysis />} />
-              <Route path="/report/:id" element={<Report />} />
-              <Route path="/protocols" element={<Protocols />} />
-              <Route path="/auditor-portal" element={<AuditorPortal />} />
-              <Route path="/defensor-portal" element={<DefensorPortal />} />
-              <Route path="/report-center" element={<ReportCenter />} />
-              <Route path="/performance-timeline" element={<PerformanceTimeline />} />
-              <Route path="/patient-portal" element={<PatientPortal />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TooltipProvider>
-      </BrowserRouter>
+      <TrustStoreProvider>
+        <BrowserRouter>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/verify/:id" element={<VerifyDocument />} />
+              <Route element={<Layout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/medical" element={<MedicalArea />} />
+                <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
+                <Route path="/patients" element={<Patients />} />
+                <Route path="/patients/:id" element={<PatientDetail />} />
+                <Route path="/professionals" element={<Professionals />} />
+                <Route path="/assessment" element={<Assessment />} />
+                <Route path="/pharmacopeia" element={<Pharmacopeia />} />
+                <Route path="/neuronavigation" element={<Neuronavigation />} />
+                <Route path="/analysis/:id" element={<Analysis />} />
+                <Route path="/report/:id" element={<Report />} />
+                <Route path="/protocols" element={<Protocols />} />
+                <Route path="/auditor-portal" element={<AuditorPortal />} />
+                <Route path="/defensor-portal" element={<DefensorPortal />} />
+                <Route path="/report-center" element={<ReportCenter />} />
+                <Route path="/performance-timeline" element={<PerformanceTimeline />} />
+                <Route path="/patient-portal" element={<PatientPortal />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </BrowserRouter>
+      </TrustStoreProvider>
     </ReportStoreProvider>
   </AppStoreProvider>
 )

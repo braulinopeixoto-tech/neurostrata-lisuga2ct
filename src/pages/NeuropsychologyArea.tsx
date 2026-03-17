@@ -11,6 +11,7 @@ import {
   Bot,
   FileText,
   TrendingUp,
+  Lock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -23,6 +24,7 @@ import { PredictiveIntelligenceTab } from '@/components/neuropsychology/Predicti
 import { QuickReportTab } from '@/components/neuropsychology/QuickReportTab'
 import { PsychometricLibraryTab } from '@/components/neuropsychology/PsychometricLibraryTab'
 import { MonitoringEvolutionTab } from '@/components/neuropsychology/MonitoringEvolutionTab'
+import { TrustLayerTab } from '@/components/neuropsychology/TrustLayerTab'
 
 export default function NeuropsychologyArea() {
   return (
@@ -57,6 +59,12 @@ export default function NeuropsychologyArea() {
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <BookOpen className="w-4 h-4" /> Biblioteca Psicométrica
+          </TabsTrigger>
+          <TabsTrigger
+            value="trust_layer"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-emerald-600 data-[state=active]:text-emerald-700 data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap font-semibold"
+          >
+            <Lock className="w-4 h-4" /> Trust Layer™
           </TabsTrigger>
           <TabsTrigger
             value="neuronavigation"
@@ -114,6 +122,9 @@ export default function NeuropsychologyArea() {
           </TabsContent>
           <TabsContent value="library" className="m-0 focus-visible:outline-none">
             <PsychometricLibraryTab />
+          </TabsContent>
+          <TabsContent value="trust_layer" className="m-0 focus-visible:outline-none">
+            <TrustLayerTab />
           </TabsContent>
           <TabsContent value="neuronavigation" className="m-0 focus-visible:outline-none">
             <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl border border-dashed shadow-sm text-center">
