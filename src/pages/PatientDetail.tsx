@@ -1,8 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
+import { useState } from 'react'
 import { Plus, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useAppStore from '@/stores/useAppStore'
+import { PatientDashboardTab } from '@/components/patient/PatientDashboardTab'
 import { AnamnesisTab } from '@/components/patient/AnamnesisTab'
 import { EvolutionTab } from '@/components/patient/EvolutionTab'
 import { ReportsTab } from '@/components/patient/ReportsTab'
@@ -21,6 +23,7 @@ export default function PatientDetail() {
   const { id } = useParams()
   const { patients } = useAppStore()
   const patient = patients.find((p) => p.id === id) || patients[0]
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-10">
@@ -47,8 +50,14 @@ export default function PatientDetail() {
         </Button>
       </div>
 
-      <Tabs defaultValue="biograma" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap shrink-0 hide-scrollbar">
+          <TabsTrigger
+            value="dashboard"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-blue-700 data-[state=active]:text-blue-800 font-bold"
+          >
+            Painel Geral
+          </TabsTrigger>
           <TabsTrigger
             value="biograma"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-purple-700 data-[state=active]:text-purple-800 font-bold"
@@ -129,6 +138,9 @@ export default function PatientDetail() {
           </TabsTrigger>
         </TabsList>
 
+        <TabsContent value="dashboard" className="m-0">
+          <PatientDashboardTab patient={patient} onTabChange={setActiveTab} />
+        </TabsContent>
         <TabsContent value="biograma" className="m-0">
           <BiogramaMethodologyTab patient={patient} />
         </TabsContent>
