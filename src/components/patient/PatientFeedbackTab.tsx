@@ -19,7 +19,7 @@ import { GAD7History } from '@/components/patient/GAD7History'
 import { WHO5History } from '@/components/patient/WHO5History'
 
 export function PatientFeedbackTab({ patient }: { patient: any }) {
-  const { patientFeedbacks } = useAppStore()
+  const { patientFeedbacks, patientDASS21, patientPHQ9, patientGAD7, patientWHO5 } = useAppStore()
   const feedbacks = patientFeedbacks[patient.id] || []
 
   const chartData = [...feedbacks].reverse().map((f: any) => ({
@@ -194,8 +194,7 @@ export function PatientFeedbackTab({ patient }: { patient: any }) {
 
         <TabsContent value="dass21">
           <DASS21History patientId={patient.id} />
-          {(!useAppStore.getState().patientDASS21[patient.id] ||
-            useAppStore.getState().patientDASS21[patient.id].length === 0) && (
+          {(!patientDASS21[patient.id] || patientDASS21[patient.id].length === 0) && (
             <div className="p-12 text-center text-muted-foreground border border-dashed rounded-lg bg-muted/20">
               Nenhum registro DASS-21 encontrado para este paciente.
             </div>
@@ -203,8 +202,7 @@ export function PatientFeedbackTab({ patient }: { patient: any }) {
         </TabsContent>
         <TabsContent value="phq9">
           <PHQ9History patientId={patient.id} />
-          {(!useAppStore.getState().patientPHQ9[patient.id] ||
-            useAppStore.getState().patientPHQ9[patient.id].length === 0) && (
+          {(!patientPHQ9[patient.id] || patientPHQ9[patient.id].length === 0) && (
             <div className="p-12 text-center text-muted-foreground border border-dashed rounded-lg bg-muted/20">
               Nenhum registro PHQ-9 encontrado para este paciente.
             </div>
@@ -212,8 +210,7 @@ export function PatientFeedbackTab({ patient }: { patient: any }) {
         </TabsContent>
         <TabsContent value="gad7">
           <GAD7History patientId={patient.id} />
-          {(!useAppStore.getState().patientGAD7[patient.id] ||
-            useAppStore.getState().patientGAD7[patient.id].length === 0) && (
+          {(!patientGAD7[patient.id] || patientGAD7[patient.id].length === 0) && (
             <div className="p-12 text-center text-muted-foreground border border-dashed rounded-lg bg-muted/20">
               Nenhum registro GAD-7 encontrado para este paciente.
             </div>
@@ -221,8 +218,7 @@ export function PatientFeedbackTab({ patient }: { patient: any }) {
         </TabsContent>
         <TabsContent value="who5">
           <WHO5History patientId={patient.id} />
-          {(!useAppStore.getState().patientWHO5[patient.id] ||
-            useAppStore.getState().patientWHO5[patient.id].length === 0) && (
+          {(!patientWHO5[patient.id] || patientWHO5[patient.id].length === 0) && (
             <div className="p-12 text-center text-muted-foreground border border-dashed rounded-lg bg-muted/20">
               Nenhum registro WHO-5 encontrado para este paciente.
             </div>
