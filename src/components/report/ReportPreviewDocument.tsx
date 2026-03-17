@@ -1,211 +1,155 @@
-import { ShieldCheck } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Activity, Brain, Network, ShieldCheck } from 'lucide-react'
 import useReportStore from '@/stores/useReportStore'
-import { DimensionalRadarChart } from '@/components/charts/DimensionalRadarChart'
-import { BrainMapVisualizer } from '@/components/charts/BrainMapVisualizer'
-import { Badge } from '@/components/ui/badge'
+import useAppStore from '@/stores/useAppStore'
 
 export function ReportPreviewDocument() {
   const { data } = useReportStore()
-
-  const Block = ({ num, title, content }: { num: number; title: string; content: string }) => (
-    <section className="space-y-2 break-inside-avoid">
-      <h3 className="font-bold text-sm bg-muted/50 px-3 py-1.5 rounded uppercase tracking-wide border-l-4 border-primary">
-        {num}. {title}
-      </h3>
-      <p className="text-sm px-3 leading-relaxed whitespace-pre-wrap">{content}</p>
-    </section>
-  )
+  const { currentUser } = useAppStore()
 
   return (
-    <div className="bg-white p-8 sm:p-12 rounded-xl shadow-elevation border min-h-[1000px] text-foreground animate-fade-in relative">
-      {data.isSigned && (
-        <div className="absolute top-8 right-8 rotate-12 opacity-80 pointer-events-none">
-          <div className="border-4 border-emerald-600 text-emerald-600 px-4 py-2 rounded-lg font-bold text-xl uppercase tracking-widest bg-emerald-50/50">
-            Assinado Digitalmente
+    <div className="bg-white p-8 sm:p-12 rounded-xl shadow-elevation border min-h-[800px] text-sm animate-fade-in max-w-4xl mx-auto">
+      {/* HEADER */}
+      <div className="border-b-2 border-slate-800 pb-6 mb-8 text-center relative">
+        <h2 className="text-3xl font-serif font-black text-slate-900 uppercase tracking-widest">
+          NeuroStrata Clinic
+        </h2>
+        <p className="text-slate-500 uppercase tracking-widest mt-2 font-semibold text-xs">
+          Laudo de Avaliação Neurofuncional Multidimensional
+        </p>
+        {data.isSigned && (
+          <div className="absolute top-0 right-0 hidden sm:flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-bold">
+            <ShieldCheck className="w-4 h-4" /> Selo ICP-Brasil
+          </div>
+        )}
+      </div>
+
+      {/* BLOCK 1: IDENTIFICATION */}
+      <section className="mb-10">
+        <h3 className="font-bold text-xs bg-slate-100 px-3 py-1.5 rounded uppercase tracking-widest text-slate-700 mb-4 border-l-4 border-l-slate-400">
+          I. Identificação do Paciente
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6">
+          <div className="col-span-2">
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Nome Completo</span>
+            <p className="font-medium text-base border-b border-slate-100 pb-1 mt-0.5">
+              {data.patientName || 'Não informado'}
+            </p>
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase">
+              Data de Nascimento / Idade
+            </span>
+            <p className="font-medium text-base border-b border-slate-100 pb-1 mt-0.5">
+              {data.dob || '--'} ({data.age || '--'})
+            </p>
+          </div>
+          <div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Escolaridade</span>
+            <p className="font-medium text-sm border-b border-slate-100 pb-1 mt-0.5">
+              {data.education || '--'}
+            </p>
+          </div>
+          <div className="col-span-2">
+            <span className="text-[10px] font-bold text-slate-400 uppercase">
+              Profissional Solicitante
+            </span>
+            <p className="font-medium text-sm border-b border-slate-100 pb-1 mt-0.5">
+              {data.professional || 'Demanda Espontânea'}
+            </p>
           </div>
         </div>
-      )}
+      </section>
 
-      <div className="text-center border-b pb-6 mb-8">
-        <h2 className="text-3xl font-serif font-bold text-primary uppercase tracking-widest">
-          NEUROSTRATA
-        </h2>
-        <p className="text-muted-foreground uppercase tracking-widest mt-2 font-medium flex items-center justify-center gap-2">
-          Relatório Neurofuncional Dimensional
-          {data.isSigned && (
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-              Finalizado
-            </Badge>
-          )}
-        </p>
-      </div>
+      {/* BLOCK 2: CLINICAL HISTORY */}
+      <section className="mb-10 space-y-6">
+        <h3 className="font-bold text-xs bg-slate-100 px-3 py-1.5 rounded uppercase tracking-widest text-slate-700 border-l-4 border-l-slate-400">
+          II. Histórico Clínico e Motivo
+        </h3>
+        <div>
+          <span className="text-xs font-bold text-slate-800 mb-1 block">Motivo da Avaliação</span>
+          <p className="text-sm leading-relaxed text-slate-600 bg-slate-50 p-3 rounded">
+            {data.reason || 'Nenhum motivo registrado.'}
+          </p>
+        </div>
+        <div>
+          <span className="text-xs font-bold text-slate-800 mb-1 block">
+            Histórico Pregresso e Comportamental
+          </span>
+          <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">
+            {data.history || '--'}
+          </p>
+        </div>
+      </section>
 
-      <div className="space-y-8">
-        <section className="space-y-2">
-          <h3 className="font-bold text-sm bg-muted/50 px-3 py-1.5 rounded uppercase tracking-wide border-l-4 border-primary">
-            1. Identificação
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-3 text-sm">
-            <div className="col-span-2">
-              <span className="text-muted-foreground text-xs uppercase">Paciente</span>
-              <strong className="block text-base">{data.patientName}</strong>
+      {/* BLOCK 3: NEUROFUNCTIONAL EVALUATION */}
+      <section className="mb-10 space-y-6">
+        <h3 className="font-bold text-xs bg-blue-50 px-3 py-1.5 rounded uppercase tracking-widest text-blue-800 border-l-4 border-l-blue-400">
+          III. Mapeamento Neurofuncional e Psicométrico
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-blue-700 font-bold mb-2">
+              <Activity className="w-4 h-4" /> Matriz RDoC
             </div>
-            <div>
-              <span className="text-muted-foreground text-xs uppercase">Data de Nascimento</span>
-              <strong className="block text-base">
-                {data.dob} ({data.age} anos)
-              </strong>
-            </div>
-            <div>
-              <span className="text-muted-foreground text-xs uppercase">Sexo</span>
-              <strong className="block text-base">{data.sex}</strong>
-            </div>
-            <div className="col-span-2">
-              <span className="text-muted-foreground text-xs uppercase">Escolaridade</span>
-              <strong className="block">{data.education}</strong>
-            </div>
-            <div className="col-span-2">
-              <span className="text-muted-foreground text-xs uppercase">Responsável Legal</span>
-              <strong className="block">{data.guardian}</strong>
-            </div>
-            <div className="col-span-2">
-              <span className="text-muted-foreground text-xs uppercase">Profissional</span>
-              <strong className="block">{data.professional}</strong>
-            </div>
-            <div>
-              <span className="text-muted-foreground text-xs uppercase">Instituição</span>
-              <strong className="block">{data.institution}</strong>
-            </div>
-            <div>
-              <span className="text-muted-foreground text-xs uppercase">Data de Emissão</span>
-              <strong className="block">{data.evalDate}</strong>
-            </div>
+            <p className="text-sm text-slate-600 bg-white border p-3 rounded shadow-sm min-h-[100px] whitespace-pre-wrap">
+              {data.rdoc || 'Avaliação pendente.'}
+            </p>
           </div>
-        </section>
-
-        <Block num={2} title="Motivo da Avaliação" content={data.reason} />
-        <Block num={3} title="Histórico Clínico" content={data.history} />
-        <Block num={4} title="Perfil Comportamental" content={data.behavior} />
-        <Block num={5} title="Avaliação Cognitiva" content={data.cognitive} />
-        <Block num={6} title="Análise RDoC" content={data.rdoc} />
-        <Block num={7} title="Perfil Big Five" content={data.bigFive} />
-        <Block num={8} title="18 Funções Psíquicas" content={data.psychicFunc} />
-        <Block num={9} title="Análise Neurofisiológica" content={data.neurophysio} />
-        <Block num={10} title="Integração NeuroStrata" content={data.integration} />
-        <Block num={11} title="Hipóteses Clínicas (DSM-5-TR)" content={data.hypotheses} />
-        <Block num={12} title="Plano de Intervenção" content={data.intervention} />
-
-        <section className="space-y-4 break-inside-avoid">
-          <h3 className="font-bold text-sm bg-muted/50 px-3 py-1.5 rounded uppercase tracking-wide border-l-4 border-primary">
-            13. Índices NeuroStrata
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 px-3">
-            <div className="border border-emerald-500/20 rounded-lg p-4 text-center bg-emerald-500/5">
-              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
-                Integridade
-              </div>
-              <div className="text-2xl font-bold text-emerald-600">{data.idxIntegrity}</div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-purple-700 font-bold mb-2">
+              <Network className="w-4 h-4" /> Perfil Big Five
             </div>
-            <div className="border border-amber-500/20 rounded-lg p-4 text-center bg-amber-500/5">
-              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
-                Comprometimento
-              </div>
-              <div className="text-2xl font-bold text-amber-600">{data.idxImpairment}</div>
-            </div>
-            <div className="border border-rose-500/20 rounded-lg p-4 text-center bg-rose-500/5">
-              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
-                Risco Clínico
-              </div>
-              <div className="text-2xl font-bold text-rose-600">{data.idxRisk}</div>
-            </div>
-            <div className="border border-purple-500/20 rounded-lg p-4 text-center bg-purple-500/5">
-              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">
-                Disfunção
-              </div>
-              <div className="text-2xl font-bold text-purple-600">{data.idxDysfunction}</div>
-            </div>
+            <p className="text-sm text-slate-600 bg-white border p-3 rounded shadow-sm min-h-[100px] whitespace-pre-wrap">
+              {data.bigFive || 'Avaliação pendente.'}
+            </p>
           </div>
-        </section>
+        </div>
 
-        <section className="space-y-4 break-inside-avoid">
-          <h3 className="font-bold text-sm bg-muted/50 px-3 py-1.5 rounded uppercase tracking-wide border-l-4 border-primary">
-            14. Visualizações Dimensionais
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center px-3 border rounded-xl p-4 bg-muted/5">
-            <div>
-              <h4 className="text-center text-xs font-bold text-muted-foreground uppercase mb-2">
-                Radar de Assinatura Neurofuncional
-              </h4>
-              <DimensionalRadarChart data={data.radarData} />
-            </div>
-            <div className="flex flex-col items-center">
-              <h4 className="text-center text-xs font-bold text-muted-foreground uppercase mb-2">
-                Topografia qEEG (Amostra)
-              </h4>
-              <BrainMapVisualizer variant="frontal" title="Excesso Frontal Relativo" />
-            </div>
-          </div>
-        </section>
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-slate-800 mb-1 block">
+            Análise das 18 Funções Psíquicas
+          </span>
+          <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">
+            {data.psychicFunc || '--'}
+          </p>
+        </div>
+      </section>
 
-        <Block num={15} title="Conclusão Técnica" content={data.conclusion} />
+      {/* BLOCK 4: CONCLUSION */}
+      <section className="mb-16">
+        <h3 className="font-bold text-xs bg-emerald-50 px-3 py-1.5 rounded uppercase tracking-widest text-emerald-800 border-l-4 border-l-emerald-500 mb-4">
+          IV. Conclusão Diagnóstica e Parecer
+        </h3>
+        <div className="bg-emerald-50/30 border border-emerald-100 p-5 rounded-lg">
+          <p className="text-sm leading-relaxed text-slate-800 font-medium whitespace-pre-wrap">
+            {data.conclusion || 'Conclusão não elaborada.'}
+          </p>
+        </div>
+      </section>
 
-        <section className="space-y-2 break-inside-avoid">
-          <h3 className="font-bold text-sm bg-muted/50 px-3 py-1.5 rounded uppercase tracking-wide border-l-4 border-primary">
-            16. Referências Científicas
-          </h3>
-          <ul className="text-xs text-muted-foreground px-5 list-disc list-inside space-y-1">
-            <li>
-              American Psychiatric Association. (2022). Diagnostic and Statistical Manual of Mental
-              Disorders (5th ed., text rev.).
-            </li>
-            <li>
-              Insel, T., et al. (2010). Research Domain Criteria (RDoC): Toward a new classification
-              framework. Am J Psychiatry.
-            </li>
-            <li>Costa, P. T., & McCrae, R. R. (1992). Revised NEO Personality Inventory.</li>
-            <li>Buzsáki, G. (2006). Rhythms of the Brain. Oxford University Press.</li>
-          </ul>
-        </section>
+      {/* SIGNATURE AREA */}
+      <section className="flex flex-col items-center justify-center pt-16 border-t border-slate-200 mt-12">
+        <div className="w-64 border-b border-slate-800 mb-4"></div>
+        <p className="font-bold text-slate-900 text-base">{currentUser.fullName}</p>
+        <p className="text-xs text-slate-500 mt-1">{currentUser.registrationId}</p>
 
-        <section className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-start gap-6 bg-muted/10 p-6 rounded-lg break-inside-avoid">
-          {data.isSigned && data.signature ? (
-            <div className="space-y-3 w-full max-w-sm">
-              <div className="flex items-center gap-2 text-green-700 font-bold">
-                <ShieldCheck className="w-6 h-6" />
-                <span>Assinatura Digital Verificada</span>
-              </div>
-              <div className="text-xs text-muted-foreground space-y-1.5 bg-white p-3 rounded border shadow-sm">
-                <p>
-                  <strong>Padrão:</strong> {data.signature.standard}
-                </p>
-                <p>
-                  <strong>Autenticidade:</strong>{' '}
-                  <span className="font-mono text-[10px] bg-muted px-1 py-0.5 rounded break-all">
-                    {data.signature.hash}
-                  </span>
-                </p>
-                <p>
-                  <strong>Carimbo de Tempo:</strong>{' '}
-                  {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground italic">
-              * Documento pendente de assinatura digital.
-            </div>
-          )}
-
-          <div className="border-t border-foreground w-full md:w-64 text-center pt-3 mt-4 md:mt-0 self-center">
-            <strong className="text-base text-primary block">
-              {data.signature?.name || data.professional}
-            </strong>
-            <span className="text-sm text-muted-foreground block">
-              {data.signature?.professionalId || 'Registro Profissional'}
+        {data.isSigned && data.signature && (
+          <div className="mt-6 flex flex-col items-center text-center bg-slate-50 border p-3 rounded-lg w-full max-w-sm">
+            <ShieldCheck className="w-5 h-5 text-emerald-500 mb-1" />
+            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
+              Documento Assinado Digitalmente
+            </span>
+            <span className="text-[10px] text-slate-500 mt-1 font-mono break-all px-2">
+              Hash: {data.signature.hash}
+            </span>
+            <span className="text-[10px] text-slate-400 mt-1">
+              {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
             </span>
           </div>
-        </section>
-      </div>
+        )}
+      </section>
     </div>
   )
 }

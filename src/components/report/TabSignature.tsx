@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { ShieldCheck, Lock, Fingerprint, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { ShieldCheck, Fingerprint, Lock, CheckCircle2 } from 'lucide-react'
 import useReportStore from '@/stores/useReportStore'
 import useAppStore from '@/stores/useAppStore'
 import { toast } from '@/components/ui/use-toast'
@@ -11,137 +9,92 @@ import { toast } from '@/components/ui/use-toast'
 export function TabSignature() {
   const { data, updateData } = useReportStore()
   const { currentUser } = useAppStore()
-  const [pin, setPin] = useState('')
-  const [isSigning, setIsSigning] = useState(false)
+  const [signing, setSigning] = useState(false)
 
   const handleSign = () => {
-    if (pin.length < 4) return
-    setIsSigning(true)
-
-    // Simulate cryptographic delay
+    setSigning(true)
     setTimeout(() => {
-      const generatedHash = Array.from({ length: 64 }, () =>
-        Math.floor(Math.random() * 16).toString(16),
-      ).join('')
-
       updateData({
         isSigned: true,
         signature: {
-          name: currentUser.fullName,
-          professionalId: currentUser.registrationId,
+          hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
           timestamp: new Date().toISOString(),
-          hash: generatedHash,
+          ip: '187.45.22.11',
           standard: 'ICP-Brasil Nível A3',
         },
       })
-      setIsSigning(false)
-
-      // Automated Notification System Toast
+      setSigning(false)
       toast({
-        title: 'Laudo Assinado e Publicado',
-        description: `Notificações automatizadas com acesso seguro enviadas ao paciente via Email e WhatsApp. (Dr(a). ${currentUser.fullName})`,
+        title: 'Documento Assinado',
+        description: 'Laudo selado criptograficamente com sucesso.',
+        action: <CheckCircle2 className="w-4 h-4 text-emerald-500" />,
       })
     }, 2000)
   }
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-2xl mx-auto">
-      <Card className="border-t-4 border-t-emerald-600 shadow-sm">
-        <CardHeader className="pb-4">
+    <div className="space-y-6 animate-fade-in">
+      <Card
+        className={
+          data.isSigned ? 'border-emerald-500 border-t-4' : 'border-t-4 border-t-slate-800'
+        }
+      >
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Fingerprint className="w-6 h-6 text-emerald-600" /> Governança e Assinatura Digital
+            <ShieldCheck
+              className={`w-6 h-6 ${data.isSigned ? 'text-emerald-500' : 'text-slate-800'}`}
+            />
+            Assinatura Digital Trust Layer™
           </CardTitle>
           <CardDescription>
-            Aplique sua assinatura digital (Padrão ICP-Brasil) para finalizar este laudo. Após
-            assinado, o documento ganha validade jurídica.
+            Finalize e sele o laudo utilizando seu certificado digital para conferir validade
+            clínica e jurídica irrefutável.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {data.isSigned && data.signature ? (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 space-y-4">
-              <div className="flex items-center gap-3 text-emerald-800">
-                <ShieldCheck className="w-8 h-8" />
-                <div>
-                  <h4 className="font-bold text-lg leading-tight">Documento Assinado e Selado</h4>
-                  <p className="text-sm opacity-80">
-                    A integridade do relatório está garantida criptograficamente.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-white p-4 rounded border">
-                <div>
-                  <span className="text-muted-foreground uppercase text-[10px] font-bold">
-                    Profissional
-                  </span>
-                  <p className="font-medium">{data.signature.name}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground uppercase text-[10px] font-bold">
-                    Registro
-                  </span>
-                  <p className="font-medium">{data.signature.professionalId}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground uppercase text-[10px] font-bold">
-                    Data/Hora
-                  </span>
-                  <p className="font-medium">
-                    {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground uppercase text-[10px] font-bold">
-                    Padrão
-                  </span>
-                  <p className="font-medium">{data.signature.standard}</p>
-                </div>
-                <div className="col-span-1 sm:col-span-2">
-                  <span className="text-muted-foreground uppercase text-[10px] font-bold">
-                    Hash de Integridade (SHA-256)
-                  </span>
-                  <p className="font-mono text-xs break-all bg-muted px-2 py-1 rounded mt-1">
-                    {data.signature.hash}
-                  </p>
-                </div>
-              </div>
+        <CardContent className="space-y-6">
+          {!data.isSigned ? (
+            <div className="flex flex-col items-center justify-center p-10 bg-slate-50 border border-dashed rounded-xl">
+              <Fingerprint className="w-16 h-16 text-slate-300 mb-4" />
+              <p className="text-slate-600 mb-6 text-center max-w-sm">
+                Ao assinar este documento, ele será bloqueado para edições e um Hash criptográfico
+                será gerado, integrando-o ao Biograma EHR do paciente.
+              </p>
+              <Button
+                onClick={handleSign}
+                disabled={signing}
+                size="lg"
+                className="bg-slate-800 hover:bg-slate-700 text-white w-full sm:w-auto"
+              >
+                {signing
+                  ? 'Conectando ao HSM...'
+                  : `Assinar Digitalmente como ${currentUser.fullName}`}
+              </Button>
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="bg-muted/30 p-4 rounded-lg border flex items-start gap-4">
-                <Lock className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
-                <div className="text-sm text-slate-600 leading-relaxed">
-                  Ao assinar este documento, você atesta a veracidade das informações dos 17 blocos
-                  funcionais. Este ato é irreversível na versão atual do documento, sendo necessário
-                  gerar um termo de retificação para futuras alterações.
+            <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-xl relative overflow-hidden">
+              <Lock className="w-32 h-32 absolute -right-4 -top-4 text-emerald-100 opacity-50" />
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center gap-2 text-emerald-800 font-bold text-lg">
+                  <CheckCircle2 className="w-6 h-6" /> Documento Finalizado e Selado
                 </div>
-              </div>
-
-              <div className="space-y-4 max-w-sm">
-                <div className="space-y-2">
-                  <Label htmlFor="pin">PIN do Certificado Digital (A3 / Nuvem)</Label>
-                  <Input
-                    id="pin"
-                    type="password"
-                    placeholder="••••••••"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-emerald-900/80">
+                  <div>
+                    <strong className="block text-emerald-900 mb-1">Responsável Técnico</strong>
+                    {currentUser.fullName} <br /> {currentUser.registrationId}
+                  </div>
+                  <div>
+                    <strong className="block text-emerald-900 mb-1">Carimbo de Tempo</strong>
+                    {new Date(data.signature.timestamp).toLocaleString('pt-BR')}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <strong className="block text-emerald-900 mb-1">
+                      Padrão e Hash de Integridade (SHA-256)
+                    </strong>
+                    <div className="font-mono text-xs bg-emerald-100/50 p-2 rounded border border-emerald-200 break-all">
+                      {data.signature.standard} | {data.signature.hash}
+                    </div>
+                  </div>
                 </div>
-                <Button
-                  className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  onClick={handleSign}
-                  disabled={isSigning || pin.length < 4}
-                >
-                  {isSigning ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processando Criptografia...
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="w-4 h-4 mr-2" /> Assinar Digitalmente
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
           )}

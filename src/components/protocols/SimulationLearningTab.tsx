@@ -1,210 +1,91 @@
-import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { Activity, Beaker, Send, TrendingUp, GitMerge, AlertCircle, RefreshCw } from 'lucide-react'
-import { toast } from '@/components/ui/use-toast'
+import { Network, Play, Activity } from 'lucide-react'
 
 export function SimulationLearningTab() {
-  const [learningForm, setLearningForm] = useState({
-    protocol: '',
-    qeegChange: '',
-    clinicalChange: '',
-  })
-
-  const [submitted, setSubmitted] = useState(false)
-
-  const handleSubmit = () => {
-    setSubmitted(true)
-    toast({
-      title: 'Aprendizado Algorítmico Atualizado',
-      description:
-        'Os dados de desfecho clínico e qEEG foram incorporados à base de inteligência artificial.',
-    })
-    setTimeout(() => {
-      setSubmitted(false)
-      setLearningForm({ protocol: '', qeegChange: '', clinicalChange: '' })
-    }, 3000)
-  }
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
-      <Card className="shadow-sm border-t-4 border-t-accent">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <GitMerge className="w-5 h-5 text-accent" /> Simulação de Impacto na Rede
-          </CardTitle>
-          <CardDescription>
-            Modelo dinâmico teórico de alteração de conectividade com base na prescrição atual.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center p-6 min-h-[350px] relative bg-muted/10 rounded-b-lg">
-          <div className="absolute top-4 right-4 flex items-center gap-2 text-xs bg-white border px-3 py-1.5 rounded-full text-muted-foreground shadow-sm">
-            <AlertCircle className="w-3 h-3 text-accent" /> Projeção de Fase 2
-          </div>
-
-          <div className="relative w-full max-w-[280px] aspect-square my-4">
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-              <ellipse
-                cx="50"
-                cy="55"
-                rx="42"
-                ry="48"
-                fill="hsl(var(--muted)/0.3)"
-                stroke="hsl(var(--border))"
-                strokeWidth="2"
-              />
-
-              {/* Nodes Base */}
-              <circle
-                cx="35"
-                cy="30"
-                r="5"
-                fill="hsl(var(--destructive))"
-                className="animate-pulse"
-              />
-              <circle
-                cx="65"
-                cy="30"
-                r="5"
-                fill="hsl(var(--destructive))"
-                className="animate-pulse"
-              />
-              <circle cx="50" cy="70" r="5" fill="hsl(var(--blue-500))" />
-
-              {/* Lines Before (Hyperconnected Frontal) */}
-              <path
-                d="M 35 30 Q 50 10 65 30"
-                fill="none"
-                stroke="hsl(var(--destructive))"
-                strokeWidth="2.5"
-                strokeDasharray="4"
-                className="animate-pulse"
-                opacity="0.7"
-              />
-
-              {/* Lines After (Targeted Consolidation) */}
-              <path
-                d="M 35 30 Q 20 50 50 70"
-                fill="none"
-                stroke="hsl(var(--success))"
-                strokeWidth="2"
-                className="animate-pulse-glow"
-              />
-              <path
-                d="M 65 30 Q 80 50 50 70"
-                fill="none"
-                stroke="hsl(var(--success))"
-                strokeWidth="2"
-                className="animate-pulse-glow"
-              />
-            </svg>
-          </div>
-
-          <div className="w-full mt-2 grid grid-cols-2 gap-4 text-center">
-            <div className="bg-white p-3 rounded-lg border shadow-sm">
-              <div className="text-[10px] font-bold text-destructive uppercase mb-1 tracking-wider">
-                Estado Admissional
-              </div>
-              <div className="text-sm font-medium text-foreground">Hiperconectividade Frontal</div>
-            </div>
-            <div className="bg-success/10 p-3 rounded-lg border border-success/30 shadow-sm">
-              <div className="text-[10px] font-bold text-success uppercase mb-1 tracking-wider">
-                Projeção Neurofuncional
-              </div>
-              <div className="text-sm font-medium text-foreground">Integração Fronto-Parietal</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
+      <div className="text-center py-10">
+        <div className="w-16 h-16 bg-accent/10 text-accent flex items-center justify-center rounded-2xl mx-auto mb-4">
+          <Network className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-bold text-foreground">Ambiente de Simulação Neural</h2>
+        <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+          Explore o impacto teórico de intervenções nas redes cerebrais em tempo real, utilizando a
+          base de conhecimento de neurociência de redes (Network Neuroscience).
+        </p>
+      </div>
 
       <Card className="shadow-sm border-t-4 border-t-primary">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Beaker className="w-5 h-5 text-primary" /> Sistema de Aprendizado Clínico
-          </CardTitle>
+          <CardTitle>Cenário: Hipoativação da Rede Executiva (CEN)</CardTitle>
           <CardDescription>
-            Realimente o algoritmo NSI com dados do mundo real para otimizar futuras sugestões de
-            protocolos.
+            Simulação de resposta ao protocolo de Neuromodulação Anódica F3 (tDCS).
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-5">
-          <div>
-            <label className="text-sm font-semibold text-foreground">
-              Protocolo Aplicado na Sessão
-            </label>
-            <Select
-              value={learningForm.protocol}
-              onValueChange={(v) => setLearningForm({ ...learningForm, protocol: v })}
-            >
-              <SelectTrigger className="mt-1.5">
-                <SelectValue placeholder="Selecione o protocolo testado..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="reac">REAC NPO (Fase 1)</SelectItem>
-                <SelectItem value="tacs_a">tACS Alpha 10Hz (Fase 2)</SelectItem>
-                <SelectItem value="tdcs_anodal">tDCS Anódica DLPFC (Fase 2)</SelectItem>
-                <SelectItem value="nfb">Neurofeedback SMR (Fase 3)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex-1 space-y-4 w-full">
+              <div className="bg-slate-50 p-4 rounded-xl border">
+                <h4 className="font-semibold text-sm mb-2 text-primary">Estado Pré-Intervenção</h4>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-muted-foreground w-16">DMN</span>
+                  <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-rose-500 w-[80%]"></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground w-16">CEN</span>
+                  <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-400 w-[30%]"></div>
+                  </div>
+                </div>
+              </div>
 
-          <div>
-            <label className="text-sm font-semibold flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-500" /> Alteração Objetiva (Marcador / qEEG)
-            </label>
-            <Input
-              className="mt-1.5"
-              placeholder="Ex: Redução de 30% na potência absoluta Theta em Fz"
-              value={learningForm.qeegChange}
-              onChange={(e) => setLearningForm({ ...learningForm, qeegChange: e.target.value })}
-            />
-          </div>
+              <div className="flex justify-center">
+                <Activity className="w-6 h-6 text-muted-foreground animate-pulse" />
+              </div>
 
-          <div>
-            <label className="text-sm font-semibold flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-success" /> Desfecho Clínico Observado
-            </label>
-            <Textarea
-              className="mt-1.5 resize-none"
-              placeholder="Ex: Paciente relata maior flexibilidade cognitiva e redução de episódios de ruminação ansiosa."
-              rows={4}
-              value={learningForm.clinicalChange}
-              onChange={(e) => setLearningForm({ ...learningForm, clinicalChange: e.target.value })}
-            />
-          </div>
+              <div className="bg-slate-50 p-4 rounded-xl border">
+                <h4 className="font-semibold text-sm mb-2 text-emerald-600">
+                  Projeção Pós-Intervenção (Efeito Alvo)
+                </h4>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-muted-foreground w-16">DMN</span>
+                  <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-rose-400 w-[50%] transition-all duration-1000"></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground w-16">CEN</span>
+                  <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-500 w-[75%] transition-all duration-1000"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div className="pt-4 border-t">
-            <Button
-              className={`w-full gap-2 transition-all ${submitted ? 'bg-success hover:bg-success' : ''}`}
-              onClick={handleSubmit}
-              disabled={submitted || !learningForm.protocol}
-            >
-              {submitted ? (
-                <>
-                  Dados Incorporados à Base de IA <CheckCircle2 className="w-4 h-4" />
-                </>
-              ) : (
-                <>
-                  Enviar para Loop de Aprendizado Algorítmico <Send className="w-4 h-4" />
-                </>
-              )}
-            </Button>
-            <p className="text-xs text-center text-muted-foreground mt-3 flex items-center justify-center gap-1">
-              <RefreshCw className="w-3 h-3" /> A atualização fortalece predições de rede para
-              perfis semelhantes.
-            </p>
+            <div className="w-full md:w-64 shrink-0 space-y-4">
+              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-900 leading-relaxed">
+                <p className="font-bold mb-2">Fundamento Clínico:</p>A estimulação do Córtex
+                Pré-Frontal Dorsolateral esquerdo visa aumentar a excitabilidade cortical,
+                fortalecendo a conectividade da Rede Executiva Central e promovendo inibição
+                descendente (Top-Down) sobre a DMN.
+              </div>
+              <Button className="w-full" variant="outline">
+                <Play className="w-4 h-4 mr-2" /> Rodar Simulação Dinâmica
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      <div className="flex justify-center mt-4">
+        <Badge variant="secondary" className="text-muted-foreground">
+          Módulo Educacional em Fase Beta
+        </Badge>
+      </div>
     </div>
   )
 }

@@ -1,113 +1,144 @@
-import { useMemo } from 'react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MATRIX_DOMAINS } from '@/lib/matrix-data'
 import { cn } from '@/lib/utils'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { Badge } from '@/components/ui/badge'
 
-interface NeurofunctionalMatrixProps {
-  phaseIndex: number
-  highlightedDomainId?: string | null
+const MATRIX_DOMAINS = [
+  { id: 'd1', name: 'Valência Negativa (Aversão/Medo)', baseColor: 'rose' },
+  { id: 'd2', name: 'Valência Positiva (Recompensa)', baseColor: 'emerald' },
+  { id: 'd3', name: 'Sistemas Cognitivos', baseColor: 'blue' },
+  { id: 'd4', name: 'Processamento Social', baseColor: 'purple' },
+  { id: 'd5', name: 'Alerta e Regulação', baseColor: 'amber' },
+  { id: 'd6', name: 'Sensório-Motor', baseColor: 'slate' },
+]
+
+const MATRIX_STAGES = [
+  { id: 's1', name: 'Patologia / Falha Aguda', score: 20 },
+  { id: 's2', name: 'Vulnerabilidade / Instabilidade', score: 40 },
+  { id: 's3', name: 'Regulação / Adaptação Base', score: 60 },
+  { id: 's4', name: 'Performance Consolidada', score: 80 },
+  { id: 's5', name: 'Alta Performance / Flow', score: 100 },
+]
+
+// Mock transitions representing a patient's journey across 4 phases (0 to 3)
+const TRANSITIONS: Record<string, number[]> = {
+  d1: [1, 2, 2, 3], // Starts at Vulnerability, ends at Regulation
+  d2: [0, 1, 3, 3], // Starts at Pathology, jumps to Performance
+  d3: [1, 1, 2, 4], // Cognition improves to Flow
+  d4: [2, 2, 3, 4], // Social improves
+  d5: [0, 2, 3, 3], // Alertness recovers
+  d6: [2, 3, 3, 4], // Motor
 }
 
 export function NeurofunctionalMatrix({
-  phaseIndex,
+  phaseIndex = 0,
   highlightedDomainId,
-}: NeurofunctionalMatrixProps) {
-  // Generates a mock score to simulate transitions from distress to adaptive states
-  const getScore = (domainIdx: number, stateIndex: number, phase: number) => {
-    // Top 5 states are adaptive, bottom 5 are distress
-    const isAdaptive = stateIndex < 5
+}: {
+  phaseIndex: number
+  highlightedDomainId?: string
+}) {
+  const getColorClass = (domainColor: string, isCurrentStage: boolean, isHighlighted: boolean) => {
+    if (!isCurrentStage) return 'bg-muted/10 border-transparent text-muted-foreground/30'
 
-    // Base targets
-    const baseAdaptive = 20
-    const baseDistress = 80
-    const finalAdaptive = 85
-    const finalDistress = 15
+    const intensity = isHighlighted ? '500' : '400'
+    const bgOpacity = isHighlighted ? 'bg-opacity-20' : 'bg-opacity-10'
+    const border = isHighlighted ? 'border-2' : 'border'
 
-    // Interpolate based on timeline phase (0 to 3)
-    const progress = phase / 3
-    const score = isAdaptive
-      ? baseAdaptive + (finalAdaptive - baseAdaptive) * progress
-      : baseDistress + (finalDistress - baseDistress) * progress
-
-    // Small deterministic noise for natural variance
-    const noise = ((domainIdx * 7 + stateIndex * 3) % 15) - 7
-    return Math.min(100, Math.max(0, score + noise))
-  }
-
-  const getColorClass = (score: number) => {
-    if (score < 20) return 'bg-slate-100 border-slate-200'
-    if (score < 40) return 'bg-indigo-200 border-indigo-300'
-    if (score < 60) return 'bg-indigo-400 border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.4)]'
-    if (score < 80) return 'bg-violet-600 border-violet-700 shadow-[0_0_15px_rgba(124,58,237,0.6)]'
-    return 'bg-fuchsia-700 border-fuchsia-800 shadow-[0_0_20px_rgba(162,28,175,0.8)]'
+    switch (domainColor) {
+      case 'rose':
+        return `bg-rose-${intensity} ${bgOpacity} border-rose-${intensity} ${border} text-rose-700 shadow-sm font-bold`
+      case 'emerald':
+        return `bg-emerald-${intensity} ${bgOpacity} border-emerald-${intensity} ${border} text-emerald-700 shadow-sm font-bold`
+      case 'blue':
+        return `bg-blue-${intensity} ${bgOpacity} border-blue-${intensity} ${border} text-blue-700 shadow-sm font-bold`
+      case 'purple':
+        return `bg-purple-${intensity} ${bgOpacity} border-purple-${intensity} ${border} text-purple-700 shadow-sm font-bold`
+      case 'amber':
+        return `bg-amber-${intensity} ${bgOpacity} border-amber-${intensity} ${border} text-amber-700 shadow-sm font-bold`
+      case 'slate':
+        return `bg-slate-${intensity} ${bgOpacity} border-slate-${intensity} ${border} text-slate-700 shadow-sm font-bold`
+      default:
+        return 'bg-primary/10 border-primary text-primary'
+    }
   }
 
   return (
-    <div className="w-full overflow-x-auto pb-4">
-      <div className="grid grid-cols-8 gap-3 min-w-[768px]">
-        {MATRIX_DOMAINS.map((domain, dIdx) => (
-          <div
-            key={domain.id}
-            className={cn(
-              'flex flex-col gap-1.5 transition-all duration-300 rounded-lg',
-              highlightedDomainId === domain.id
-                ? 'ring-4 ring-primary ring-offset-2 scale-[1.02] bg-slate-50 z-10'
-                : 'opacity-90 hover:opacity-100',
-              highlightedDomainId && highlightedDomainId !== domain.id && 'opacity-40 grayscale',
-            )}
-          >
-            <div className="h-12 px-1 text-center">
-              <h4 className="text-[11px] font-bold text-slate-800 leading-tight line-clamp-2 uppercase tracking-tight">
-                {domain.name}
+    <div className="w-full overflow-x-auto">
+      <div className="min-w-[800px] border rounded-lg bg-white overflow-hidden">
+        {/* Header */}
+        <div className="grid grid-cols-6 bg-muted/40 border-b divide-x">
+          <div className="p-4 font-bold text-sm text-foreground flex items-center justify-center bg-muted/60">
+            DOMÍNIOS FUNCIONAIS
+          </div>
+          {MATRIX_STAGES.map((stage) => (
+            <div key={stage.id} className="p-4 text-center">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                {stage.name}
               </h4>
+              <div className="text-[10px] text-muted-foreground/70 mt-1 font-mono">
+                Score: {stage.score}
+              </div>
             </div>
+          ))}
+        </div>
 
-            <div className="flex flex-col gap-1 px-1">
-              {domain.states.map((state, sIdx) => {
-                const score = getScore(dIdx, sIdx, phaseIndex)
-                return (
-                  <TooltipProvider key={state.id} delayDuration={100}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          className={cn(
-                            'w-full aspect-square rounded cursor-pointer border transition-all duration-700 hover:scale-110 relative',
-                            getColorClass(score),
-                          )}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="right"
-                        className="p-4 w-64 shadow-xl border-border bg-white text-slate-900"
-                      >
-                        <div className="space-y-3">
-                          <div className="border-b pb-2">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                              Estado Funcional {state.id}
-                            </span>
-                            <p className="font-bold text-base capitalize mt-0.5">{state.name}</p>
+        {/* Body */}
+        <div className="divide-y">
+          {MATRIX_DOMAINS.map((domain) => {
+            const currentStageIndex = TRANSITIONS[domain.id][phaseIndex]
+            const isHighlighted = highlightedDomainId === domain.id
+
+            return (
+              <div
+                key={domain.id}
+                className={cn(
+                  'grid grid-cols-6 divide-x transition-colors',
+                  isHighlighted && 'bg-slate-50/80',
+                )}
+              >
+                <div className="p-4 font-semibold text-sm text-slate-700 flex items-center justify-between">
+                  <span>{domain.name}</span>
+                  {isHighlighted && (
+                    <Badge variant="outline" className="ml-2 scale-75 border-primary text-primary">
+                      Alvo
+                    </Badge>
+                  )}
+                </div>
+
+                {MATRIX_STAGES.map((stage, idx) => {
+                  const isCurrent = currentStageIndex === idx
+
+                  return (
+                    <div key={stage.id} className="p-3 flex items-center justify-center relative">
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <div
+                            className={cn(
+                              'w-full h-full min-h-[48px] rounded-md flex items-center justify-center text-xs transition-all duration-500 cursor-pointer',
+                              getColorClass(domain.baseColor, isCurrent, isHighlighted),
+                            )}
+                          >
+                            {isCurrent ? 'Estado Atual' : ''}
                           </div>
-                          <div>
-                            <p className="text-xs font-semibold text-primary">{domain.name}</p>
-                            <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
-                              <strong>Circuitos envolvidos:</strong> {domain.circuits}
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64">
+                          <div className="space-y-2">
+                            <h4 className="font-bold text-sm">{domain.name}</h4>
+                            <p className="text-xs text-muted-foreground">Estágio: {stage.name}</p>
+                            <p className="text-xs border-t pt-2 mt-2">
+                              {isCurrent
+                                ? 'Nesta fase, o paciente apresenta as características correspondentes a este estado neurofuncional, refletindo a eficácia da intervenção.'
+                                : 'Estado não detectado nesta fase do tratamento.'}
                             </p>
                           </div>
-                          <div className="bg-slate-50 p-2 rounded border flex items-center justify-between">
-                            <span className="text-xs font-medium">Nível de Ativação</span>
-                            <span className="text-sm font-mono font-bold">
-                              {Math.round(score)}%
-                            </span>
-                          </div>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

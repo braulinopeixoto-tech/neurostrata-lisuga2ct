@@ -1,20 +1,17 @@
+import { useState } from 'react'
+import { UserCircle, CheckCircle2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -22,81 +19,119 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Settings, ShieldCheck, UserCheck } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
-import { Badge } from '@/components/ui/badge'
+import { toast } from '@/components/ui/use-toast'
 
 export function PortalAccessModal() {
   const { patients, updatePatientPortalAccess } = useAppStore()
+  const [open, setOpen] = useState(false)
+  const [selectedPatientId, setSelectedPatientId] = useState('')
+  const [access, setAccess] = useState(false)
+  const [visibility, setVisibility] = useState<'Simplified' | 'Detailed'>('Detailed')
+
+  const handlePatientSelect = (id: string) => {
+    setSelectedPatientId(id)
+    const patient = patients.find((p) => p.id === id)
+    if (patient) {
+      setAccess(patient.hasPortalAccess || false)
+      setVisibility(patient.portalVisibility || 'Detailed')
+    }
+  }
+
+  const handleSave = () => {
+    if (selectedPatientId) {
+      updatePatientPortalAccess(selectedPatientId, access, visibility)
+      toast({
+        title: 'Acesso Atualizado',
+        description: 'As configurações do Portal do Paciente foram salvas.',
+        action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
+      })
+      setOpen(false)
+    }
+  }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/5">
-          <Settings className="w-4 h-4 mr-2" /> Acessos ao Portal
+        <Button variant="outline" className="gap-2">
+          <UserCircle className="w-4 h-4" /> Gestão de Portal
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl bg-slate-50">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl text-primary">
-            <ShieldCheck className="w-6 h-6" /> Gerenciamento de Permissões (Portal do Paciente)
+          <DialogTitle className="flex items-center gap-2">
+            <UserCircle className="w-5 h-5 text-primary" /> Configurar Portal do Paciente
           </DialogTitle>
+          <DialogDescription>
+            Controle o acesso e a visibilidade de laudos e biogramas para seus pacientes.
+          </DialogDescription>
         </DialogHeader>
-        <div className="mt-4 border rounded-xl overflow-hidden bg-white shadow-sm">
-          <Table>
-            <TableHeader className="bg-muted/50">
-              <TableRow>
-                <TableHead>Paciente</TableHead>
-                <TableHead className="text-center">Acesso Ativo</TableHead>
-                <TableHead>Nível de Visibilidade</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {patients.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-muted-foreground" />
+
+        <div className="space-y-6 py-4">
+          <div className="space-y-2">
+            <Label>Selecionar Paciente</Label>
+            <Select value={selectedPatientId} onValueChange={handlePatientSelect}>
+              <SelectTrigger>
+                <SelectValue placeholder="Escolha um paciente..." />
+              </SelectTrigger>
+              <SelectContent>
+                {patients.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
                     {p.name}
-                    {p.hasPortalAccess && (
-                      <Badge
-                        variant="secondary"
-                        className="ml-2 text-[10px] bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-                      >
-                        Conectado
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Switch
-                      checked={p.hasPortalAccess}
-                      onCheckedChange={(c) =>
-                        updatePatientPortalAccess(p.id, c, p.portalVisibility || 'Detailed')
-                      }
-                      className="mx-auto"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={p.portalVisibility || 'Detailed'}
-                      onValueChange={(v: 'Simplified' | 'Detailed') =>
-                        updatePatientPortalAccess(p.id, p.hasPortalAccess || false, v)
-                      }
-                      disabled={!p.hasPortalAccess}
-                    >
-                      <SelectTrigger className="w-[200px] bg-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Simplified">Simplificado (Resumos)</SelectItem>
-                        <SelectItem value="Detailed">Detalhado (Insights)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedPatientId && (
+            <div className="space-y-6 p-4 bg-muted/30 rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Liberar Acesso ao Portal</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Permite login com e-mail/senha para autoavaliação.
+                  </p>
+                </div>
+                <Switch checked={access} onCheckedChange={setAccess} />
+              </div>
+
+              {access && (
+                <div className="space-y-3 pt-4 border-t">
+                  <Label>Nível de Visibilidade de Dados Clínicos</Label>
+                  <Select value={visibility} onValueChange={(v) => setVisibility(v as any)}>
+                    <SelectTrigger className="bg-white">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Simplified">
+                        <div className="font-medium">Simplificada (Padrão)</div>
+                        <span className="text-xs text-muted-foreground block">
+                          Apenas gráficos de evolução, autoavaliação e comunicados.
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="Detailed">
+                        <div className="font-medium">Detalhada (Avançada)</div>
+                        <span className="text-xs text-muted-foreground block">
+                          Acesso aos Laudos em PDF, Biograma completo e Certificados ICP-Brasil.
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+          )}
         </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} disabled={!selectedPatientId}>
+            Salvar Configurações
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
