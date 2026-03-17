@@ -10,6 +10,7 @@ import {
   Stethoscope,
   Bot,
   FileText,
+  TrendingUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -21,6 +22,7 @@ import { DiagnosisFlowTab } from '@/components/neuropsychology/DiagnosisFlowTab'
 import { PredictiveIntelligenceTab } from '@/components/neuropsychology/PredictiveIntelligenceTab'
 import { QuickReportTab } from '@/components/neuropsychology/QuickReportTab'
 import { PsychometricLibraryTab } from '@/components/neuropsychology/PsychometricLibraryTab'
+import { MonitoringEvolutionTab } from '@/components/neuropsychology/MonitoringEvolutionTab'
 
 export default function NeuropsychologyArea() {
   return (
@@ -48,31 +50,49 @@ export default function NeuropsychologyArea() {
             value="hub"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
-            <ActivitySquare className="w-4 h-4" /> Hub Psicométrico
+            <ActivitySquare className="w-4 h-4" /> Hub de Avaliação
+          </TabsTrigger>
+          <TabsTrigger
+            value="library"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <BookOpen className="w-4 h-4" /> Biblioteca Psicométrica
+          </TabsTrigger>
+          <TabsTrigger
+            value="neuronavigation"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <MapIcon className="w-4 h-4" /> Neuronavegação Guiada
           </TabsTrigger>
           <TabsTrigger
             value="supervision"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
-            <ShieldCheck className="w-4 h-4" /> Supervisão (Check-up)
+            <ShieldCheck className="w-4 h-4" /> Painel de Supervisão
           </TabsTrigger>
           <TabsTrigger
             value="protocols"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
-            <BookOpen className="w-4 h-4" /> Protocolos Neuro
+            <BookOpen className="w-4 h-4" /> Biblioteca de Protocolos
           </TabsTrigger>
           <TabsTrigger
             value="stress_test"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
-            <Activity className="w-4 h-4" /> Stress Test
+            <Activity className="w-4 h-4" /> Stress Test Real-Time
           </TabsTrigger>
           <TabsTrigger
             value="diagnosis_flow"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
-            <Stethoscope className="w-4 h-4" /> Fluxo Diagnóstico
+            <Stethoscope className="w-4 h-4" /> Fluxo de Exames
+          </TabsTrigger>
+          <TabsTrigger
+            value="monitoring"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <TrendingUp className="w-4 h-4" /> Monitoramento e Evolução
           </TabsTrigger>
           <TabsTrigger
             value="intelligence"
@@ -86,41 +106,11 @@ export default function NeuropsychologyArea() {
           >
             <FileText className="w-4 h-4" /> Quick Report
           </TabsTrigger>
-          <TabsTrigger
-            value="library"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <BookOpen className="w-4 h-4" /> Biblioteca Psicométrica
-          </TabsTrigger>
-          <TabsTrigger
-            value="neuronavigation"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <MapIcon className="w-4 h-4" /> Neuronavegação
-          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
           <TabsContent value="hub" className="m-0 focus-visible:outline-none">
             <AssessmentHubTab />
-          </TabsContent>
-          <TabsContent value="supervision" className="m-0 focus-visible:outline-none">
-            <SupervisionPanelTab />
-          </TabsContent>
-          <TabsContent value="protocols" className="m-0 focus-visible:outline-none">
-            <ProtocolLibraryTab />
-          </TabsContent>
-          <TabsContent value="stress_test" className="m-0 focus-visible:outline-none">
-            <StressTestTab />
-          </TabsContent>
-          <TabsContent value="diagnosis_flow" className="m-0 focus-visible:outline-none">
-            <DiagnosisFlowTab />
-          </TabsContent>
-          <TabsContent value="intelligence" className="m-0 focus-visible:outline-none">
-            <PredictiveIntelligenceTab />
-          </TabsContent>
-          <TabsContent value="quick_report" className="m-0 focus-visible:outline-none">
-            <QuickReportTab />
           </TabsContent>
           <TabsContent value="library" className="m-0 focus-visible:outline-none">
             <PsychometricLibraryTab />
@@ -137,6 +127,27 @@ export default function NeuropsychologyArea() {
                 <Link to="/neuronavigation">Ir para Neuronavegação</Link>
               </Button>
             </div>
+          </TabsContent>
+          <TabsContent value="supervision" className="m-0 focus-visible:outline-none">
+            <SupervisionPanelTab />
+          </TabsContent>
+          <TabsContent value="protocols" className="m-0 focus-visible:outline-none">
+            <ProtocolLibraryTab />
+          </TabsContent>
+          <TabsContent value="stress_test" className="m-0 focus-visible:outline-none">
+            <StressTestTab />
+          </TabsContent>
+          <TabsContent value="diagnosis_flow" className="m-0 focus-visible:outline-none">
+            <DiagnosisFlowTab />
+          </TabsContent>
+          <TabsContent value="monitoring" className="m-0 focus-visible:outline-none">
+            <MonitoringEvolutionTab />
+          </TabsContent>
+          <TabsContent value="intelligence" className="m-0 focus-visible:outline-none">
+            <PredictiveIntelligenceTab />
+          </TabsContent>
+          <TabsContent value="quick_report" className="m-0 focus-visible:outline-none">
+            <QuickReportTab />
           </TabsContent>
         </div>
       </Tabs>

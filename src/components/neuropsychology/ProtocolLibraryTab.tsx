@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Search, Zap, Brain, HeartPulse, Activity } from 'lucide-react'
@@ -32,19 +32,19 @@ const PROTOCOLS = [
     icon: Brain,
   },
   {
-    category: 'HRV Training',
+    category: 'Treino HRV',
     title: 'Coerência Cardíaca 0.1Hz',
     desc: 'Estabilização do tônus vagal e regulação autonômica do estresse.',
     icon: HeartPulse,
   },
   {
-    category: 'Biofeedback Training',
+    category: 'Treino Biofeedback',
     title: 'Treino SMR (Sensorimotor)',
     desc: 'Neurofeedback para hiperatividade motora e atenção seletiva.',
     icon: Activity,
   },
   {
-    category: 'Biofeedback Training',
+    category: 'Treino Biofeedback',
     title: 'Alpha-Theta Crossover',
     desc: 'Redução de ruminação ansiosa e indução a estados de relaxamento profundo.',
     icon: Activity,
@@ -77,7 +77,7 @@ export function ProtocolLibraryTab() {
             className="pl-9 bg-white"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <Button
             variant={filter === null ? 'default' : 'outline'}
             onClick={() => setFilter(null)}
@@ -112,7 +112,7 @@ export function ProtocolLibraryTab() {
                       ? '#3b82f6'
                       : p.category === 'Reabilitação Cognitiva'
                         ? '#8b5cf6'
-                        : p.category === 'HRV Training'
+                        : p.category === 'Treino HRV'
                           ? '#ef4444'
                           : '#10b981',
                 }}
