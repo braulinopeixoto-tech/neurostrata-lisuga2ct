@@ -16,6 +16,7 @@ import {
   UserCircle,
   Scale,
   Brain,
+  Apple,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -72,6 +73,7 @@ export function AppSidebar() {
     { name: 'Início', path: '/', icon: LayoutDashboard },
     { name: 'Área Médica', path: '/medical', icon: Stethoscope },
     { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
+    { name: 'Área Nutricional', path: '/nutrition', icon: Apple },
     { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
     { name: 'Pacientes', path: '/patients', icon: Users },
     { name: 'Profissionais', path: '/professionals', icon: Stethoscope },

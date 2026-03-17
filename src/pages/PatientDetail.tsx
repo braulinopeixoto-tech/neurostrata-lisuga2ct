@@ -13,6 +13,7 @@ import { ModularLibraryTab } from '@/components/protocols/ModularLibraryTab'
 import { LegalConsultationTab } from '@/components/patient/LegalConsultationTab'
 import { PatientFeedbackTab } from '@/components/patient/PatientFeedbackTab'
 import { CheckupValidationTab } from '@/components/patient/CheckupValidationTab'
+import { PatientNutritionTab } from '@/components/patient/PatientNutritionTab'
 
 export default function PatientDetail() {
   const { id } = useParams()
@@ -101,6 +102,12 @@ export default function PatientDetail() {
             Biblioteca de Protocolos
           </TabsTrigger>
           <TabsTrigger
+            value="nutrition"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-green-700 data-[state=active]:text-green-800"
+          >
+            Nutrição Funcional
+          </TabsTrigger>
+          <TabsTrigger
             value="legal"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 whitespace-nowrap text-blue-700 data-[state=active]:text-blue-800"
           >
@@ -134,6 +141,9 @@ export default function PatientDetail() {
         </TabsContent>
         <TabsContent value="protocols" className="m-0">
           <ModularLibraryTab />
+        </TabsContent>
+        <TabsContent value="nutrition" className="m-0">
+          <PatientNutritionTab patient={patient} />
         </TabsContent>
         <TabsContent value="legal" className="m-0">
           <LegalConsultationTab patient={patient} />

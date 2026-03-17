@@ -68,6 +68,33 @@ interface Citation {
   dateSaved: string
 }
 
+export interface NutritionProfile {
+  id: string
+  patient_hash: string
+  metabolic_type: string
+  inflammatory_score: number
+  gut_health_score: number
+  created_at: string
+}
+
+export interface NutritionProtocol {
+  id: string
+  name: string
+  objective: string
+  mechanism: string
+  interventions: string[]
+  biomarkers: string[]
+}
+
+export interface NutritionTracking {
+  id: string
+  patient_id: string
+  symptoms: string[]
+  diet_log: string
+  energy_level: number
+  timestamp: string
+}
+
 interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: Patient[]
@@ -151,6 +178,13 @@ interface AppState {
   ) => void
   patientCheckins: Record<string, any[]>
   addPatientCheckin: (patientId: string, checkin: any) => void
+
+  // Nutrition specific states
+  nutritionProfiles: NutritionProfile[]
+  nutritionProtocols: NutritionProtocol[]
+  nutritionTracking: NutritionTracking[]
+  addNutritionProfile: (profile: NutritionProfile) => void
+  addNutritionTracking: (tracking: NutritionTracking) => void
 }
 
 const AppStateContext = createContext<AppState | undefined>(undefined)
@@ -196,6 +230,50 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   })
   const [patientAlerts, setPatientAlerts] = useState<Record<string, PatientAlert[]>>({})
   const [patientCheckins, setPatientCheckins] = useState<Record<string, any[]>>({})
+
+  // Nutrition states
+  const [nutritionProfiles, setNutritionProfiles] = useState<NutritionProfile[]>([
+    {
+      id: 'NP001',
+      patient_hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
+      metabolic_type: 'Inflamatório',
+      inflammatory_score: 85,
+      gut_health_score: 40,
+      created_at: new Date().toISOString(),
+    },
+  ])
+  const [nutritionProtocols] = useState<NutritionProtocol[]>([
+    {
+      id: 'NPROT1',
+      name: 'Modulação Intestinal para Ansiedade',
+      objective: 'Reduzir inflamação sistêmica e melhorar eixo intestino-cérebro',
+      mechanism: 'Aumento da produção de GABA via microbiota, redução de citocinas',
+      interventions: [
+        'Dieta Low-FODMAP adaptada',
+        'Probióticos cepas específicas (L. rhamnosus)',
+        'Ômega-3 2g/dia',
+      ],
+      biomarkers: ['PCR-us', 'Zonulina fecal'],
+    },
+    {
+      id: 'NPROT2',
+      name: 'Suporte Mitocondrial para Fadiga Mental',
+      objective: 'Aumentar a eficiência da produção de ATP neuronal',
+      mechanism: 'Estímulo da biogênese mitocondrial e proteção antioxidante',
+      interventions: ['CoQ10 100mg', 'PQQ 10mg', 'Dieta cetogênica cíclica'],
+      biomarkers: ['Ácido úrico', 'Homocisteína', 'Insulina de jejum'],
+    },
+  ])
+  const [nutritionTracking, setNutritionTracking] = useState<NutritionTracking[]>([
+    {
+      id: 'NT001',
+      patient_id: 'P001',
+      symptoms: ['Distensão abdominal', 'Fadiga pós-prandial'],
+      diet_log: 'Excesso de carboidratos refinados no jantar',
+      energy_level: 4,
+      timestamp: new Date().toISOString(),
+    },
+  ])
 
   const [currentAssessmentData, setCurrentAssessmentData] = useState({
     qeegTheta: false,
@@ -535,6 +613,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         p.id === patientId ? { ...p, hasPortalAccess: access, portalVisibility: visibility } : p,
       ),
     )
+  const addNutritionProfile = (profile: NutritionProfile) =>
+    setNutritionProfiles((prev) => [profile, ...prev])
+  const addNutritionTracking = (tracking: NutritionTracking) =>
+    setNutritionTracking((prev) => [tracking, ...prev])
 
   return (
     <AppStateContext.Provider
@@ -592,6 +674,11 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         resolvePatientAlert,
         patientCheckins,
         addPatientCheckin,
+        nutritionProfiles,
+        nutritionProtocols,
+        nutritionTracking,
+        addNutritionProfile,
+        addNutritionTracking,
       }}
     >
       {children}

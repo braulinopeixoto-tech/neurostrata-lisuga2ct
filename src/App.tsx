@@ -12,6 +12,7 @@ import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
 import MedicalArea from '@/pages/MedicalArea'
 import NeuropsychologyArea from '@/pages/NeuropsychologyArea'
+import NutritionArea from '@/pages/NutritionArea'
 import Patients from '@/pages/Patients'
 import PatientDetail from '@/pages/PatientDetail'
 import Assessment from '@/pages/assessment/Assessment'
@@ -43,6 +44,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/medical" element={<MedicalArea />} />
                 <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
+                <Route path="/nutrition" element={<NutritionArea />} />
                 <Route path="/patients" element={<Patients />} />
                 <Route path="/patients/:id" element={<PatientDetail />} />
                 <Route path="/professionals" element={<Professionals />} />

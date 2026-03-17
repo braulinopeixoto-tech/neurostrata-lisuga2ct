@@ -23,7 +23,7 @@ export default function Index() {
   const professionalAreas = [
     { name: 'Área Médica', icon: Stethoscope, path: '/medical' },
     { name: 'Área Neuropsicológica', icon: Brain, path: '/neuropsychology' },
-    { name: 'Área Nutri', icon: Apple, path: '/dashboard' },
+    { name: 'Área Nutrição Funcional', icon: Apple, path: '/nutrition' },
     { name: 'Área Fono', icon: MessageSquare, path: '/dashboard' },
     { name: 'Área Farmaco Clínico', icon: FlaskConical, path: '/pharmacopeia' },
     { name: 'Área Psicopedagogo', icon: GraduationCap, path: '/dashboard' },
