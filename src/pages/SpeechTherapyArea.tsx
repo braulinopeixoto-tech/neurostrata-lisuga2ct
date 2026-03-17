@@ -6,6 +6,7 @@ import {
   Zap,
   FileText,
   Users,
+  TrendingUp,
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
