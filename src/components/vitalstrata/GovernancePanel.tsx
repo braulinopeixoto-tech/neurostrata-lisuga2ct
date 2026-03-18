@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import {
   HeartPulse,
   ArrowDownRight,
@@ -11,8 +13,12 @@ import {
   Zap,
   ArrowRightLeft,
   Target,
+  Sparkles,
+  Info,
+  CheckCircle2,
+  Clock,
 } from 'lucide-react'
-import { VitalRecord } from '@/stores/useVitalStrataStore'
+import useVitalStrataStore, { VitalRecord } from '@/stores/useVitalStrataStore'
 
 interface Props {
   latestRecord: VitalRecord | undefined
@@ -20,6 +26,9 @@ interface Props {
 }
 
 export function GovernancePanel({ latestRecord, previousRecord }: Props) {
+  const { protocols, applyIntervention } = useVitalStrataStore()
+  const { toast } = useToast()
+
   if (!latestRecord) return null
 
   const score = latestRecord.vitalScore
@@ -35,10 +44,36 @@ export function GovernancePanel({ latestRecord, previousRecord }: Props) {
   ]
   const bottlenecks = domains.filter((d) => d.val < 60).sort((a, b) => a.val - b.val)
 
+  // AI Recommendation Engine Logic
+  const recommendations = bottlenecks
+    .map((b) => {
+      const matchingProtocol = protocols.find((p) => p.targetDomain === b.key)
+      if (!matchingProtocol) return null
+      return {
+        bottleneck: b,
+        protocol: matchingProtocol,
+        rationale: `Queda crítica detectada (${b.val}%) na reserva ${b.name}. Risco de sobrecarga compensatória evidenciado pelo Strain Index (${latestRecord.proprietaryMetrics.strainIndex}).`,
+      }
+    })
+    .filter(Boolean) as { bottleneck: any; protocol: any; rationale: string }[]
+
+  const handleApply = (rec: any) => {
+    applyIntervention(
+      latestRecord.patientId,
+      rec.protocol.id,
+      rec.rationale,
+      'Dr. Renato Alves (Sistema)',
+    )
+    toast({
+      title: 'Plano Atualizado & Auditado',
+      description: `${rec.protocol.name} inserido no plano via Trust Layer™.`,
+    })
+  }
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       {latestRecord.isAlert && (
-        <Alert variant="destructive" className="bg-rose-50 border-rose-200">
+        <Alert variant="destructive" className="bg-rose-50 border-rose-200 shadow-sm">
           <ShieldAlert className="h-5 w-5 text-rose-600" />
           <AlertTitle className="text-rose-800 font-bold">Alerta do Motor Preditivo</AlertTitle>
           <AlertDescription className="text-rose-700">{latestRecord.alertMessage}</AlertDescription>
@@ -173,18 +208,18 @@ export function GovernancePanel({ latestRecord, previousRecord }: Props) {
         </div>
       </div>
 
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Target className="w-5 h-5 text-accent" /> Bottlenecks & Governança
+      <Card className="shadow-sm border-t-4 border-t-indigo-500 overflow-hidden">
+        <CardHeader className="bg-slate-50/50 pb-4 border-b">
+          <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+            <Target className="w-5 h-5 text-indigo-600" /> Governança & Explicabilidade IA
           </CardTitle>
           <CardDescription>
-            Principais gargalos e ações recomendadas para otimizar a Reserva Funcional.
+            Gargalos funcionais mapeados e matriz de decisão clínica assistida.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-6">
           <div>
-            <h4 className="text-sm font-semibold uppercase text-slate-500 mb-3">
+            <h4 className="text-sm font-semibold uppercase text-slate-500 mb-3 tracking-wider">
               Gargalos Identificados (Abaixo de 60%)
             </h4>
             {bottlenecks.length > 0 ? (
@@ -193,39 +228,64 @@ export function GovernancePanel({ latestRecord, previousRecord }: Props) {
                   <Badge
                     key={b.key}
                     variant="outline"
-                    className="border-rose-200 text-rose-700 bg-rose-50 px-3 py-1.5"
+                    className="border-rose-200 text-rose-700 bg-rose-50 px-3 py-1.5 shadow-sm"
                   >
                     {b.name}: {b.val}%
                   </Badge>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-emerald-600 font-medium">
-                Nenhum gargalo crítico detectado.
+              <p className="text-sm text-emerald-600 font-medium bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                Nenhum gargalo crítico detectado. Reserva Funcional estabilizada.
               </p>
             )}
           </div>
-          <div className="bg-slate-50 p-4 rounded-lg border">
-            <h4 className="text-sm font-semibold uppercase text-slate-500 mb-2">
-              Ações Recomendadas (IA)
-            </h4>
-            <ul className="space-y-2 text-sm text-slate-700">
-              {bottlenecks.some((b) => b.key === 'contextual') && (
-                <li>• Intervenção na higiene do sono e redução de carga de estresse ambiental.</li>
-              )}
-              {bottlenecks.some((b) => b.key === 'metabolic') && (
-                <li>• Revisão do protocolo de gestão metabólica e marcadores inflamatórios.</li>
-              )}
-              {bottlenecks.some((b) => b.key === 'emotional') && (
-                <li>• Introdução de protocolo tDCS para regulação fronto-límbica.</li>
-              )}
-              {bottlenecks.length === 0 && (
-                <li>
-                  • Manter monitoramento contínuo e protocolos de consolidação de neuroplasticidade.
-                </li>
-              )}
-            </ul>
-          </div>
+
+          {recommendations.length > 0 && (
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold uppercase text-indigo-500 mb-2 tracking-wider flex items-center gap-2">
+                <Sparkles className="w-4 h-4" /> Recomendações Assistidas (SHAP Logic)
+              </h4>
+              <div className="grid gap-4">
+                {recommendations.map((rec, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col md:flex-row gap-4 justify-between items-start bg-white p-5 rounded-xl border shadow-sm border-l-4 border-l-indigo-400 hover:shadow-md transition-shadow"
+                  >
+                    <div className="space-y-3 flex-1">
+                      <div>
+                        <h5 className="font-bold text-slate-800 text-lg">{rec.protocol.name}</h5>
+                        <div className="flex flex-wrap gap-2 mt-1.5">
+                          <Badge
+                            variant="secondary"
+                            className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                          >
+                            {rec.protocol.type}
+                          </Badge>
+                          <Badge variant="outline" className="text-slate-500 bg-slate-50">
+                            <Clock className="w-3 h-3 mr-1" /> {rec.protocol.duration}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="bg-indigo-50/50 border border-indigo-100 text-slate-700 text-xs p-3 rounded-lg flex items-start gap-2.5">
+                        <Info className="w-4 h-4 text-indigo-500 shrink-0 mt-0.5" />
+                        <p className="leading-relaxed">
+                          <strong className="text-indigo-900">Motivo da Sugestão (IA):</strong>{' '}
+                          {rec.rationale}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleApply(rec)}
+                      className="shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white w-full md:w-auto shadow-sm"
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" /> Validar e Aplicar
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

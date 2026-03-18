@@ -32,6 +32,26 @@ export interface VitalRecord {
   interventions?: string[]
 }
 
+export interface ClinicalProtocol {
+  id: string
+  name: string
+  type: 'Neuromodulation' | 'Behavioral' | 'Metabolic' | 'Cognitive'
+  targetDomain: keyof VitalDomainScores
+  expectedOutcome: string
+  duration: string
+  description: string
+}
+
+export interface AppliedIntervention {
+  id: string
+  patientId: string
+  protocolId: string
+  appliedAt: string
+  appliedBy: string
+  rationale: string
+  status: 'Active' | 'Completed' | 'Discontinued'
+}
+
 export const calculateVitalScore = (domains: VitalDomainScores) => {
   return Math.round(
     domains.neuro * 0.3 +
@@ -44,18 +64,76 @@ export const calculateVitalScore = (domains: VitalDomainScores) => {
 
 interface VitalStrataState {
   records: VitalRecord[]
+  protocols: ClinicalProtocol[]
+  appliedInterventions: AppliedIntervention[]
   addRecord: (record: Omit<VitalRecord, 'id' | 'vitalScore' | 'hash'>) => void
   getPatientRecords: (patientId: string) => VitalRecord[]
+  applyIntervention: (
+    patientId: string,
+    protocolId: string,
+    rationale: string,
+    author: string,
+  ) => void
 }
 
 const VitalStrataContext = createContext<VitalStrataState | undefined>(undefined)
+
+const MOCK_PROTOCOLS_VITAL: ClinicalProtocol[] = [
+  {
+    id: 'cp-01',
+    name: 'Estimulação SMR (Sensoriomotora)',
+    type: 'Neuromodulation',
+    targetDomain: 'neuro',
+    expectedOutcome: 'Aumento da estabilidade cortical e redução de hiperatividade motora.',
+    duration: '20 sessões',
+    description: 'Treinamento de neurofeedback focado na faixa de 12-15Hz na região central (Cz).',
+  },
+  {
+    id: 'cp-02',
+    name: 'Treino de Flexibilidade Cognitiva',
+    type: 'Cognitive',
+    targetDomain: 'cognitive',
+    expectedOutcome: 'Melhora no Task-Switching e redução da rigidez atencional.',
+    duration: '12 semanas',
+    description:
+      'Bateria de exercícios neurocognitivos gamificados com aumento progressivo de dificuldade.',
+  },
+  {
+    id: 'cp-03',
+    name: 'Modulação Fronto-Límbica (tDCS)',
+    type: 'Neuromodulation',
+    targetDomain: 'emotional',
+    expectedOutcome: 'Maior controle inibitório sobre reatividade emocional.',
+    duration: '15 sessões',
+    description: 'Estimulação transcraniana por corrente contínua anódica no DLPFC esquerdo.',
+  },
+  {
+    id: 'cp-04',
+    name: 'Protocolo Anti-Inflamatório Intenso',
+    type: 'Metabolic',
+    targetDomain: 'metabolic',
+    expectedOutcome: 'Redução de marcadores inflamatórios e melhora do brain fog.',
+    duration: '90 dias',
+    description: 'Combinação de Ômega-3 (EPA/DHA alto), Cúrcuma e dieta cetogênica cíclica.',
+  },
+  {
+    id: 'cp-05',
+    name: 'Reestruturação de Higiene do Sono',
+    type: 'Behavioral',
+    targetDomain: 'contextual',
+    expectedOutcome: 'Aumento da eficiência do sono e recuperação da reserva vagal.',
+    duration: '30 dias',
+    description:
+      'Bloqueio de luz azul pós 20h, regulação térmica do quarto e suplementação de L-Treonato de Magnésio.',
+  },
+]
 
 const MOCK_RECORDS: VitalRecord[] = [
   {
     id: 'vr-003',
     patientId: 'P001',
     timestamp: new Date().toISOString(),
-    domains: { neuro: 78, cognitive: 70, emotional: 60, metabolic: 55, contextual: 45 },
+    domains: { neuro: 78, cognitive: 70, emotional: 55, metabolic: 55, contextual: 45 },
     proprietaryMetrics: {
       reserveDelta: -2,
       strainIndex: 75,
@@ -65,7 +143,7 @@ const MOCK_RECORDS: VitalRecord[] = [
     vitalScore: calculateVitalScore({
       neuro: 78,
       cognitive: 70,
-      emotional: 60,
+      emotional: 55,
       metabolic: 55,
       contextual: 45,
     }),
@@ -75,7 +153,7 @@ const MOCK_RECORDS: VitalRecord[] = [
     author: 'Dr. Renato Alves',
     isAlert: true,
     alertMessage:
-      'Deterioração Silenciosa: Queda acentuada em eixos metabólico e contextual, enquanto neuro-marcador primário se mantém falsamente estável.',
+      'Deterioração Silenciosa: Queda acentuada em eixos metabólico e emocional, enquanto neuro-marcador primário se mantém falsamente estável.',
     hash: 'c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8',
     interventions: ['Ajuste Medicamentoso', 'Protocolo Nutricional Anti-inflamatório'],
   },
@@ -104,30 +182,11 @@ const MOCK_RECORDS: VitalRecord[] = [
     hash: 'b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7',
     interventions: [],
   },
-  {
-    id: 'vr-001',
-    patientId: 'P001',
-    timestamp: new Date(Date.now() - 30 * 86400000).toISOString(),
-    domains: { neuro: 80, cognitive: 80, emotional: 80, metabolic: 80, contextual: 80 },
-    proprietaryMetrics: { reserveDelta: 0, strainIndex: 30, frictionScore: 20, allostaticLoad: 40 },
-    vitalScore: calculateVitalScore({
-      neuro: 80,
-      cognitive: 80,
-      emotional: 80,
-      metabolic: 80,
-      contextual: 80,
-    }),
-    source: 'Avaliação Multidimensional (EHR)',
-    reliability: 'High',
-    evidenceLink: '/report/rep-1',
-    author: 'Dr. Renato Alves',
-    hash: 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6',
-    interventions: ['Início de Terapia', 'Prescrição tDCS'],
-  },
 ]
 
 export function VitalStrataStoreProvider({ children }: { children: ReactNode }) {
   const [records, setRecords] = useState<VitalRecord[]>(MOCK_RECORDS)
+  const [appliedInterventions, setAppliedInterventions] = useState<AppliedIntervention[]>([])
 
   const addRecord = (record: Omit<VitalRecord, 'id' | 'vitalScore' | 'hash'>) => {
     const newRecord: VitalRecord = {
@@ -140,6 +199,49 @@ export function VitalStrataStoreProvider({ children }: { children: ReactNode }) 
     setRecords((prev) => [newRecord, ...prev])
   }
 
+  const applyIntervention = (
+    patientId: string,
+    protocolId: string,
+    rationale: string,
+    author: string,
+  ) => {
+    const protocol = MOCK_PROTOCOLS_VITAL.find((p) => p.id === protocolId)
+    if (!protocol) return
+
+    const newApplied: AppliedIntervention = {
+      id: `api-${Date.now()}`,
+      patientId,
+      protocolId,
+      appliedAt: new Date().toISOString(),
+      appliedBy: author,
+      rationale,
+      status: 'Active',
+    }
+
+    setAppliedInterventions((prev) => [newApplied, ...prev])
+
+    // Generate an Audit Event by creating a new VitalRecord state reflection
+    setRecords((prev) => {
+      const patientRecords = prev.filter((r) => r.patientId === patientId)
+      const latest = patientRecords[0]
+      if (!latest) return prev
+
+      const newRecord: VitalRecord = {
+        ...latest,
+        id: `vr-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        source: 'Atribuição de Plano de Cuidado',
+        interventions: [...(latest.interventions || []), protocol.name],
+        hash:
+          Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        author: author,
+        isAlert: false,
+        alertMessage: undefined,
+      }
+      return [newRecord, ...prev]
+    })
+  }
+
   const getPatientRecords = (patientId: string) => {
     return records
       .filter((r) => r.patientId === patientId)
@@ -147,7 +249,16 @@ export function VitalStrataStoreProvider({ children }: { children: ReactNode }) 
   }
 
   return (
-    <VitalStrataContext.Provider value={{ records, addRecord, getPatientRecords }}>
+    <VitalStrataContext.Provider
+      value={{
+        records,
+        protocols: MOCK_PROTOCOLS_VITAL,
+        appliedInterventions,
+        addRecord,
+        getPatientRecords,
+        applyIntervention,
+      }}
+    >
       {children}
     </VitalStrataContext.Provider>
   )

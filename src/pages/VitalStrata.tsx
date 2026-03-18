@@ -19,6 +19,7 @@ import { InteractiveBiogram } from '@/components/vitalstrata/InteractiveBiogram'
 import { SimulationEngine } from '@/components/vitalstrata/SimulationEngine'
 import { TrustLayerAudit } from '@/components/vitalstrata/TrustLayerAudit'
 import { PatientView } from '@/components/vitalstrata/PatientView'
+import { InterventionsLibrary } from '@/components/vitalstrata/InterventionsLibrary'
 
 export default function VitalStrata() {
   const { patients } = useAppStore()
@@ -88,6 +89,12 @@ export default function VitalStrata() {
               Dashboard de Governança
             </TabsTrigger>
             <TabsTrigger
+              value="interventions"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500 data-[state=active]:text-indigo-700 data-[state=active]:bg-transparent py-3 font-semibold"
+            >
+              Intervenções & Protocolos
+            </TabsTrigger>
+            <TabsTrigger
               value="biogram"
               className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 font-semibold"
             >
@@ -110,6 +117,10 @@ export default function VitalStrata() {
           <TabsContent value="overview" className="m-0 space-y-6 focus-visible:outline-none">
             <GovernancePanel latestRecord={latestRecord} previousRecord={previousRecord} />
             <DomainModules record={latestRecord} />
+          </TabsContent>
+
+          <TabsContent value="interventions" className="m-0 focus-visible:outline-none">
+            <InterventionsLibrary patientId={selectedPatientId} />
           </TabsContent>
 
           <TabsContent value="biogram" className="m-0 focus-visible:outline-none">
