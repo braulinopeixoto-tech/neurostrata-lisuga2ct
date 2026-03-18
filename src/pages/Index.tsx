@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
+  Network,
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -53,7 +54,28 @@ export default function Index() {
       </div>
 
       {/* Main Portals Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Link to="/teamflow" className="block group">
+          <Card className="h-full border-t-4 border-t-indigo-500 hover:shadow-lg transition-all hover:-translate-y-1 bg-white">
+            <CardHeader>
+              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Network className="w-6 h-6" />
+              </div>
+              <CardTitle>TeamFlow™</CardTitle>
+              <CardDescription>
+                Ambiência Translacional para líderes médicos, gestão de casos e convergência
+                diagnóstica.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center text-sm font-bold text-indigo-600 mt-2">
+                Acessar Workspace{' '}
+                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
         <Link to="/patient-portal" className="block group">
           <Card className="h-full border-t-4 border-t-emerald-500 hover:shadow-lg transition-all hover:-translate-y-1 bg-white">
             <CardHeader>
@@ -62,7 +84,7 @@ export default function Index() {
               </div>
               <CardTitle>Portal do Paciente</CardTitle>
               <CardDescription>
-                Acesso seguro a laudos, questionários de autoavaliação e biograma longitudinal.
+                Acesso seguro a laudos, autoavaliação e biograma longitudinal.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -82,7 +104,7 @@ export default function Index() {
               </div>
               <CardTitle>Portal do Auditor</CardTitle>
               <CardDescription>
-                Verificação criptográfica e acesso temporário a documentos clínicos sensíveis.
+                Verificação criptográfica e acesso temporário a documentos sensíveis.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -95,19 +117,18 @@ export default function Index() {
         </Link>
 
         <Link to="/defensor-portal" className="block group">
-          <Card className="h-full border-t-4 border-t-indigo-500 hover:shadow-lg transition-all hover:-translate-y-1 bg-white">
+          <Card className="h-full border-t-4 border-t-slate-800 hover:shadow-lg transition-all hover:-translate-y-1 bg-white">
             <CardHeader>
-              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-slate-100 text-slate-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Scale className="w-6 h-6" />
               </div>
               <CardTitle>Portal do Defensor</CardTitle>
               <CardDescription>
-                Gestão de defesas jurídicas apoiadas em dados neurofuncionais e Biograma
-                Longitudinal.
+                Gestão de defesas jurídicas apoiadas no Biograma Longitudinal.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center text-sm font-bold text-indigo-600 mt-2">
+              <div className="flex items-center text-sm font-bold text-slate-800 mt-2">
                 Acessar Portal{' '}
                 <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </div>

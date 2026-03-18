@@ -20,6 +20,7 @@ import {
   MessageSquare,
   GraduationCap,
   HeartPulse,
+  Network,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -74,6 +75,7 @@ export function AppSidebar() {
 
   const navItems = [
     { name: 'Início', path: '/', icon: LayoutDashboard },
+    { name: 'TeamFlow™', path: '/teamflow', icon: Network },
     { name: 'VitalStrata™', path: '/vitalstrata', icon: HeartPulse },
     { name: 'Área Médica', path: '/medical', icon: Stethoscope },
     { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
@@ -136,12 +138,30 @@ export function AppSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton asChild isActive={location.pathname === item.path}>
+              <SidebarMenuButton
+                asChild
+                isActive={
+                  location.pathname === item.path ||
+                  (item.path !== '/' && location.pathname.startsWith(item.path))
+                }
+              >
                 <Link to={item.path} className="flex items-center gap-3">
                   <item.icon
-                    className={item.name === 'VitalStrata™' ? 'w-5 h-5 text-rose-500' : 'w-5 h-5'}
+                    className={
+                      item.name === 'TeamFlow™'
+                        ? 'w-5 h-5 text-indigo-500'
+                        : item.name === 'VitalStrata™'
+                          ? 'w-5 h-5 text-rose-500'
+                          : 'w-5 h-5'
+                    }
                   />
-                  <span className={item.name === 'VitalStrata™' ? 'font-bold text-slate-800' : ''}>
+                  <span
+                    className={
+                      item.name === 'TeamFlow™' || item.name === 'VitalStrata™'
+                        ? 'font-bold text-slate-800'
+                        : ''
+                    }
+                  >
                     {item.name}
                   </span>
                 </Link>
