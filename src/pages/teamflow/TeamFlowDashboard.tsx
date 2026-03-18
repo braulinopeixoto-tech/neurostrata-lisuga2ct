@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import {
   Network,
   Users,
@@ -12,6 +13,7 @@ import {
   ActivitySquare,
   BrainCircuit,
   Edit2,
+  ShieldCheck,
 } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import { ClinicSettingsModal } from '@/components/teamflow/ClinicSettingsModal'
@@ -147,6 +149,18 @@ export default function TeamFlowDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <Alert className="bg-slate-50 border-slate-200 shadow-sm">
+        <ShieldCheck className="h-4 w-4 !text-emerald-600" />
+        <AlertTitle className="text-slate-800 font-semibold">Nota Técnica: Trust Layer™</AlertTitle>
+        <AlertDescription className="text-slate-600 mt-2 text-sm leading-relaxed text-justify">
+          O Trust Layer™ consiste em uma infraestrutura de registro auditável que assegura a
+          integridade, rastreabilidade e verificabilidade de todas as operações clínicas realizadas
+          no âmbito do NeuroStrata, por meio da vinculação de dados a profissionais responsáveis,
+          registros temporais e versões metodológicas, garantindo transparência, segurança jurídica
+          e validade técnica das informações produzidas.
+        </AlertDescription>
+      </Alert>
 
       <ClinicSettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
