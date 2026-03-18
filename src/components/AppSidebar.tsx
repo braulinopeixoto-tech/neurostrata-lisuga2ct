@@ -19,6 +19,7 @@ import {
   Apple,
   MessageSquare,
   GraduationCap,
+  HeartPulse,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -73,6 +74,7 @@ export function AppSidebar() {
 
   const navItems = [
     { name: 'Início', path: '/', icon: LayoutDashboard },
+    { name: 'VitalStrata™', path: '/vitalstrata', icon: HeartPulse },
     { name: 'Área Médica', path: '/medical', icon: Stethoscope },
     { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
     { name: 'Área Nutricional', path: '/nutrition', icon: Apple },
@@ -136,8 +138,12 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.path}>
               <SidebarMenuButton asChild isActive={location.pathname === item.path}>
                 <Link to={item.path} className="flex items-center gap-3">
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.name}</span>
+                  <item.icon
+                    className={item.name === 'VitalStrata™' ? 'w-5 h-5 text-rose-500' : 'w-5 h-5'}
+                  />
+                  <span className={item.name === 'VitalStrata™' ? 'font-bold text-slate-800' : ''}>
+                    {item.name}
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

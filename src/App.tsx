@@ -8,6 +8,7 @@ import { AppStoreProvider } from '@/stores/useAppStore'
 import { ReportStoreProvider } from '@/stores/useReportStore'
 import { TrustStoreProvider } from '@/stores/useTrustStore'
 import { PharmacyStoreProvider } from '@/stores/usePharmacyStore'
+import { VitalStrataStoreProvider } from '@/stores/useVitalStrataStore'
 
 import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
@@ -31,49 +32,53 @@ import ReportCenter from '@/pages/ReportCenter'
 import PerformanceTimeline from '@/pages/PerformanceTimeline'
 import PatientPortal from '@/pages/PatientPortal'
 import VerifyDocument from '@/pages/VerifyDocument'
+import VitalStrata from '@/pages/VitalStrata'
 
 const App = () => (
   <AppStoreProvider>
     <ReportStoreProvider>
       <TrustStoreProvider>
         <PharmacyStoreProvider>
-          <BrowserRouter>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/verify/:id" element={<VerifyDocument />} />
-                <Route element={<Layout />}>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/medical" element={<MedicalArea />} />
-                  <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
-                  <Route path="/nutrition" element={<NutritionArea />} />
-                  <Route path="/speech-therapy" element={<SpeechTherapyArea />} />
-                  <Route path="/psychopedagogy" element={<PsychopedagogyArea />} />
-                  <Route path="/patients" element={<Patients />} />
-                  <Route path="/patients/:id" element={<PatientDetail />} />
-                  <Route path="/professionals" element={<Professionals />} />
-                  <Route path="/assessment" element={<Assessment />} />
-                  <Route
-                    path="/pharmacopeia"
-                    element={<Navigate to="/gestao-metabolica" replace />}
-                  />
-                  <Route path="/gestao-metabolica" element={<Pharmacopeia />} />
-                  <Route path="/neuronavigation" element={<Neuronavigation />} />
-                  <Route path="/analysis/:id" element={<Analysis />} />
-                  <Route path="/report/:id" element={<Report />} />
-                  <Route path="/protocols" element={<Protocols />} />
-                  <Route path="/auditor-portal" element={<AuditorPortal />} />
-                  <Route path="/defensor-portal" element={<DefensorPortal />} />
-                  <Route path="/report-center" element={<ReportCenter />} />
-                  <Route path="/performance-timeline" element={<PerformanceTimeline />} />
-                  <Route path="/patient-portal" element={<PatientPortal />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </TooltipProvider>
-          </BrowserRouter>
+          <VitalStrataStoreProvider>
+            <BrowserRouter>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/verify/:id" element={<VerifyDocument />} />
+                  <Route element={<Layout />}>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/vitalstrata" element={<VitalStrata />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/medical" element={<MedicalArea />} />
+                    <Route path="/neuropsychology" element={<NeuropsychologyArea />} />
+                    <Route path="/nutrition" element={<NutritionArea />} />
+                    <Route path="/speech-therapy" element={<SpeechTherapyArea />} />
+                    <Route path="/psychopedagogy" element={<PsychopedagogyArea />} />
+                    <Route path="/patients" element={<Patients />} />
+                    <Route path="/patients/:id" element={<PatientDetail />} />
+                    <Route path="/professionals" element={<Professionals />} />
+                    <Route path="/assessment" element={<Assessment />} />
+                    <Route
+                      path="/pharmacopeia"
+                      element={<Navigate to="/gestao-metabolica" replace />}
+                    />
+                    <Route path="/gestao-metabolica" element={<Pharmacopeia />} />
+                    <Route path="/neuronavigation" element={<Neuronavigation />} />
+                    <Route path="/analysis/:id" element={<Analysis />} />
+                    <Route path="/report/:id" element={<Report />} />
+                    <Route path="/protocols" element={<Protocols />} />
+                    <Route path="/auditor-portal" element={<AuditorPortal />} />
+                    <Route path="/defensor-portal" element={<DefensorPortal />} />
+                    <Route path="/report-center" element={<ReportCenter />} />
+                    <Route path="/performance-timeline" element={<PerformanceTimeline />} />
+                    <Route path="/patient-portal" element={<PatientPortal />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </TooltipProvider>
+            </BrowserRouter>
+          </VitalStrataStoreProvider>
         </PharmacyStoreProvider>
       </TrustStoreProvider>
     </ReportStoreProvider>
