@@ -1,7 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { HeartPulse, ArrowDownRight, ArrowUpRight, ShieldAlert, Activity } from 'lucide-react'
+import {
+  HeartPulse,
+  ArrowDownRight,
+  ArrowUpRight,
+  ShieldAlert,
+  Activity,
+  Brain,
+  Zap,
+  ArrowRightLeft,
+  Target,
+} from 'lucide-react'
 import { VitalRecord } from '@/stores/useVitalStrataStore'
 
 interface Props {
@@ -35,8 +45,8 @@ export function GovernancePanel({ latestRecord, previousRecord }: Props) {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-sm border-t-4 border-t-primary flex flex-col justify-center items-center p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <Card className="shadow-sm border-t-4 border-t-primary flex flex-col justify-center items-center p-6 lg:col-span-1">
           <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
             <HeartPulse className="w-5 h-5 text-primary" /> VitalScore™ Atual
           </h3>
@@ -90,65 +100,134 @@ export function GovernancePanel({ latestRecord, previousRecord }: Props) {
           </div>
         </Card>
 
-        <Card className="shadow-sm md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Activity className="w-5 h-5 text-accent" /> Governança Funcional
-            </CardTitle>
-            <CardDescription>
-              Principais gargalos e ações recomendadas para a Reserva Funcional.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h4 className="text-sm font-semibold uppercase text-slate-500 mb-3">
-                Gargalos Identificados (Abaixo de 60%)
-              </h4>
-              {bottlenecks.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {bottlenecks.map((b) => (
-                    <Badge
-                      key={b.key}
-                      variant="outline"
-                      className="border-rose-200 text-rose-700 bg-rose-50 px-3 py-1.5"
-                    >
-                      {b.name}: {b.val}%
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-emerald-600 font-medium">
-                  Nenhum gargalo crítico detectado.
-                </p>
-              )}
-            </div>
-            <div className="bg-slate-50 p-4 rounded-lg border">
-              <h4 className="text-sm font-semibold uppercase text-slate-500 mb-2">
-                Ações Recomendadas (IA)
-              </h4>
-              <ul className="space-y-2 text-sm text-slate-700">
-                {bottlenecks.some((b) => b.key === 'contextual') && (
-                  <li>
-                    • Intervenção na higiene do sono e redução de carga de estresse ambiental.
-                  </li>
-                )}
-                {bottlenecks.some((b) => b.key === 'metabolic') && (
-                  <li>• Revisão do protocolo de gestão metabólica e marcadores inflamatórios.</li>
-                )}
-                {bottlenecks.some((b) => b.key === 'emotional') && (
-                  <li>• Introdução de protocolo tDCS para regulação fronto-límbica.</li>
-                )}
-                {bottlenecks.length === 0 && (
-                  <li>
-                    • Manter monitoramento contínuo e protocolos de consolidação de
-                    neuroplasticidade.
-                  </li>
-                )}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card className="shadow-sm border-l-4 border-l-blue-500 hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex justify-between items-center">
+                <span>Functional Reserve Delta</span>
+                <ArrowRightLeft className="w-4 h-4 text-blue-500" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold flex items-end gap-2">
+                {latestRecord.proprietaryMetrics.reserveDelta > 0 ? '+' : ''}
+                {latestRecord.proprietaryMetrics.reserveDelta}
+                <span className="text-xs font-normal text-muted-foreground mb-1">pts vs basal</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Diferença entre a reserva atual e o nível basal.
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm border-l-4 border-l-purple-500 hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex justify-between items-center">
+                <span>Compensation Strain Index</span>
+                <Activity className="w-4 h-4 text-purple-500" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold flex items-end gap-2">
+                {latestRecord.proprietaryMetrics.strainIndex}
+                <span className="text-xs font-normal text-muted-foreground mb-1">/ 100</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Nível de esforço para manter a performance aparente.
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm border-l-4 border-l-amber-500 hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex justify-between items-center">
+                <span>Neurobehavioral Friction</span>
+                <Brain className="w-4 h-4 text-amber-500" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold flex items-end gap-2">
+                {latestRecord.proprietaryMetrics.frictionScore}
+                <span className="text-xs font-normal text-muted-foreground mb-1">/ 100</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Gap entre potencial cognitivo e execução comportamental.
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm border-l-4 border-l-rose-500 hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex justify-between items-center">
+                <span>Allostatic Load Proxy</span>
+                <Zap className="w-4 h-4 text-rose-500" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold flex items-end gap-2">
+                {latestRecord.proprietaryMetrics.allostaticLoad}
+                <span className="text-xs font-normal text-muted-foreground mb-1">/ 100</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Compósito de marcadores de sobrecarga adaptativa.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Target className="w-5 h-5 text-accent" /> Bottlenecks & Governança
+          </CardTitle>
+          <CardDescription>
+            Principais gargalos e ações recomendadas para otimizar a Reserva Funcional.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h4 className="text-sm font-semibold uppercase text-slate-500 mb-3">
+              Gargalos Identificados (Abaixo de 60%)
+            </h4>
+            {bottlenecks.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {bottlenecks.map((b) => (
+                  <Badge
+                    key={b.key}
+                    variant="outline"
+                    className="border-rose-200 text-rose-700 bg-rose-50 px-3 py-1.5"
+                  >
+                    {b.name}: {b.val}%
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-emerald-600 font-medium">
+                Nenhum gargalo crítico detectado.
+              </p>
+            )}
+          </div>
+          <div className="bg-slate-50 p-4 rounded-lg border">
+            <h4 className="text-sm font-semibold uppercase text-slate-500 mb-2">
+              Ações Recomendadas (IA)
+            </h4>
+            <ul className="space-y-2 text-sm text-slate-700">
+              {bottlenecks.some((b) => b.key === 'contextual') && (
+                <li>• Intervenção na higiene do sono e redução de carga de estresse ambiental.</li>
+              )}
+              {bottlenecks.some((b) => b.key === 'metabolic') && (
+                <li>• Revisão do protocolo de gestão metabólica e marcadores inflamatórios.</li>
+              )}
+              {bottlenecks.some((b) => b.key === 'emotional') && (
+                <li>• Introdução de protocolo tDCS para regulação fronto-límbica.</li>
+              )}
+              {bottlenecks.length === 0 && (
+                <li>
+                  • Manter monitoramento contínuo e protocolos de consolidação de neuroplasticidade.
+                </li>
+              )}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -14,7 +14,7 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
       color: 'text-blue-500',
       bg: 'bg-blue-100',
       val: record.domains.neuro,
-      desc: 'qEEG, coerência, frequência dominante',
+      desc: 'qEEG, conectividade e coerência',
     },
     {
       id: 'cognitive',
@@ -23,7 +23,7 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
       color: 'text-purple-500',
       bg: 'bg-purple-100',
       val: record.domains.cognitive,
-      desc: 'Atenção, memória, flexibilidade',
+      desc: 'As 18 funções psíquicas (Atenção, Memória, Executiva)',
     },
     {
       id: 'emotional',
@@ -32,7 +32,7 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
       color: 'text-rose-500',
       bg: 'bg-rose-100',
       val: record.domains.emotional,
-      desc: 'Estabilidade emocional, reatividade',
+      desc: 'Matriz RDoC (Valência Negativa) e Big Five (Neuroticismo)',
     },
     {
       id: 'metabolic',
@@ -41,7 +41,7 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
       color: 'text-emerald-500',
       bg: 'bg-emerald-100',
       val: record.domains.metabolic,
-      desc: 'Nutrição, energia, inflamação',
+      desc: 'Painel inflamatório e nutricional (Neuronutrição)',
     },
     {
       id: 'contextual',
@@ -50,7 +50,7 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
       color: 'text-amber-500',
       bg: 'bg-amber-100',
       val: record.domains.contextual,
-      desc: 'Ambiente, carga de estresse, sono',
+      desc: 'Allostatic load, qualidade do sono e ambiente',
     },
   ]
 
@@ -65,7 +65,9 @@ export function DomainModules({ record }: { record: VitalRecord | undefined }) {
               </CardTitle>
               <span className={`font-black text-lg ${m.color}`}>{m.val}%</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{m.desc}</p>
+            <p className="text-xs text-muted-foreground mt-1 line-clamp-1" title={m.desc}>
+              {m.desc}
+            </p>
           </CardHeader>
           <CardContent>
             <Progress
