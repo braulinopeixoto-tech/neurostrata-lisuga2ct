@@ -16,6 +16,7 @@ import {
   Map as MapIcon,
   UploadCloud,
   Brain,
+  Watch,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -27,6 +28,7 @@ import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRada
 import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
 import { PatientDigitizationTab } from '@/components/patient-portal/PatientDigitizationTab'
 import { PatientVerifiedCheckup } from '@/components/patient-portal/PatientVerifiedCheckup'
+import { PatientWearablesTab } from '@/components/patient-portal/PatientWearablesTab'
 
 export default function PatientPortal() {
   const { patients } = useAppStore()
@@ -189,6 +191,12 @@ export default function PatientPortal() {
             <Activity className="w-4 h-4" /> Consulta Rápida
           </TabsTrigger>
           <TabsTrigger
+            value="wearable"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap font-semibold text-indigo-700"
+          >
+            <Watch className="w-4 h-4" /> Wearables & IA
+          </TabsTrigger>
+          <TabsTrigger
             value="digitization"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
@@ -284,6 +292,10 @@ export default function PatientPortal() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="wearable" className="m-0 space-y-6 print:block animate-fade-in">
+          <PatientWearablesTab patientId={patient.id} />
         </TabsContent>
 
         <TabsContent value="digitization" className="m-0 print:block animate-fade-in">

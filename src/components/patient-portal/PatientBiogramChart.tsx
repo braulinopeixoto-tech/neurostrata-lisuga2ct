@@ -10,11 +10,21 @@ import {
 } from 'recharts'
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 
-export function PatientBiogramChart({ data }: { data: any[] }) {
+export function PatientBiogramChart({
+  data,
+  showWearables = false,
+}: {
+  data: any[]
+  showWearables?: boolean
+}) {
   const config = {
     bemEstar: { label: 'Bem-estar Emocional', color: 'hsl(var(--chart-1))' },
     foco: { label: 'Foco e Cognição', color: 'hsl(var(--chart-2))' },
     energia: { label: 'Energia Vital', color: 'hsl(var(--chart-3))' },
+    ...(showWearables && {
+      sleep: { label: 'Qualidade do Sono (Wearable)', color: 'hsl(var(--chart-4))' },
+      stress: { label: 'Nível de Stress (Wearable)', color: 'hsl(var(--chart-5))' },
+    }),
   }
 
   return (
@@ -27,11 +37,12 @@ export function PatientBiogramChart({ data }: { data: any[] }) {
             <YAxis domain={[0, 100]} tickLine={false} axisLine={false} />
             <Tooltip content={<ChartTooltipContent />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />
+
             <Line
               type="monotone"
               name="Bem-estar"
               dataKey="bemEstar"
-              stroke="hsl(var(--chart-1))"
+              stroke="var(--color-bemEstar)"
               strokeWidth={3}
               dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
             />
@@ -39,7 +50,7 @@ export function PatientBiogramChart({ data }: { data: any[] }) {
               type="monotone"
               name="Foco e Atenção"
               dataKey="foco"
-              stroke="hsl(var(--chart-2))"
+              stroke="var(--color-foco)"
               strokeWidth={3}
               dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
             />
@@ -47,10 +58,33 @@ export function PatientBiogramChart({ data }: { data: any[] }) {
               type="monotone"
               name="Energia Vital"
               dataKey="energia"
-              stroke="hsl(var(--chart-3))"
+              stroke="var(--color-energia)"
               strokeWidth={3}
               dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
             />
+
+            {showWearables && (
+              <>
+                <Line
+                  type="monotone"
+                  name="Qualidade do Sono"
+                  dataKey="sleep"
+                  stroke="var(--color-sleep)"
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                />
+                <Line
+                  type="monotone"
+                  name="Nível de Stress"
+                  dataKey="stress"
+                  stroke="var(--color-stress)"
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                />
+              </>
+            )}
           </LineChart>
         </ResponsiveContainer>
       </ChartContainer>
