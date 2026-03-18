@@ -137,6 +137,33 @@ export interface BiogramaDimension {
   contributors: TraceabilityContributor[]
 }
 
+export interface BiogramaDataPoint {
+  id: string
+  date: string
+  reserveScore: number
+  metrics: {
+    cognition: number
+    emotion: number
+    physiology: number
+    sleep: number
+    stress: number
+    hrv: number
+  }
+  sources: {
+    id: string
+    type: 'wearable' | 'clinical' | 'system'
+    name: string
+    description: string
+    timestamp: string
+  }[]
+  verification: {
+    isVerified: boolean
+    verifiedBy?: string
+    verifiedAt?: string
+  }
+  qualitativeInsight: string
+}
+
 interface AppState {
   currentUser: { id: string; fullName: string; role: string; registrationId: string }
   patients: Patient[]
@@ -198,8 +225,9 @@ interface AppState {
   addPatientGAD7: (patientId: string, assessment: any) => void
   patientWHO5: Record<string, any[]>
   addPatientWHO5: (patientId: string, assessment: any) => void
-  patientBiogram: Record<string, any[]>
-  addPatientBiogramData: (patientId: string, data: any) => void
+  patientBiogram: Record<string, BiogramaDataPoint[]>
+  addPatientBiogramData: (patientId: string, data: BiogramaDataPoint) => void
+  simulateBiogramSync: (patientId: string) => void
   patientJourneys: Record<string, CheckupJourneyState>
   submitJourneyStage: (patientId: string, stageId: CheckupStageId, data: any) => void
   validateJourneyStage: (
@@ -265,7 +293,115 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [quickReportDraft, setQuickReportDraft] = useState('')
   const [citations, setCitations] = useState<Citation[]>([])
   const [patientFeedbacks, setPatientFeedbacks] = useState<Record<string, any[]>>({})
-  const [patientBiogram, setPatientBiogram] = useState<Record<string, any[]>>({})
+
+  // Initialize Biograma with rich longitudinal data
+  const [patientBiogram, setPatientBiogram] = useState<Record<string, BiogramaDataPoint[]>>({
+    P001: [
+      {
+        id: 'bio-1',
+        date: '2023-01-10T09:00:00Z',
+        reserveScore: 45,
+        metrics: { cognition: 50, emotion: 40, physiology: 45, sleep: 55, stress: 80, hrv: 35 },
+        sources: [
+          {
+            id: 'src-1',
+            type: 'clinical',
+            name: 'Avaliação de Admissão',
+            description: 'Mapeamento multidimensional inicial',
+            timestamp: '2023-01-10T09:00:00Z',
+          },
+        ],
+        verification: {
+          isVerified: true,
+          verifiedBy: 'Dr. Renato Alves',
+          verifiedAt: '2023-01-11T14:30:00Z',
+        },
+        qualitativeInsight:
+          'Baixa reserva funcional. Estado basal desregulado, alto nível de estresse relatado.',
+      },
+      {
+        id: 'bio-2',
+        date: '2023-03-15T10:30:00Z',
+        reserveScore: 55,
+        metrics: { cognition: 60, emotion: 55, physiology: 50, sleep: 65, stress: 65, hrv: 42 },
+        sources: [
+          {
+            id: 'src-2',
+            type: 'wearable',
+            name: 'Apple Watch Series 8',
+            description: 'Média móvel de 7 dias (Sono/HRV)',
+            timestamp: '2023-03-14T23:59:00Z',
+          },
+          {
+            id: 'src-3',
+            type: 'clinical',
+            name: 'Quick Report AI',
+            description: 'Revisão de acompanhamento Fase 1',
+            timestamp: '2023-03-15T10:30:00Z',
+          },
+        ],
+        verification: {
+          isVerified: true,
+          verifiedBy: 'Dr. Renato Alves',
+          verifiedAt: '2023-03-15T11:00:00Z',
+        },
+        qualitativeInsight:
+          'Sinais iniciais de estabilização. Melhora perceptível na regulação emocional e qualidade do sono.',
+      },
+      {
+        id: 'bio-3',
+        date: '2023-05-20T14:00:00Z',
+        reserveScore: 68,
+        metrics: { cognition: 70, emotion: 65, physiology: 65, sleep: 80, stress: 50, hrv: 55 },
+        sources: [
+          {
+            id: 'src-4',
+            type: 'wearable',
+            name: 'Oura Ring Gen3',
+            description: 'Integração contínua de biomarcadores',
+            timestamp: '2023-05-20T12:00:00Z',
+          },
+        ],
+        verification: {
+          isVerified: true,
+          verifiedBy: 'Dra. Camila Rocha',
+          verifiedAt: '2023-05-21T09:15:00Z',
+        },
+        qualitativeInsight:
+          'Ganho expressivo em neuroplasticidade. O eixo dopaminérgico responde bem à intervenção.',
+      },
+      {
+        id: 'bio-4',
+        date: '2023-07-20T08:45:00Z',
+        reserveScore: 82,
+        metrics: { cognition: 85, emotion: 80, physiology: 80, sleep: 85, stress: 40, hrv: 65 },
+        sources: [
+          {
+            id: 'src-5',
+            type: 'clinical',
+            name: 'Biograma Semestral',
+            description: 'Validação final de ciclo terapêutico',
+            timestamp: '2023-07-20T08:45:00Z',
+          },
+          {
+            id: 'src-6',
+            type: 'system',
+            name: 'Motor IA NeuroStrata',
+            description: 'Convergência de dados e cálculo de Reserva Funcional',
+            timestamp: '2023-07-20T08:46:00Z',
+          },
+        ],
+        verification: {
+          isVerified: true,
+          verifiedBy: 'Dr. Renato Alves',
+          verifiedAt: '2023-07-20T09:00:00Z',
+        },
+        qualitativeInsight:
+          'Platô de alta performance alcançado. Paciente apresenta resiliência robusta e métricas estabilizadas.',
+      },
+    ],
+  })
+
   const [patientDASS21, setPatientDASS21] = useState<Record<string, any[]>>({})
   const [patientPHQ9, setPatientPHQ9] = useState<Record<string, any[]>>({})
   const [patientGAD7, setPatientGAD7] = useState<Record<string, any[]>>({})
@@ -425,11 +561,47 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     })
   }
 
-  const addPatientBiogramData = (patientId: string, data: any) => {
+  const addPatientBiogramData = (patientId: string, data: BiogramaDataPoint) => {
     setPatientBiogram((prev) => ({
       ...prev,
-      [patientId]: [...(prev[patientId] || []), { ...data, id: `bio-${Date.now()}` }],
+      [patientId]: [...(prev[patientId] || []), data],
     }))
+  }
+
+  const simulateBiogramSync = (patientId: string) => {
+    setPatientBiogram((prev) => {
+      const current = prev[patientId] || []
+      const last = current[current.length - 1]
+      const newScore = Math.min(100, (last?.reserveScore || 70) + Math.floor(Math.random() * 5))
+      const newPoint: BiogramaDataPoint = {
+        id: `bio-${Date.now()}`,
+        date: new Date().toISOString(),
+        reserveScore: newScore,
+        metrics: {
+          cognition: Math.min(100, (last?.metrics.cognition || 70) + 2),
+          emotion: Math.min(100, (last?.metrics.emotion || 70) + 1),
+          physiology: Math.min(100, (last?.metrics.physiology || 70) + 3),
+          sleep: Math.min(100, (last?.metrics.sleep || 70) + 4),
+          stress: Math.max(10, (last?.metrics.stress || 50) - 5),
+          hrv: Math.min(100, (last?.metrics.hrv || 50) + 3),
+        },
+        sources: [
+          {
+            id: `src-${Date.now()}`,
+            type: 'wearable',
+            name: 'Integração Automática via Wearable',
+            description: 'Sincronização em tempo real de biomarcadores (HRV, Sleep)',
+            timestamp: new Date().toISOString(),
+          },
+        ],
+        verification: {
+          isVerified: false,
+        },
+        qualitativeInsight:
+          'Nova sincronização detectada. Modulação positiva da variabilidade da frequência cardíaca em repouso.',
+      }
+      return { ...prev, [patientId]: [...current, newPoint] }
+    })
   }
 
   const addPatientAuditLog = (patientId: string, log: any) => {
@@ -559,6 +731,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         addPatientWHO5,
         patientBiogram,
         addPatientBiogramData,
+        simulateBiogramSync,
         patientJourneys,
         submitJourneyStage,
         validateJourneyStage,

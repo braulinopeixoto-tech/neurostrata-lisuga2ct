@@ -12,17 +12,8 @@ import {
   Sparkles,
   BrainCircuit,
 } from 'lucide-react'
-import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
 
 export function PatientWearablesTab({ patientId }: { patientId: string }) {
-  // Use patientId in real scenario to fetch data. Here we mock specific wearable biogram data.
-  const wearableBiogramData = [
-    { date: 'Janeiro', bemEstar: 45, foco: 50, energia: 40, sleep: 55, stress: 80 },
-    { date: 'Março', bemEstar: 55, foco: 65, energia: 50, sleep: 65, stress: 65 },
-    { date: 'Maio', bemEstar: 65, foco: 75, energia: 65, sleep: 80, stress: 50 },
-    { date: 'Julho', bemEstar: 75, foco: 85, energia: 80, sleep: 85, stress: 42 },
-  ]
-
   const metrics = [
     {
       id: 'hrv',
@@ -180,19 +171,6 @@ export function PatientWearablesTab({ patientId }: { patientId: string }) {
           </CardContent>
         </Card>
       </div>
-
-      <Card className="shadow-sm border-t-4 border-t-indigo-500">
-        <CardHeader>
-          <CardTitle className="text-xl">Biograma com Camada Fisiológica (Wearable)</CardTitle>
-          <CardDescription>
-            Integração das métricas biológicas vitais (Sono e Stress) com os eixos neurofuncionais
-            para um mapeamento holístico.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PatientBiogramChart data={wearableBiogramData} showWearables={true} />
-        </CardContent>
-      </Card>
     </div>
   )
 }

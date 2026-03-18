@@ -17,6 +17,7 @@ import {
   UploadCloud,
   Brain,
   Watch,
+  RefreshCcw,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -25,17 +26,18 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import useAppStore from '@/stores/useAppStore'
 import { SimplifiedRadarChart } from '@/components/patient-portal/SimplifiedRadarChart'
-import { PatientBiogramChart } from '@/components/patient-portal/PatientBiogramChart'
 import { PatientDigitizationTab } from '@/components/patient-portal/PatientDigitizationTab'
 import { PatientVerifiedCheckup } from '@/components/patient-portal/PatientVerifiedCheckup'
 import { PatientWearablesTab } from '@/components/patient-portal/PatientWearablesTab'
+import { DynamicBiograma } from '@/components/patient-portal/DynamicBiograma'
 
 export default function PatientPortal() {
-  const { patients } = useAppStore()
+  const { patients, patientBiogram, simulateBiogramSync } = useAppStore()
   const { toast } = useToast()
   // Use P001 which is fully mocked, or fallback
   const patient = patients.find((p) => p.id === 'P001') || patients[0]
-  const [activeTab, setActiveTab] = useState('checkup')
+  const [activeTab, setActiveTab] = useState('biogram')
+  const [isSyncing, setIsSyncing] = useState(false)
 
   if (!patient.hasPortalAccess) {
     return (
@@ -51,9 +53,23 @@ export default function PatientPortal() {
   }
 
   const isSimplified = patient.portalVisibility === 'Simplified'
+  const patientBiogramData = patientBiogram[patient.id] || []
 
   const handlePrint = () => {
     window.print()
+  }
+
+  const handleSimulateSync = () => {
+    setIsSyncing(true)
+    setTimeout(() => {
+      simulateBiogramSync(patient.id)
+      setIsSyncing(false)
+      toast({
+        title: 'Sincronização Concluída',
+        description: 'Novos dados de Wearables integrados ao seu Biograma.',
+        action: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
+      })
+    }, 1500)
   }
 
   const handleDownloadPDF = (certName: string) => {
@@ -81,13 +97,6 @@ export default function PatientPortal() {
     { subject: 'Energia e Motivação', baseline: 50, current: 80 },
     { subject: 'Regulação Social', baseline: 55, current: 90 },
     { subject: 'Qualidade do Sono', baseline: 35, current: 70 },
-  ]
-
-  const biogramData = [
-    { date: 'Janeiro', bemEstar: 45, foco: 50, energia: 40 },
-    { date: 'Março', bemEstar: 55, foco: 65, energia: 50 },
-    { date: 'Maio', bemEstar: 65, foco: 75, energia: 65 },
-    { date: 'Julho', bemEstar: 75, foco: 85, energia: 80 },
   ]
 
   const certificates = [
@@ -163,26 +172,46 @@ export default function PatientPortal() {
             Acompanhe sua jornada clínica, acesse laudos e monitore sua evolução funcional.
           </p>
         </div>
-        <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg border shadow-sm">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-            {patient.name.charAt(0)}
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-lg border shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              {patient.name.charAt(0)}
+            </div>
+            <div>
+              <p className="font-semibold text-sm leading-tight text-foreground">{patient.name}</p>
+              <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Paciente {patient.status}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="font-semibold text-sm leading-tight text-foreground">{patient.name}</p>
-            <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Paciente {patient.status}
-            </p>
-          </div>
+          {activeTab === 'biogram' && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSimulateSync}
+              disabled={isSyncing}
+              className="w-full bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800"
+            >
+              <RefreshCcw className={`w-3.5 h-3.5 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+              Sincronizar Wearables
+            </Button>
+          )}
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap hide-scrollbar print:hidden">
           <TabsTrigger
-            value="checkup"
+            value="biogram"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap text-primary font-bold uppercase tracking-tight"
           >
-            <Brain className="w-4 h-4" /> Check-up Mental Verificado
+            <TrendingUp className="w-4 h-4" /> Biograma Dinâmico
+          </TabsTrigger>
+          <TabsTrigger
+            value="checkup"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Brain className="w-4 h-4" /> Check-up Mental
           </TabsTrigger>
           <TabsTrigger
             value="dashboard"
@@ -202,12 +231,6 @@ export default function PatientPortal() {
           >
             <UploadCloud className="w-4 h-4" /> Digitalização Validada
           </TabsTrigger>
-          <TabsTrigger
-            value="biogram"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
-          >
-            <TrendingUp className="w-4 h-4" /> Biograma Longitudinal
-          </TabsTrigger>
           {!isSimplified && (
             <>
               <TabsTrigger
@@ -225,6 +248,10 @@ export default function PatientPortal() {
             </>
           )}
         </TabsList>
+
+        <TabsContent value="biogram" className="m-0 print:block animate-fade-in">
+          <DynamicBiograma data={patientBiogramData} />
+        </TabsContent>
 
         <TabsContent value="checkup" className="m-0 print:hidden animate-fade-in space-y-6">
           <PatientVerifiedCheckup patientId={patient.id} />
@@ -300,40 +327,6 @@ export default function PatientPortal() {
 
         <TabsContent value="digitization" className="m-0 print:block animate-fade-in">
           <PatientDigitizationTab patientId={patient.id} />
-        </TabsContent>
-
-        <TabsContent value="biogram" className="m-0 print:block animate-fade-in">
-          <Card className="shadow-sm border-t-4 border-t-primary print:shadow-none print:border-none">
-            <CardHeader className="flex flex-row justify-between items-start print:pb-2">
-              <div>
-                <CardTitle className="text-xl">Biograma Longitudinal Certificado</CardTitle>
-                <CardDescription>
-                  Acompanhamento contínuo da sua evolução funcional ao longo do tratamento.
-                </CardDescription>
-              </div>
-              <Button variant="outline" onClick={handlePrint} className="print:hidden">
-                <Printer className="w-4 h-4 mr-2" /> Imprimir Biograma
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {!isSimplified && (
-                <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-blue-900">
-                      Documento de Valor Clínico Validado
-                    </h4>
-                    <p className="text-xs text-blue-800 mt-1 leading-relaxed">
-                      Este gráfico representa a consolidação auditável das suas melhoras em
-                      métricas-chave de saúde neurofuncional. Os dados são gerados pelo motor NSI e
-                      certificados pelo seu médico assistente.
-                    </p>
-                  </div>
-                </div>
-              )}
-              <PatientBiogramChart data={biogramData} />
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {!isSimplified && (

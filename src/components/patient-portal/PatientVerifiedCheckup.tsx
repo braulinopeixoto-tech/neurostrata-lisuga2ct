@@ -35,7 +35,6 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
     },
   ]
 
-  // Group level 2 logic
   const getStageStatus = (id: string) => {
     if (!journey) return 'locked'
     if (id === 'level2_functions') {
