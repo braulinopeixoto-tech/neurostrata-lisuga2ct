@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { AlertTriangle, AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import useAppStore from '@/stores/useAppStore'
@@ -11,39 +11,45 @@ export function SmartClinicalAlerts({ patientId }: { patientId: string }) {
 
   const loggedAlerts = useRef<Set<string>>(new Set())
 
-  if (!patient || !patient.activePrescriptions || !patient.geneticMarkers) return null
+  const alerts = useMemo(() => {
+    if (!patient || !patient.activePrescriptions || !patient.geneticMarkers) return []
 
-  const alerts = []
+    const alertsList = []
 
-  const hasCYP2C19Ultra = patient.geneticMarkers.some(
-    (m) => m.gene === 'CYP2C19' && m.phenotype.includes('Ultrarrápido'),
-  )
-  const hasEscitalopram = patient.activePrescriptions.some((p) => p.medication === 'Escitalopram')
+    const hasCYP2C19Ultra = patient.geneticMarkers.some(
+      (m) => m.gene === 'CYP2C19' && m.phenotype.includes('Ultrarrápido'),
+    )
+    const hasEscitalopram = patient.activePrescriptions.some((p) => p.medication === 'Escitalopram')
 
-  if (hasCYP2C19Ultra && hasEscitalopram) {
-    alerts.push({
-      id: 'cyp2c19-escitalopram',
-      type: 'Ajuste Sugerido de Dose',
-      level: 'warning',
-      message:
-        'O paciente é metabolizador ultrarrápido para CYP2C19 e está em uso de Escitalopram. Há risco de falha terapêutica. Considere ajuste de dose ou mudança para alternativa (ex: Sertralina).',
-    })
-  }
+    if (hasCYP2C19Ultra && hasEscitalopram) {
+      alertsList.push({
+        id: 'cyp2c19-escitalopram',
+        type: 'Ajuste Sugerido de Dose',
+        level: 'warning',
+        message:
+          'O paciente é metabolizador ultrarrápido para CYP2C19 e está em uso de Escitalopram. Há risco de falha terapêutica. Considere ajuste de dose ou mudança para alternativa (ex: Sertralina).',
+      })
+    }
 
-  const hasHLAB = patient.geneticMarkers.some(
-    (m) => m.gene === 'HLA-B*1502' && m.phenotype.includes('Positivo'),
-  )
-  const hasCarbamazepina = patient.activePrescriptions.some((p) => p.medication === 'Carbamazepina')
+    const hasHLAB = patient.geneticMarkers.some(
+      (m) => m.gene === 'HLA-B*1502' && m.phenotype.includes('Positivo'),
+    )
+    const hasCarbamazepina = patient.activePrescriptions.some(
+      (p) => p.medication === 'Carbamazepina',
+    )
 
-  if (hasHLAB && hasCarbamazepina) {
-    alerts.push({
-      id: 'hlab-carbamazepina',
-      type: 'Risco de Reação Adversa',
-      level: 'danger',
-      message:
-        'Marcador HLA-B*1502 positivo com uso de Carbamazepina. Alto risco de Síndrome de Stevens-Johnson. Descontinuação fortemente recomendada.',
-    })
-  }
+    if (hasHLAB && hasCarbamazepina) {
+      alertsList.push({
+        id: 'hlab-carbamazepina',
+        type: 'Risco de Reação Adversa',
+        level: 'danger',
+        message:
+          'Marcador HLA-B*1502 positivo com uso de Carbamazepina. Alto risco de Síndrome de Stevens-Johnson. Descontinuação fortemente recomendada.',
+      })
+    }
+
+    return alertsList
+  }, [patient])
 
   useEffect(() => {
     alerts.forEach((alert) => {
@@ -60,6 +66,8 @@ export function SmartClinicalAlerts({ patientId }: { patientId: string }) {
       }
     })
   }, [alerts, patientId, currentUser, addAuditLog])
+
+  if (!patient || !patient.activePrescriptions || !patient.geneticMarkers) return null
 
   if (alerts.length === 0) return null
 
