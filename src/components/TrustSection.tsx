@@ -71,7 +71,7 @@ export function TrustSection() {
       </div>
 
       {/* Trust Layer Footer Section */}
-      <div className="mt-12 bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-800 shadow-xl relative overflow-hidden">
+      <div className="mt-12 bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-800 shadow-xl relative overflow-hidden text-inherit">
         {/* Background decoration */}
         <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
 
@@ -99,7 +99,7 @@ export function TrustSection() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2.5 text-sm text-slate-200 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                Biograma
+                Biograma Longitudinal Certificado
               </li>
               <li className="flex items-center gap-2.5 text-sm text-slate-200 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
