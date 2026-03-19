@@ -6,6 +6,8 @@ import {
   Network,
   ShieldCheck,
   History,
+  Dna,
+  Microscope,
 } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -15,6 +17,8 @@ import { InterventionsTab } from '@/components/pharmacopeia/InterventionsTab'
 import { PartnerNetworkTab } from '@/components/pharmacopeia/PartnerNetworkTab'
 import { IntegratedReportTab } from '@/components/pharmacopeia/IntegratedReportTab'
 import { AuditLogTab } from '@/components/pharmacopeia/AuditLogTab'
+import { PharmacogeneticsTab } from '@/components/genetics/PharmacogeneticsTab'
+import { NutrigeneticsTab } from '@/components/genetics/NutrigeneticsTab'
 
 export default function Pharmacopeia() {
   return (
@@ -49,39 +53,51 @@ export default function Pharmacopeia() {
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent mb-6 overflow-x-auto flex-nowrap hide-scrollbar">
           <TabsTrigger
             value="metabolic"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <Activity className="w-4 h-4" /> Eixo Metabólico
           </TabsTrigger>
           <TabsTrigger
             value="exams"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <TestTube className="w-4 h-4" /> Exames
           </TabsTrigger>
           <TabsTrigger
             value="interventions"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <BriefcaseMedical className="w-4 h-4" /> Intervenções
           </TabsTrigger>
           <TabsTrigger
             value="network"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <Network className="w-4 h-4" /> Rede Parceira
           </TabsTrigger>
           <TabsTrigger
             value="audit"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <History className="w-4 h-4" /> Log de Auditoria
           </TabsTrigger>
           <TabsTrigger
             value="report"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
           >
             <ShieldCheck className="w-4 h-4" /> Relatório Dossiê
+          </TabsTrigger>
+          <TabsTrigger
+            value="pharmacogenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Dna className="w-4 h-4" /> Farmacogenética
+          </TabsTrigger>
+          <TabsTrigger
+            value="nutrigenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Microscope className="w-4 h-4" /> Nutrigenética & Metabolômica
           </TabsTrigger>
         </TabsList>
 
@@ -102,6 +118,12 @@ export default function Pharmacopeia() {
         </TabsContent>
         <TabsContent value="report" className="m-0 focus-visible:outline-none">
           <IntegratedReportTab />
+        </TabsContent>
+        <TabsContent value="pharmacogenetics" className="m-0 focus-visible:outline-none">
+          <PharmacogeneticsTab />
+        </TabsContent>
+        <TabsContent value="nutrigenetics" className="m-0 focus-visible:outline-none">
+          <NutrigeneticsTab />
         </TabsContent>
       </Tabs>
     </div>

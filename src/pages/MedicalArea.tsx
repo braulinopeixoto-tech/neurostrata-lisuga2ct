@@ -1,12 +1,23 @@
 import { Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Stethoscope, FlaskConical, TrendingUp, Cpu, Scale, Brain } from 'lucide-react'
+import {
+  Stethoscope,
+  FlaskConical,
+  TrendingUp,
+  Cpu,
+  Scale,
+  Brain,
+  Dna,
+  Microscope,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ClinicalHubTab } from '@/components/medical/ClinicalHubTab'
 import { DiagnosticsTab } from '@/components/medical/DiagnosticsTab'
 import { MonitoringTab } from '@/components/medical/MonitoringTab'
 import { AutomationTab } from '@/components/medical/AutomationTab'
 import { GovernanceTab } from '@/components/medical/GovernanceTab'
+import { PharmacogeneticsTab } from '@/components/genetics/PharmacogeneticsTab'
+import { NutrigeneticsTab } from '@/components/genetics/NutrigeneticsTab'
 
 export default function MedicalArea() {
   return (
@@ -60,6 +71,18 @@ export default function MedicalArea() {
           >
             <Scale className="w-4 h-4" /> Governança e Portais
           </TabsTrigger>
+          <TabsTrigger
+            value="pharmacogenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Dna className="w-4 h-4" /> Farmacogenética
+          </TabsTrigger>
+          <TabsTrigger
+            value="nutrigenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-accent data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Microscope className="w-4 h-4" /> Nutrigenética & Metabolômica
+          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
@@ -77,6 +100,12 @@ export default function MedicalArea() {
           </TabsContent>
           <TabsContent value="governance" className="m-0 focus-visible:outline-none">
             <GovernanceTab />
+          </TabsContent>
+          <TabsContent value="pharmacogenetics" className="m-0 focus-visible:outline-none">
+            <PharmacogeneticsTab />
+          </TabsContent>
+          <TabsContent value="nutrigenetics" className="m-0 focus-visible:outline-none">
+            <NutrigeneticsTab />
           </TabsContent>
         </div>
       </Tabs>

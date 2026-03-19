@@ -1,4 +1,14 @@
-import { Apple, ActivitySquare, BookOpen, Brain, Activity, LineChart, FileText } from 'lucide-react'
+import {
+  Apple,
+  ActivitySquare,
+  BookOpen,
+  Brain,
+  Activity,
+  LineChart,
+  FileText,
+  Dna,
+  Microscope,
+} from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { AssessmentHubTab } from '@/components/nutrition/AssessmentHubTab'
@@ -8,6 +18,8 @@ import { ExamsBiomarkersTab } from '@/components/nutrition/ExamsBiomarkersTab'
 import { SupervisionDashboardTab } from '@/components/nutrition/SupervisionDashboardTab'
 import { MetabolicStressTab } from '@/components/nutrition/MetabolicStressTab'
 import { TrustLayerReportTab } from '@/components/nutrition/TrustLayerReportTab'
+import { PharmacogeneticsTab } from '@/components/genetics/PharmacogeneticsTab'
+import { NutrigeneticsTab } from '@/components/genetics/NutrigeneticsTab'
 
 export default function NutritionArea() {
   return (
@@ -68,6 +80,18 @@ export default function NutritionArea() {
           >
             <FileText className="w-4 h-4" /> Laudos Trust Layer™
           </TabsTrigger>
+          <TabsTrigger
+            value="pharmacogenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-700 data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Dna className="w-4 h-4" /> Farmacogenética
+          </TabsTrigger>
+          <TabsTrigger
+            value="nutrigenetics"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:text-green-700 data-[state=active]:bg-transparent py-3 flex gap-2 whitespace-nowrap"
+          >
+            <Microscope className="w-4 h-4" /> Nutrigenética & Metabolômica
+          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
@@ -91,6 +115,12 @@ export default function NutritionArea() {
           </TabsContent>
           <TabsContent value="report" className="m-0 focus-visible:outline-none">
             <TrustLayerReportTab />
+          </TabsContent>
+          <TabsContent value="pharmacogenetics" className="m-0 focus-visible:outline-none">
+            <PharmacogeneticsTab />
+          </TabsContent>
+          <TabsContent value="nutrigenetics" className="m-0 focus-visible:outline-none">
+            <NutrigeneticsTab />
           </TabsContent>
         </div>
       </Tabs>
