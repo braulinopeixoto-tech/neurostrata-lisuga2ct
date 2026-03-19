@@ -21,6 +21,10 @@ export const MOCK_PATIENTS = [
       speechTherapy: { status: 'Atenção', summary: 'dificuldade de processamento auditivo' },
       psychopedagogy: { status: 'Crítico', summary: 'dificuldade em leitura e atenção escolar' },
     },
+    activePrescriptions: [{ medication: 'Escitalopram', dosage: '10mg/dia' }],
+    geneticMarkers: [
+      { gene: 'CYP2C19', phenotype: 'Metabolizador Ultrarrápido', type: 'Pharmacogenetics' },
+    ],
   },
   {
     id: 'P002',
@@ -43,6 +47,8 @@ export const MOCK_PATIENTS = [
       speechTherapy: { status: 'Normal', summary: 'comunicação preservada' },
       psychopedagogy: { status: 'Normal', summary: 'desenvolvimento adequado' },
     },
+    activePrescriptions: [{ medication: 'Carbamazepina', dosage: '200mg/dia' }],
+    geneticMarkers: [{ gene: 'HLA-B*1502', phenotype: 'Positivo', type: 'Pharmacogenetics' }],
   },
   {
     id: 'P003',
@@ -66,6 +72,8 @@ export const MOCK_PATIENTS = [
       speechTherapy: { status: 'Normal', summary: 'fluência normal' },
       psychopedagogy: { status: 'Normal', summary: 'n/a' },
     },
+    activePrescriptions: [],
+    geneticMarkers: [],
   },
 ]
 

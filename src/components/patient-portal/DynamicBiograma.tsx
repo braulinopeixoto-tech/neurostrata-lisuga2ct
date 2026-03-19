@@ -7,6 +7,9 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
+  LineChart,
+  Line,
+  Legend,
 } from 'recharts'
 import { BiogramaDataPoint } from '@/stores/useAppStore'
 import { ChartContainer } from '@/components/ui/chart'
@@ -26,6 +29,18 @@ export function DynamicBiograma({ data }: Props) {
       ...d,
       index,
       displayDate: new Date(d.date).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' }),
+    }))
+  }, [data])
+
+  const metabolicChartData = useMemo(() => {
+    return data.map((d) => ({
+      displayDate: new Date(d.date).toLocaleDateString('pt-BR', {
+        month: 'short',
+        day: 'numeric',
+      }),
+      inflamacao: Math.round(Math.max(10, 80 - d.reserveScore * 0.5 + Math.random() * 10)),
+      cortisol: Math.round(Math.max(20, 90 - d.metrics.stress * 0.6 + Math.random() * 5)),
+      insulina: Math.round(Math.max(5, 60 - d.metrics.physiology * 0.4 + Math.random() * 5)),
     }))
   }, [data])
 
@@ -161,6 +176,101 @@ export function DynamicBiograma({ data }: Props) {
           <BiogramaDetailCard data={selectedPoint} />
         </div>
       )}
+
+      {/* Perfil Metabólico Chart */}
+      <div className="bg-white p-4 sm:p-6 rounded-xl border shadow-sm mt-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-slate-800">
+            Perfil Metabólico e Evolução Genética
+          </h3>
+          <p className="text-sm text-slate-500">
+            Acompanhamento longitudinal dos biomarcadores sistêmicos correlacionados às variações
+            funcionais.
+          </p>
+        </div>
+
+        <div className="h-[280px] w-full">
+          <ChartContainer
+            config={{
+              inflamacao: { label: 'Inflamação (PCR-us)', color: '#ef4444' }, // red-500
+              cortisol: { label: 'Cortisol Salivar', color: '#f59e0b' }, // amber-500
+              insulina: { label: 'Insulina', color: '#3b82f6' }, // blue-500
+            }}
+            className="w-full h-full"
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={metabolicChartData}
+                margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis
+                  dataKey="displayDate"
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                  dy={10}
+                />
+                <YAxis
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  cursor={{
+                    stroke: 'hsl(var(--muted-foreground))',
+                    strokeWidth: 1,
+                    strokeDasharray: '3 3',
+                  }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white border border-border p-3 rounded-lg shadow-xl text-xs font-medium space-y-1">
+                          <p className="font-bold text-slate-800 mb-2 border-b pb-1">
+                            {payload[0].payload.displayDate}
+                          </p>
+                          {payload.map((entry: any, i) => (
+                            <div key={i} className="flex justify-between gap-4">
+                              <span style={{ color: entry.color }}>{entry.name}:</span>
+                              <span className="font-bold text-slate-900">{entry.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
+                <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                <Line
+                  type="monotone"
+                  dataKey="inflamacao"
+                  stroke="#ef4444"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="cortisol"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="insulina"
+                  stroke="#3b82f6"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
+      </div>
     </div>
   )
 }

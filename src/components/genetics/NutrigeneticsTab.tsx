@@ -19,11 +19,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Microscope, ShieldCheck, Plus, CheckCircle2, User } from 'lucide-react'
+import { Microscope, ShieldCheck, Plus, CheckCircle2, User, Sparkles } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import useAppStore from '@/stores/useAppStore'
 import useTrustStore from '@/stores/useTrustStore'
 import { toast } from '@/components/ui/use-toast'
+import { SmartClinicalAlerts } from '@/components/medical/SmartClinicalAlerts'
 
 export function NutrigeneticsTab() {
   const { caseWorkspaces, specialtyReports, saveSpecialtyReport } = useTeamFlowStore()
@@ -34,6 +35,8 @@ export function NutrigeneticsTab() {
   const [biomarker, setBiomarker] = useState('')
   const [interaction, setInteraction] = useState('')
   const [impact, setImpact] = useState('')
+
+  const selectedCase = caseWorkspaces.find((cw) => cw.id === selectedCaseId)
 
   const existingReport = useMemo(() => {
     return specialtyReports.find(
@@ -52,6 +55,41 @@ export function NutrigeneticsTab() {
         return { raw: k, desc, author }
       })
   }, [existingReport])
+
+  const handleSuggestInterpretation = () => {
+    if (!biomarker) {
+      toast({
+        title: 'Atenção',
+        description: 'Preencha o campo Biomarcador / Gene primeiro.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    let suggestion = ''
+    let intr = ''
+    if (biomarker.toUpperCase().includes('MTHFR')) {
+      intr = 'Redução na conversão de ácido fólico'
+      suggestion = 'Suplementar L-Metilfolato ativo.'
+    } else if (biomarker.toUpperCase().includes('COMT')) {
+      intr = 'Degradação lenta de catecolaminas'
+      suggestion = 'Otimizar suporte de magnésio.'
+    } else {
+      intr = 'Interação neutra'
+      suggestion = 'Manter conduta padrão.'
+    }
+
+    setInteraction(intr)
+    setImpact(suggestion)
+
+    addAuditLog({
+      evento: `Interpretação Gerada (${biomarker}) - Metodologia v2.4`,
+      profissional: `${currentUser.fullName} (${currentUser.registrationId})`,
+      data: new Date().toISOString(),
+      origem: 'Biblioteca de Interpretação Metabólica',
+      decisao_validada: false,
+    })
+  }
 
   const handleAddMarker = () => {
     if (!selectedCaseId || !biomarker || !interaction || !impact) {
@@ -86,7 +124,7 @@ export function NutrigeneticsTab() {
     )
 
     addAuditLog({
-      evento: `Inclusão de Perfil Nutrigenético/Metabolômico (${biomarker})`,
+      evento: `Aceite e Inclusão de Perfil Nutrigenético/Metabolômico (${biomarker}) - Metodologia v2.4`,
       profissional: `${currentUser.fullName} (${currentUser.registrationId})`,
       data: new Date().toISOString(),
       origem: 'Módulo de Nutrigenética',
@@ -133,6 +171,8 @@ export function NutrigeneticsTab() {
             </Select>
           </div>
 
+          {selectedCase?.patient_id && <SmartClinicalAlerts patientId={selectedCase.patient_id} />}
+
           {selectedCaseId && (
             <>
               <div className="bg-muted/30 p-5 rounded-lg border space-y-4">
@@ -159,7 +199,7 @@ export function NutrigeneticsTab() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs">Impacto Clínico / Conduta</Label>
+                    <Label className="text-xs">Sugestão / Conduta</Label>
                     <Input
                       value={impact}
                       onChange={(e) => setImpact(e.target.value)}
@@ -168,12 +208,19 @@ export function NutrigeneticsTab() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end pt-2">
+                <div className="flex flex-wrap justify-end pt-2 gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={handleSuggestInterpretation}
+                    className="text-teal-700 border-teal-200 bg-teal-50 hover:bg-teal-100"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" /> Sugerir Interpretação
+                  </Button>
                   <Button
                     onClick={handleAddMarker}
                     className="bg-teal-600 hover:bg-teal-700 text-white"
                   >
-                    <ShieldCheck className="w-4 h-4 mr-2" /> Registrar e Selar
+                    <ShieldCheck className="w-4 h-4 mr-2" /> Aceitar e Selar
                   </Button>
                 </div>
               </div>

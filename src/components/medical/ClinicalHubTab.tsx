@@ -27,6 +27,7 @@ import {
 import { toast } from '@/components/ui/use-toast'
 import useAppStore from '@/stores/useAppStore'
 import { QuickReportValidationModal } from './QuickReportValidationModal'
+import { SmartClinicalAlerts } from '@/components/medical/SmartClinicalAlerts'
 
 export function ClinicalHubTab() {
   const { quickReportDraft, setQuickReportDraft, patients, updatePatient } = useAppStore()
@@ -113,7 +114,7 @@ export function ClinicalHubTab() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-2">
             <Label className="font-medium whitespace-nowrap">Paciente-alvo:</Label>
             <Select value={selectedPatientId} onValueChange={setSelectedPatientId}>
               <SelectTrigger className="w-full sm:w-[250px] bg-slate-50">
@@ -128,6 +129,8 @@ export function ClinicalHubTab() {
               </SelectContent>
             </Select>
           </div>
+
+          {selectedPatientId && <SmartClinicalAlerts patientId={selectedPatientId} />}
 
           <Textarea
             placeholder="Descreva suas observações clínicas brutas de forma livre. A IA analisará e distribuirá as informações nos painéis de Cognição, Emoção, Comportamento e nas áreas funcionais..."

@@ -19,11 +19,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Dna, ShieldCheck, Plus, CheckCircle2, User } from 'lucide-react'
+import { Dna, ShieldCheck, Plus, CheckCircle2, User, Sparkles } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import useAppStore from '@/stores/useAppStore'
 import useTrustStore from '@/stores/useTrustStore'
 import { toast } from '@/components/ui/use-toast'
+import { SmartClinicalAlerts } from '@/components/medical/SmartClinicalAlerts'
 
 export function PharmacogeneticsTab() {
   const { caseWorkspaces, specialtyReports, saveSpecialtyReport } = useTeamFlowStore()
@@ -34,6 +35,8 @@ export function PharmacogeneticsTab() {
   const [gene, setGene] = useState('')
   const [phenotype, setPhenotype] = useState('')
   const [recommendation, setRecommendation] = useState('')
+
+  const selectedCase = caseWorkspaces.find((cw) => cw.id === selectedCaseId)
 
   const existingReport = useMemo(() => {
     return specialtyReports.find(
@@ -52,6 +55,41 @@ export function PharmacogeneticsTab() {
         return { raw: k, desc, author }
       })
   }, [existingReport])
+
+  const handleSuggestInterpretation = () => {
+    if (!gene) {
+      toast({
+        title: 'Atenção',
+        description: 'Preencha o campo Gene / Variante primeiro.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    let suggestion = ''
+    let pheno = ''
+    if (gene.toUpperCase().includes('CYP2C19')) {
+      suggestion = 'Risco de falha terapêutica com ISRS. Requer ajuste de dose.'
+      pheno = 'Metabolizador Ultrarrápido'
+    } else if (gene.toUpperCase().includes('HLA-B')) {
+      suggestion = 'Alto risco de reações cutâneas graves com anticonvulsivantes.'
+      pheno = 'Alelo Positivo'
+    } else {
+      suggestion = 'Sem alterações significativas na biblioteca.'
+      pheno = 'Normal'
+    }
+
+    setPhenotype(pheno)
+    setRecommendation(suggestion)
+
+    addAuditLog({
+      evento: `Interpretação Gerada (${gene}) - Metodologia v2.4`,
+      profissional: `${currentUser.fullName} (${currentUser.registrationId})`,
+      data: new Date().toISOString(),
+      origem: 'Biblioteca de Interpretação Genética',
+      decisao_validada: false,
+    })
+  }
 
   const handleAddMarker = () => {
     if (!selectedCaseId || !gene || !phenotype || !recommendation) {
@@ -86,7 +124,7 @@ export function PharmacogeneticsTab() {
     )
 
     addAuditLog({
-      evento: `Inclusão de Marcador Farmacogenético (${gene})`,
+      evento: `Aceite e Inclusão de Marcador Farmacogenético (${gene}) - Metodologia v2.4`,
       profissional: `${currentUser.fullName} (${currentUser.registrationId})`,
       data: new Date().toISOString(),
       origem: 'Módulo de Farmacogenética',
@@ -134,6 +172,8 @@ export function PharmacogeneticsTab() {
             </Select>
           </div>
 
+          {selectedCase?.patient_id && <SmartClinicalAlerts patientId={selectedCase.patient_id} />}
+
           {selectedCaseId && (
             <>
               <div className="bg-muted/30 p-5 rounded-lg border space-y-4">
@@ -160,7 +200,7 @@ export function PharmacogeneticsTab() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs">Recomendação Clínica</Label>
+                    <Label className="text-xs">Sugestão / Recomendação Clínica</Label>
                     <Input
                       value={recommendation}
                       onChange={(e) => setRecommendation(e.target.value)}
@@ -169,12 +209,19 @@ export function PharmacogeneticsTab() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end pt-2">
+                <div className="flex flex-wrap justify-end pt-2 gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={handleSuggestInterpretation}
+                    className="text-indigo-700 border-indigo-200 bg-indigo-50 hover:bg-indigo-100"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" /> Sugerir Interpretação
+                  </Button>
                   <Button
                     onClick={handleAddMarker}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white"
                   >
-                    <ShieldCheck className="w-4 h-4 mr-2" /> Registrar e Selar
+                    <ShieldCheck className="w-4 h-4 mr-2" /> Aceitar e Selar
                   </Button>
                 </div>
               </div>

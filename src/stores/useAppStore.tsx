@@ -27,6 +27,17 @@ export interface PatientAlert {
   resolvedBy?: string
 }
 
+export interface ActivePrescription {
+  medication: string
+  dosage: string
+}
+
+export interface GeneticMarker {
+  gene: string
+  phenotype: string
+  type: string
+}
+
 export interface Patient {
   id: string
   name: string
@@ -40,6 +51,8 @@ export interface Patient {
   hasPortalAccess?: boolean
   portalVisibility?: 'Simplified' | 'Detailed'
   linkedProfessionals?: { id: string; name: string; role: string }[]
+  activePrescriptions?: ActivePrescription[]
+  geneticMarkers?: GeneticMarker[]
   dimensions?: {
     cognition: { status: string; label: string }
     emotion: { status: string; label: string }
