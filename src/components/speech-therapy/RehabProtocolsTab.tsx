@@ -9,8 +9,9 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Zap, PlusCircle, CheckCircle2 } from 'lucide-react'
+import { Zap, PlusCircle, CheckCircle2, History } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
+import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 
 const FONO_PROTOCOLS = [
   'Reabilitação de Afasia (Broca/Wernicke)',
@@ -20,10 +21,11 @@ const FONO_PROTOCOLS = [
   'Treino de Processamento Auditivo Central',
 ]
 
-export function RehabProtocolsTab() {
+export function RehabProtocolsTab({ patientId }: { patientId: string }) {
   const [fonoProt, setFonoProt] = useState('')
   const [neuroMod, setNeuroMod] = useState('')
   const [activeProtocols, setActiveProtocols] = useState<any[]>([])
+  const { logAction } = useTeamFlowStore()
 
   const handleAdd = () => {
     if (!fonoProt || !neuroMod) {
@@ -34,10 +36,23 @@ export function RehabProtocolsTab() {
       })
       return
     }
-    setActiveProtocols((prev) => [...prev, { fono: fonoProt, neuro: neuroMod, id: Date.now() }])
+
+    const newProtocol = { fono: fonoProt, neuro: neuroMod, id: Date.now() }
+    setActiveProtocols((prev) => [...prev, newProtocol])
+
+    // Log the intervention in the Trust Layer
+    logAction(
+      'speech_rehab_protocol',
+      patientId,
+      'ASSIGN_PROTOCOL',
+      null,
+      newProtocol,
+      'Fonoaudiologia',
+    )
+
     toast({
-      title: 'Protocolo Registrado',
-      description: 'O plano de intervenção combinada foi salvo.',
+      title: 'Protocolo Registrado e Auditado',
+      description: 'O plano de intervenção combinada foi salvo no histórico do paciente.',
     })
     setFonoProt('')
     setNeuroMod('')
@@ -51,7 +66,8 @@ export function RehabProtocolsTab() {
             <Zap className="w-5 h-5 text-blue-600" /> Protocolos de Reabilitação Integrada
           </CardTitle>
           <CardDescription>
-            Associe os treinos fonoaudiológicos específicos aos alvos de neuromodulação.
+            Associe os treinos fonoaudiológicos específicos aos alvos de neuromodulação do
+            NeuroModel.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -72,7 +88,7 @@ export function RehabProtocolsTab() {
               </Select>
             </div>
             <div className="flex-1 space-y-2 w-full">
-              <label className="text-sm font-medium">Suporte Neuromodulatório</label>
+              <label className="text-sm font-medium">Suporte Neuromodulatório Sugerido</label>
               <Select value={neuroMod} onValueChange={setNeuroMod}>
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Selecione..." />
@@ -93,23 +109,23 @@ export function RehabProtocolsTab() {
           </div>
 
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm uppercase text-muted-foreground">
-              Plano de Intervenção Ativo
+            <h4 className="font-semibold text-sm uppercase text-muted-foreground flex items-center gap-2">
+              <History className="w-4 h-4" /> Plano de Intervenção Ativo
             </h4>
             {activeProtocols.length === 0 ? (
               <p className="text-sm text-muted-foreground italic border border-dashed p-4 rounded text-center">
-                Nenhum protocolo combinado registrado.
+                Nenhum protocolo combinado registrado para este paciente.
               </p>
             ) : (
               activeProtocols.map((prot) => (
                 <div
                   key={prot.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg bg-white shadow-sm"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg bg-white shadow-sm hover:border-blue-200 transition-colors"
                 >
                   <div>
                     <h5 className="font-bold text-primary">{prot.fono}</h5>
                     <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-blue-500" /> Associado com: {prot.neuro}
+                      <Zap className="w-3.5 h-3.5 text-blue-500" /> Suporte Neural: {prot.neuro}
                     </p>
                   </div>
                   <Badge className="mt-2 sm:mt-0 bg-emerald-50 text-emerald-700 border-emerald-200">

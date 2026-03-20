@@ -7,39 +7,49 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { BrainCircuit, Link as LinkIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { BrainCircuit, Link as LinkIcon, AlertTriangle } from 'lucide-react'
 
-export function NeurofunctionalTab() {
+export function NeurofunctionalTab({ patientId }: { patientId: string }) {
   const [qeeg, setQeeg] = useState('')
   const [p300, setP300] = useState('')
   const [n400, setN400] = useState('')
 
   const getCorrelation = () => {
     const correlations = []
+    let riskLevel = 'baixo'
+
     if (n400 === 'alterado') {
       correlations.push(
         'Atraso/Redução no N400: Alteração compatível com dificuldade de processamento linguístico e integração semântica.',
       )
+      riskLevel = 'moderado'
     }
     if (p300 === 'alterado') {
       correlations.push(
         'Atraso no P300: Alteração de latência/amplitude sugere déficit atencional ou de processamento de informações auditivas.',
       )
+      riskLevel = 'moderado'
     }
     if (qeeg === 'fronto-temporal') {
       correlations.push(
         'qEEG (Fronto-Temporal): Hipoativação e lentificação nesta região associada a possíveis quadros de afasia não fluente (Broca).',
       )
+      riskLevel = 'alto'
     } else if (qeeg === 'assimetria') {
       correlations.push(
         'qEEG (Assimetria): Diferença inter-hemisférica pode impactar prosódia e compreensão pragmática.',
       )
     }
 
-    return correlations
+    if (n400 === 'alterado' && qeeg === 'fronto-temporal') {
+      riskLevel = 'critico'
+    }
+
+    return { correlations, riskLevel }
   }
 
-  const correlations = getCorrelation()
+  const { correlations, riskLevel } = getCorrelation()
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -50,8 +60,8 @@ export function NeurofunctionalTab() {
             Evocados
           </CardTitle>
           <CardDescription>
-            Insira os achados neurofuncionais para obter a lógica correlacional automatizada com a
-            linguagem.
+            Insira os achados neurofuncionais para obter a lógica correlacional automatizada e o
+            impacto no VitalScore™.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -65,7 +75,7 @@ export function NeurofunctionalTab() {
                 <SelectContent>
                   <SelectItem value="normal">Padrão Normativo</SelectItem>
                   <SelectItem value="fronto-temporal">
-                    Lentificação Fronto-Temporal (Broca)
+                    Lentificação Fronto-Temporal (Broca/Wernicke)
                   </SelectItem>
                   <SelectItem value="assimetria">Assimetria Hemisférica</SelectItem>
                 </SelectContent>
@@ -99,23 +109,48 @@ export function NeurofunctionalTab() {
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
+          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-5 flex flex-col">
             <h3 className="font-semibold text-blue-900 flex items-center gap-2 mb-4 border-b border-blue-200 pb-2">
-              <LinkIcon className="w-4 h-4" /> Lógica Correlacional (Motor IA)
+              <LinkIcon className="w-4 h-4" /> Convergência IA (Motor NeuroStrata)
             </h3>
             {correlations.length > 0 ? (
-              <ul className="space-y-3">
-                {correlations.map((c, i) => (
-                  <li
-                    key={i}
-                    className="text-sm text-blue-800 bg-white p-3 rounded shadow-sm border border-blue-100"
-                  >
-                    {c}
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-4 flex-1">
+                <ul className="space-y-3">
+                  {correlations.map((c, i) => (
+                    <li
+                      key={i}
+                      className="text-sm text-blue-800 bg-white p-3 rounded shadow-sm border border-blue-100"
+                    >
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-auto pt-4 border-t border-blue-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-blue-900 uppercase">
+                      Impacto VitalScore™:
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className={`
+                        ${
+                          riskLevel === 'critico'
+                            ? 'bg-rose-100 text-rose-800 border-rose-300'
+                            : riskLevel === 'alto'
+                              ? 'bg-orange-100 text-orange-800 border-orange-300'
+                              : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }
+                      `}
+                    >
+                      {riskLevel === 'critico' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                      Agravo {riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1)}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
             ) : (
-              <p className="text-sm text-blue-700 italic">
+              <p className="text-sm text-blue-700 italic my-auto text-center opacity-70">
                 Insira os marcadores ao lado para visualizar a interpretação neurofuncional
                 integrada para a fonoaudiologia.
               </p>

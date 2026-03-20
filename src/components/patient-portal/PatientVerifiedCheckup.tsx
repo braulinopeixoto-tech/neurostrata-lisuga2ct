@@ -1,13 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Brain, Lock, CheckCircle2, FileEdit, Clock } from 'lucide-react'
+import { Brain, Lock, CheckCircle2, FileEdit, Clock, AlertTriangle } from 'lucide-react'
 import useAppStore from '@/stores/useAppStore'
 import { toast } from '@/components/ui/use-toast'
 
 export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
-  const { patientJourneys, submitJourneyStage } = useAppStore()
+  const { patientJourneys, submitJourneyStage, patientBiogram } = useAppStore()
   const journey = patientJourneys[patientId]
+
+  // Mock checking if there's a recent biogram issue (RDoC Agravamento)
+  const biogramData = patientBiogram[patientId] || []
+  const latestBiogram = biogramData[biogramData.length - 1]
+  const hasAgravamento = latestBiogram && latestBiogram.metrics.stress > 70
 
   const handleStartStage = (stageId: string) => {
     toast({ title: 'Redirecionando...', description: 'Abrindo o questionário seguro.' })
@@ -53,42 +58,62 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
   return (
     <Card className="border-t-4 border-t-primary shadow-sm">
       <CardHeader className="bg-slate-50 border-b pb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-            <Brain className="w-6 h-6" />
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+              <Brain className="w-6 h-6" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Sua Jornada de Check-up</CardTitle>
+              <CardDescription className="mt-1">
+                Acompanhamento contínuo conectado ao seu VitalScore™.
+              </CardDescription>
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-xl">Sua Jornada de Check-up</CardTitle>
-            <CardDescription className="mt-1">
-              Complete os níveis para que seu médico possa desbloquear a arquitetura final da sua
-              mente.
-            </CardDescription>
-          </div>
+          {hasAgravamento && (
+            <Badge className="bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-100 p-2">
+              <AlertTriangle className="w-4 h-4 mr-1.5" /> Alerta de Agravamento RDoC Ativo
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-6">
+        {hasAgravamento && (
+          <div className="mb-6 bg-rose-50 border border-rose-200 p-4 rounded-lg text-sm text-rose-800">
+            <strong>Recomendação Médica:</strong> Detectamos uma variação recente nos seus
+            indicadores de estresse (VitalScore). Por favor, realize o Nível 2 de Mapeamento o mais
+            rápido possível para que nossa equipe ajuste seu protocolo.
+          </div>
+        )}
+
         <div className="relative border-l-2 border-muted ml-4 space-y-8 pb-4">
           {STAGES.map((stage, i) => {
             const status = getStageStatus(stage.id)
+
+            // Auto-unlock level 2 if there's an issue
+            const isAvailableOverride =
+              status === 'locked' && hasAgravamento && stage.id === 'level2_functions'
+
+            const finalStatus = isAvailableOverride ? 'available' : status
 
             return (
               <div key={stage.id} className="pl-8 relative group">
                 <div
                   className={`absolute w-8 h-8 rounded-full -left-[17px] top-0 flex items-center justify-center ring-4 ring-white transition-transform ${
-                    status === 'validated'
+                    finalStatus === 'validated'
                       ? 'bg-emerald-500 text-white'
-                      : status === 'pending_validation'
+                      : finalStatus === 'pending_validation'
                         ? 'bg-amber-400 text-white'
-                        : status === 'available'
+                        : finalStatus === 'available'
                           ? 'bg-primary text-white'
                           : 'bg-muted text-muted-foreground'
                   }`}
                 >
-                  {status === 'validated' ? (
+                  {finalStatus === 'validated' ? (
                     <CheckCircle2 className="w-4 h-4" />
-                  ) : status === 'pending_validation' ? (
+                  ) : finalStatus === 'pending_validation' ? (
                     <Clock className="w-4 h-4" />
-                  ) : status === 'available' ? (
+                  ) : finalStatus === 'available' ? (
                     <FileEdit className="w-4 h-4" />
                   ) : (
                     <Lock className="w-4 h-4" />
@@ -97,13 +122,15 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
 
                 <div
                   className={`p-5 border rounded-xl shadow-sm ${
-                    status === 'available' ? 'border-primary shadow-md bg-white' : 'bg-slate-50'
+                    finalStatus === 'available'
+                      ? 'border-primary shadow-md bg-white'
+                      : 'bg-slate-50'
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
                     <div>
                       <h4
-                        className={`font-bold text-lg ${status === 'locked' ? 'text-muted-foreground' : 'text-foreground'}`}
+                        className={`font-bold text-lg ${finalStatus === 'locked' ? 'text-muted-foreground' : 'text-foreground'}`}
                       >
                         {stage.title}
                       </h4>
@@ -111,22 +138,22 @@ export function PatientVerifiedCheckup({ patientId }: { patientId: string }) {
                     </div>
 
                     <div className="shrink-0 w-full sm:w-auto">
-                      {status === 'validated' && (
+                      {finalStatus === 'validated' && (
                         <Badge className="bg-emerald-100 text-emerald-800 w-full justify-center">
                           Nível Validado
                         </Badge>
                       )}
-                      {status === 'pending_validation' && (
+                      {finalStatus === 'pending_validation' && (
                         <Badge className="bg-amber-100 text-amber-800 w-full justify-center">
                           Em Análise Médica
                         </Badge>
                       )}
-                      {status === 'locked' && (
+                      {finalStatus === 'locked' && (
                         <Badge variant="secondary" className="w-full justify-center">
                           Aguardando Liberação
                         </Badge>
                       )}
-                      {status === 'available' && (
+                      {finalStatus === 'available' && (
                         <Button onClick={() => handleStartStage(stage.id)} className="w-full">
                           Iniciar Questionário
                         </Button>
