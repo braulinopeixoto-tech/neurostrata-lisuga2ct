@@ -70,6 +70,7 @@ const App = () => (
                       <Route path="/neuronavigation" element={<Neuronavigation />} />
                       <Route path="/analysis/:id" element={<Analysis />} />
                       <Route path="/report/:id" element={<Report />} />
+                      <Route path="/report/new" element={<Report />} />
                       <Route path="/protocols" element={<Protocols />} />
                       <Route path="/auditor-portal" element={<AuditorPortal />} />
                       <Route path="/defensor-portal" element={<DefensorPortal />} />
@@ -77,7 +78,7 @@ const App = () => (
                       <Route path="/performance-timeline" element={<PerformanceTimeline />} />
                       <Route path="/patient-portal" element={<PatientPortal />} />
 
-                      {/* TeamFlow Routes */}
+                      {/* TeamFlow / NeuroModel Routes */}
                       <Route path="/teamflow" element={<TeamFlowDashboard />} />
                       <Route path="/teamflow/team" element={<TeamManagement />} />
                       <Route path="/teamflow/cases" element={<CaseWorkspaceList />} />

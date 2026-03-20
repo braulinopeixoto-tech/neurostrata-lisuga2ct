@@ -10,13 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { ActivitySquare, Plus, ArrowRight, ArrowLeft } from 'lucide-react'
+import { Layers, Plus, ArrowRight, ArrowLeft } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import useAppStore from '@/stores/useAppStore'
+import { useState } from 'react'
+import { NewNeuroModelModal } from '@/components/neuromodel/NewNeuroModelModal'
 
 export default function CaseWorkspaceList() {
   const { caseWorkspaces } = useTeamFlowStore()
   const { patients } = useAppStore()
+  const [newModelOpen, setNewModelOpen] = useState(false)
 
   const getPatientName = (id: string) => patients.find((p) => p.id === id)?.name || id
 
@@ -30,7 +33,7 @@ export default function CaseWorkspaceList() {
           className="text-muted-foreground hover:text-primary"
         >
           <Link to="/teamflow">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Voltar ao Dashboard
+            <ArrowLeft className="w-4 h-4 mr-1" /> Voltar ao Command Center
           </Link>
         </Button>
       </div>
@@ -38,31 +41,33 @@ export default function CaseWorkspaceList() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <ActivitySquare className="w-6 h-6 text-indigo-500" /> Case Workspaces
+            <Layers className="w-6 h-6 text-indigo-500" /> Repositório de NeuroModels
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Hubs centralizados para investigação multidisciplinar.
+            Gestão de todos os modelos dimensionais instanciados.
           </p>
         </div>
-        <Button className="bg-indigo-600 hover:bg-indigo-700">
-          <Plus className="w-4 h-4 mr-2" /> Novo Case Workspace
+        <Button onClick={() => setNewModelOpen(true)} className="bg-indigo-600 hover:bg-indigo-700">
+          <Plus className="w-4 h-4 mr-2" /> Novo NeuroModel
         </Button>
       </div>
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle className="text-lg">Casos em Andamento</CardTitle>
-          <CardDescription>Fluxo de trabalho (Pipeline) de todos os pacientes.</CardDescription>
+          <CardTitle className="text-lg">Modelos Ativos e Arquivados</CardTitle>
+          <CardDescription>
+            Fluxo de trabalho (Pipeline) de todos os pacientes em análise estruturada.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border overflow-hidden">
             <Table>
               <TableHeader className="bg-slate-50">
                 <TableRow>
-                  <TableHead>Título do Caso</TableHead>
+                  <TableHead>Título Investigativo</TableHead>
                   <TableHead>Paciente</TableHead>
-                  <TableHead>Status (Pipeline)</TableHead>
-                  <TableHead>Data de Criação</TableHead>
+                  <TableHead>Status BIM</TableHead>
+                  <TableHead>Integridade</TableHead>
                   <TableHead className="text-right"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -79,8 +84,10 @@ export default function CaseWorkspaceList() {
                         {cw.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
-                      {new Date(cw.created_at).toLocaleDateString('pt-BR')}
+                    <TableCell>
+                      <span className="text-emerald-600 font-semibold">
+                        {cw.consistency_score}%
+                      </span>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -90,7 +97,7 @@ export default function CaseWorkspaceList() {
                         className="text-indigo-600 hover:text-indigo-800"
                       >
                         <Link to={`/teamflow/cases/${cw.id}`}>
-                          Acessar Hub <ArrowRight className="w-4 h-4 ml-2" />
+                          Acessar Modelo <ArrowRight className="w-4 h-4 ml-2" />
                         </Link>
                       </Button>
                     </TableCell>
@@ -101,6 +108,8 @@ export default function CaseWorkspaceList() {
           </div>
         </CardContent>
       </Card>
+
+      <NewNeuroModelModal open={newModelOpen} onOpenChange={setNewModelOpen} />
     </div>
   )
 }

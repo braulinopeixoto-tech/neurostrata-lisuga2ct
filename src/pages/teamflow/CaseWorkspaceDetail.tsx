@@ -1,107 +1,190 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   ArrowLeft,
-  ActivitySquare,
   BrainCircuit,
+  Activity,
+  Layers,
+  FileCheck,
+  Target,
   Network,
-  ShieldCheck,
-  FileSignature,
-  CheckCircle2,
+  PieChart,
 } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import useAppStore from '@/stores/useAppStore'
-import { CasePipeline } from '@/components/teamflow/CasePipeline'
-import { CaseOverviewTab } from '@/components/teamflow/CaseOverviewTab'
-import { SpecialtyDataTab } from '@/components/teamflow/SpecialtyDataTab'
-import { ConvergencePanelTab } from '@/components/teamflow/ConvergencePanelTab'
-import { ValidationReportTab } from '@/components/teamflow/ValidationReportTab'
-import { CaseAuditTab } from '@/components/teamflow/CaseAuditTab'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable'
+import { Progress } from '@/components/ui/progress'
+
+import { LayerTriage } from '@/components/neuromodel/LayerTriage'
+import { LayerCollection } from '@/components/neuromodel/LayerCollection'
+import { LayerBiomarkers } from '@/components/neuromodel/LayerBiomarkers'
+import { LayerConvergence } from '@/components/neuromodel/LayerConvergence'
+import { LayerPlanning } from '@/components/neuromodel/LayerPlanning'
+import { LayerGraphics } from '@/components/neuromodel/LayerGraphics'
+import { LayerReport } from '@/components/neuromodel/LayerReport'
+import { CollaborationPanel } from '@/components/neuromodel/CollaborationPanel'
 
 export default function CaseWorkspaceDetail() {
   const { id } = useParams()
   const { caseWorkspaces } = useTeamFlowStore()
   const { patients } = useAppStore()
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeLayer, setActiveLayer] = useState('triage')
 
-  const caseData = caseWorkspaces.find((cw) => cw.id === id)
-  const patient = caseData ? patients.find((p) => p.id === caseData.patient_id) : null
+  const cw = caseWorkspaces.find((c) => c.id === id)
+  const patient = cw ? patients.find((p) => p.id === cw.patient_id) : null
 
-  if (!caseData || !patient) return <div className="p-10 text-center">Caso não encontrado.</div>
+  if (!cw || !patient) return <div className="p-10 text-center">NeuroModel não encontrado.</div>
+
+  const menuItems = [
+    { id: 'triage', label: 'Triagem Clínica', icon: Activity, desc: 'Camada 1 (Blocos 1-4)' },
+    {
+      id: 'collection',
+      label: 'Avaliação Estruturada',
+      icon: Layers,
+      desc: 'Camada 2 (Blocos 5-8)',
+    },
+    { id: 'biomarkers', label: 'Neurofisiologia', icon: BrainCircuit, desc: 'Camada 3 (Bloco 9)' },
+    { id: 'convergence', label: 'Convergência IA', icon: Network, desc: 'Camada 4 (Blocos 10-11)' },
+    { id: 'planning', label: 'Plano Terapêutico', icon: Target, desc: 'Camada 5 (Bloco 12)' },
+    {
+      id: 'graphics',
+      label: 'Dashboard Analítico',
+      icon: PieChart,
+      desc: 'Camada 6 (Blocos 13-14)',
+    },
+    { id: 'report', label: 'Motor de Laudos', icon: FileCheck, desc: 'Camada 7 (Blocos 15-17)' },
+  ]
+
+  const ActiveComponent = () => {
+    switch (activeLayer) {
+      case 'triage':
+        return <LayerTriage caseId={cw.id} />
+      case 'collection':
+        return <LayerCollection caseId={cw.id} />
+      case 'biomarkers':
+        return <LayerBiomarkers caseId={cw.id} />
+      case 'convergence':
+        return <LayerConvergence caseId={cw.id} />
+      case 'planning':
+        return <LayerPlanning caseId={cw.id} />
+      case 'graphics':
+        return <LayerGraphics caseId={cw.id} />
+      case 'report':
+        return <LayerReport caseId={cw.id} />
+      default:
+        return null
+    }
+  }
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto pb-10 animate-fade-in">
-      <div className="flex items-center gap-2 mb-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          asChild
-          className="text-muted-foreground hover:text-primary"
-        >
-          <Link to="/teamflow/cases">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Voltar a Casos
-          </Link>
-        </Button>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm border-l-4 border-l-indigo-500">
-        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 border-b pb-6">
+    <div className="h-[calc(100vh-6rem)] flex flex-col space-y-4 animate-fade-in -m-2 sm:-m-4">
+      {/* Top Header BIM-style */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-6 py-3 bg-white border-b shadow-sm shrink-0 z-10">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild className="-ml-2">
+            <Link to="/teamflow/cases">
+              <ArrowLeft className="w-5 h-5 text-slate-500" />
+            </Link>
+          </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{caseData.title}</h1>
-            <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-              <span className="font-semibold text-slate-700">Paciente:</span> {patient.name}
-              <span className="text-slate-300">|</span>
-              <span className="font-semibold text-slate-700">Abertura:</span>{' '}
-              {new Date(caseData.created_at).toLocaleDateString('pt-BR')}
+            <h1 className="text-xl font-bold text-slate-900 leading-none">{cw.title}</h1>
+            <p className="text-sm text-slate-500 mt-1 font-medium">
+              Paciente: {patient.name} | Status:{' '}
+              <span className="text-indigo-600">{cw.status}</span>
             </p>
           </div>
-          {caseData.status === 'Laudo Validado' && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-lg flex items-center gap-2 font-bold h-fit shadow-sm">
-              <ShieldCheck className="w-5 h-5" /> Laudo Emitido e Selado
-            </div>
-          )}
         </div>
 
-        <CasePipeline currentStatus={caseData.status} />
+        <div className="flex items-center gap-6 mt-3 sm:mt-0">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">
+              Integridade do Modelo
+            </span>
+            <div className="flex items-center gap-2">
+              <Progress
+                value={cw.consistency_score}
+                className="w-24 h-2 bg-emerald-100 [&>div]:bg-emerald-500"
+              />
+              <span className="text-sm font-bold text-emerald-600">{cw.consistency_score}%</span>
+            </div>
+          </div>
+          <div className="flex flex-col border-l pl-6">
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">
+              Risco Clínico
+            </span>
+            <div className="flex items-center gap-2">
+              <Progress
+                value={cw.risk_score}
+                className="w-24 h-2 bg-rose-100 [&>div]:bg-rose-500"
+              />
+              <span className="text-sm font-bold text-rose-600">{cw.risk_score}%</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 mb-6 h-auto p-1 bg-muted rounded-lg">
-          <TabsTrigger value="overview" className="flex items-center gap-2 py-2">
-            <ActivitySquare className="w-4 h-4" /> Visão Geral
-          </TabsTrigger>
-          <TabsTrigger value="specialties" className="flex items-center gap-2 py-2">
-            <BrainCircuit className="w-4 h-4" /> Coleta Estruturada
-          </TabsTrigger>
-          <TabsTrigger value="convergence" className="flex items-center gap-2 py-2">
-            <Network className="w-4 h-4" /> Convergência
-          </TabsTrigger>
-          <TabsTrigger value="validation" className="flex items-center gap-2 py-2">
-            <FileSignature className="w-4 h-4" /> Validação & Laudo
-          </TabsTrigger>
-          <TabsTrigger value="audit" className="flex items-center gap-2 py-2 text-emerald-700">
-            <ShieldCheck className="w-4 h-4" /> Auditoria Trust Layer
-          </TabsTrigger>
-        </TabsList>
+      {/* Main Workspace Area using Resizable Panels */}
+      <div className="flex-1 overflow-hidden px-2 sm:px-4 pb-2">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full rounded-xl border bg-white shadow-sm overflow-hidden"
+        >
+          {/* Left Sidebar: Layers / BIM Navigator */}
+          <ResizablePanel defaultSize={20} minSize={15} maxSize={25} className="bg-slate-50/50">
+            <div className="p-4 border-b h-14 flex items-center">
+              <h3 className="font-bold text-slate-700 text-sm uppercase tracking-wider">
+                Camadas do Modelo
+              </h3>
+            </div>
+            <div className="p-2 space-y-1 overflow-y-auto h-[calc(100%-3.5rem)]">
+              {menuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveLayer(item.id)}
+                  className={`w-full text-left flex items-start gap-3 p-3 rounded-lg transition-colors ${
+                    activeLayer === item.id
+                      ? 'bg-indigo-50 border border-indigo-200 shadow-sm'
+                      : 'hover:bg-slate-100 border border-transparent'
+                  }`}
+                >
+                  <item.icon
+                    className={`w-5 h-5 shrink-0 mt-0.5 ${activeLayer === item.id ? 'text-indigo-600' : 'text-slate-400'}`}
+                  />
+                  <div>
+                    <div
+                      className={`font-semibold text-sm ${activeLayer === item.id ? 'text-indigo-900' : 'text-slate-700'}`}
+                    >
+                      {item.label}
+                    </div>
+                    <div
+                      className={`text-[10px] mt-0.5 ${activeLayer === item.id ? 'text-indigo-600/80' : 'text-slate-400'}`}
+                    >
+                      {item.desc}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </ResizablePanel>
 
-        <TabsContent value="overview" className="m-0 focus-visible:outline-none">
-          <CaseOverviewTab caseData={caseData} patient={patient} />
-        </TabsContent>
-        <TabsContent value="specialties" className="m-0 focus-visible:outline-none">
-          <SpecialtyDataTab caseId={caseData.id} />
-        </TabsContent>
-        <TabsContent value="convergence" className="m-0 focus-visible:outline-none">
-          <ConvergencePanelTab caseId={caseData.id} />
-        </TabsContent>
-        <TabsContent value="validation" className="m-0 focus-visible:outline-none">
-          <ValidationReportTab caseData={caseData} patient={patient} />
-        </TabsContent>
-        <TabsContent value="audit" className="m-0 focus-visible:outline-none">
-          <CaseAuditTab caseId={caseData.id} />
-        </TabsContent>
-      </Tabs>
+          <ResizableHandle withHandle />
+
+          {/* Middle Content: Active Layer Builder */}
+          <ResizablePanel defaultSize={60} className="bg-slate-50">
+            <div className="h-full overflow-y-auto p-6 sm:p-10">
+              <ActiveComponent />
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle className="hidden lg:flex" />
+
+          {/* Right Sidebar: Collaboration / Audit */}
+          <ResizablePanel defaultSize={20} minSize={15} maxSize={30} className="hidden lg:block">
+            <CollaborationPanel caseId={cw.id} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   )
 }

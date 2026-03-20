@@ -3,129 +3,112 @@ import { cn } from '@/lib/utils'
 interface BrainMapVisualizerProps {
   title?: string
   subtitle?: string
-  variant?: 'default' | 'frontal' | 'limbic' | 'parietal'
+  variant?: 'default' | 'frontal' | 'limbic'
   className?: string
 }
 
 export function BrainMapVisualizer({
-  title = 'Topografia Fp1-Fp2',
-  subtitle = 'Assimetria de Theta detectada',
+  title,
+  subtitle,
   variant = 'default',
   className,
 }: BrainMapVisualizerProps) {
+  // SVG points for a simplified brain top view
   return (
-    <div className={cn('relative w-full flex flex-col items-center justify-center p-4', className)}>
-      <div className="relative w-full aspect-square max-w-[200px] opacity-95">
-        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-          {/* Head outline */}
-          <ellipse
+    <div className={cn('flex flex-col items-center justify-center p-4', className)}>
+      <div className="relative w-48 h-56">
+        {/* Basic Brain Outline */}
+        <svg viewBox="0 0 200 240" className="w-full h-full drop-shadow-md">
+          {/* Left Hemisphere */}
+          <path
+            d="M 100 20 C 60 20 20 60 20 120 C 20 180 60 220 100 220"
+            fill="none"
+            stroke="hsl(var(--muted))"
+            strokeWidth="4"
+          />
+          {/* Right Hemisphere */}
+          <path
+            d="M 100 20 C 140 20 180 60 180 120 C 180 180 140 220 100 220"
+            fill="none"
+            stroke="hsl(var(--muted))"
+            strokeWidth="4"
+          />
+          {/* Center line */}
+          <line
+            x1="100"
+            y1="20"
+            x2="100"
+            y2="220"
+            stroke="hsl(var(--muted))"
+            strokeWidth="2"
+            strokeDasharray="4 4"
+          />
+
+          {/* Heatmap Nodes */}
+          {/* Fp1 / Fp2 */}
+          <circle
+            cx="70"
+            cy="50"
+            r="15"
+            fill={variant === 'frontal' ? 'rgba(239, 68, 68, 0.7)' : 'rgba(59, 130, 246, 0.3)'}
+            className="animate-pulse"
+          />
+          <circle
+            cx="130"
+            cy="50"
+            r="15"
+            fill={variant === 'frontal' ? 'rgba(239, 68, 68, 0.5)' : 'rgba(59, 130, 246, 0.3)'}
+          />
+
+          {/* F3 / F4 */}
+          <circle
             cx="50"
-            cy="55"
-            rx="42"
-            ry="48"
-            fill="hsl(var(--muted)/0.3)"
-            stroke="hsl(var(--border))"
-            strokeWidth="2"
+            cy="90"
+            r="18"
+            fill={variant === 'frontal' ? 'rgba(245, 158, 11, 0.6)' : 'rgba(16, 185, 129, 0.4)'}
           />
-          {/* Nose */}
-          <path d="M 46 7 L 50 2 L 54 7" fill="none" stroke="hsl(var(--border))" strokeWidth="2" />
-          {/* Ears */}
-          <path
-            d="M 8 45 C 2 50 2 60 8 65"
-            fill="none"
-            stroke="hsl(var(--border))"
-            strokeWidth="2"
+          <circle cx="150" cy="90" r="18" fill="rgba(16, 185, 129, 0.4)" />
+
+          {/* C3 / C4 */}
+          <circle
+            cx="45"
+            cy="140"
+            r="20"
+            fill={variant === 'limbic' ? 'rgba(239, 68, 68, 0.6)' : 'rgba(59, 130, 246, 0.4)'}
+            className={variant === 'limbic' ? 'animate-pulse' : ''}
           />
-          <path
-            d="M 92 45 C 98 50 98 60 92 65"
-            fill="none"
-            stroke="hsl(var(--border))"
-            strokeWidth="2"
+          <circle
+            cx="155"
+            cy="140"
+            r="20"
+            fill={variant === 'limbic' ? 'rgba(245, 158, 11, 0.6)' : 'rgba(59, 130, 246, 0.4)'}
           />
 
-          {/* Dynamic Heatmap Spots based on variant */}
-          {variant === 'default' && (
-            <>
-              <circle
-                cx="35"
-                cy="30"
-                r="18"
-                fill="url(#heat-red)"
-                opacity="0.85"
-                className="animate-pulse"
-              />
-              <circle cx="65" cy="30" r="15" fill="url(#heat-yellow)" opacity="0.7" />
-              <circle cx="50" cy="75" r="24" fill="url(#heat-blue)" opacity="0.6" />
-            </>
-          )}
+          {/* P3 / P4 */}
+          <circle cx="60" cy="180" r="16" fill="rgba(139, 92, 246, 0.5)" />
+          <circle cx="140" cy="180" r="16" fill="rgba(139, 92, 246, 0.5)" />
 
-          {variant === 'frontal' && (
-            <>
-              <circle
-                cx="30"
-                cy="25"
-                r="20"
-                fill="url(#heat-red)"
-                opacity="0.9"
-                className="animate-pulse"
-              />
-              <circle cx="70" cy="25" r="20" fill="url(#heat-red)" opacity="0.8" />
-              <circle cx="50" cy="20" r="15" fill="url(#heat-yellow)" opacity="0.6" />
-            </>
-          )}
+          {/* O1 / O2 */}
+          <circle cx="85" cy="205" r="12" fill="rgba(16, 185, 129, 0.6)" />
+          <circle cx="115" cy="205" r="12" fill="rgba(16, 185, 129, 0.6)" />
 
-          {variant === 'limbic' && (
-            <>
-              <circle
-                cx="50"
-                cy="55"
-                r="22"
-                fill="url(#heat-red)"
-                opacity="0.85"
-                className="animate-pulse"
-              />
-              <circle cx="50" cy="45" r="18" fill="url(#heat-yellow)" opacity="0.7" />
-            </>
-          )}
-
-          {variant === 'parietal' && (
-            <>
-              <circle cx="35" cy="70" r="20" fill="url(#heat-blue)" opacity="0.8" />
-              <circle
-                cx="65"
-                cy="70"
-                r="20"
-                fill="url(#heat-blue)"
-                opacity="0.8"
-                className="animate-pulse"
-              />
-              <circle cx="50" cy="65" r="16" fill="url(#heat-yellow)" opacity="0.6" />
-            </>
-          )}
-
-          <defs>
-            <radialGradient id="heat-red">
-              <stop offset="0%" stopColor="#ef4444" />
-              <stop offset="50%" stopColor="#ef4444" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="heat-yellow">
-              <stop offset="0%" stopColor="#eab308" />
-              <stop offset="50%" stopColor="#eab308" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#eab308" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="heat-blue">
-              <stop offset="0%" stopColor="#3b82f6" />
-              <stop offset="60%" stopColor="#3b82f6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-            </radialGradient>
-          </defs>
+          {/* Cz / Pz (Midline) */}
+          <circle
+            cx="100"
+            cy="115"
+            r="14"
+            fill={variant === 'limbic' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(245, 158, 11, 0.4)'}
+          />
+          <circle cx="100" cy="160" r="14" fill="rgba(59, 130, 246, 0.5)" />
         </svg>
       </div>
-      <div className="mt-4 text-center space-y-1">
-        <h4 className="text-sm font-semibold">{title}</h4>
-        <p className="text-xs text-muted-foreground font-mono">{subtitle}</p>
-      </div>
+
+      {(title || subtitle) && (
+        <div className="text-center mt-4">
+          {title && <h4 className="font-bold text-slate-800 text-sm">{title}</h4>}
+          {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+        </div>
+      )}
     </div>
   )
 }

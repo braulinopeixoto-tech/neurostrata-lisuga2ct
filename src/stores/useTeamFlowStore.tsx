@@ -29,12 +29,35 @@ export type CaseStatus =
   | 'Revisão Médica'
   | 'Laudo Validado'
 
+export interface NeuroModelBlocks {
+  b1_identification?: any
+  b2_reason?: string
+  b3_history?: string
+  b4_behavior?: string
+  b5_cognitive?: any
+  b6_rdoc?: any
+  b7_bigfive?: any
+  b8_psychic?: any
+  b9_neurophysio?: string
+  b10_integration?: string
+  b11_hypotheses?: string
+  b12_intervention?: string
+  b13_index?: any
+  b14_graphics?: any
+  b15_conclusion?: string
+  b16_references?: string[]
+  b17_signature?: any
+}
+
 export interface CaseWorkspace {
   id: string
   patient_id: string
   status: CaseStatus
   created_at: string
   title: string
+  risk_score: number
+  consistency_score: number
+  blocks: NeuroModelBlocks
 }
 
 export interface TeamMember {
@@ -44,25 +67,10 @@ export interface TeamMember {
   specialty?: string
 }
 
-export interface SpecialtyReport {
-  id: string
-  case_id: string
-  specialty: string
-  author_id: string
-  structured_data: {
-    checklists: Record<string, boolean>
-    scales: Record<string, number>
-    evidence_links: string[]
-  }
-  status: 'Draft' | 'Submitted'
-  updated_at: string
-}
-
 interface TeamFlowState {
   organization: { id: string; name: string; crm: string }
   teamMembers: TeamMember[]
   caseWorkspaces: CaseWorkspace[]
-  specialtyReports: SpecialtyReport[]
   auditLogs: TrustLayerLog[]
   vitalSnapshots: VitalscoreSnapshot[]
   updateOrganization: (org: { name: string; crm: string }) => void
@@ -75,7 +83,16 @@ interface TeamFlowState {
     actor: string,
   ) => void
   updateCaseStatus: (caseId: string, newStatus: CaseStatus, actor: string) => void
-  saveSpecialtyReport: (report: SpecialtyReport, actor: string) => void
+  createCaseWorkspace: (
+    caseData: Omit<CaseWorkspace, 'id' | 'created_at' | 'blocks'>,
+    actor: string,
+  ) => void
+  updateCaseBlock: (
+    caseId: string,
+    blockKey: keyof NeuroModelBlocks,
+    data: any,
+    actor: string,
+  ) => void
 }
 
 const TeamFlowContext = createContext<TeamFlowState | undefined>(undefined)
@@ -93,30 +110,26 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
     crm: 'CRM 12345-SP',
   })
   const [teamMembers] = useState<TeamMember[]>(MOCK_TEAM)
+
   const [caseWorkspaces, setCaseWorkspaces] = useState<CaseWorkspace[]>([
     {
       id: 'CW1',
       patient_id: 'P001',
-      status: 'Análise Multidisciplinar',
+      status: 'Convergência',
       created_at: new Date().toISOString(),
       title: 'Investigação de Déficit Atencional Secundário',
-    },
-  ])
-  const [specialtyReports, setSpecialtyReports] = useState<SpecialtyReport[]>([
-    {
-      id: 'SR1',
-      case_id: 'CW1',
-      specialty: 'Neuropsicologia',
-      author_id: 'TM2',
-      status: 'Submitted',
-      updated_at: new Date().toISOString(),
-      structured_data: {
-        checklists: { 'Déficit de Memória Operacional': true, 'Impulsividade Motora': false },
-        scales: { 'Nível de Prejuízo Funcional': 7 },
-        evidence_links: ['WAIS-IV_Report.pdf', 'DASS-21_Raw.json'],
+      risk_score: 65,
+      consistency_score: 88,
+      blocks: {
+        b2_reason: 'Dificuldade de foco sustentado e regulação emocional.',
+        b3_history: 'Histórico familiar de TDAH. Nenhuma complicação neonatal.',
+        b6_rdoc: { 'Sistemas Cognitivos': 'Déficit severo na memória de trabalho.' },
+        b15_conclusion:
+          'Convergência preliminar aponta para TDAH combinado com desregulação límbica.',
       },
     },
   ])
+
   const [auditLogs, setAuditLogs] = useState<TrustLayerLog[]>([
     {
       id: 'LOG1',
@@ -126,9 +139,10 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
       actor_id: 'TM1',
       timestamp: new Date().toISOString(),
       previous_version: { status: 'Coleta' },
-      new_version: { status: 'Análise Multidisciplinar' },
+      new_version: { status: 'Convergência' },
     },
   ])
+
   const [vitalSnapshots] = useState<VitalscoreSnapshot[]>([
     {
       id: 'VS1',
@@ -185,20 +199,43 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  const saveSpecialtyReport = (report: SpecialtyReport, actor: string) => {
-    setSpecialtyReports((prev) => {
-      const existing = prev.find((r) => r.id === report.id)
-      logAction(
-        'specialty_report',
-        report.id,
-        existing ? 'UPDATE' : 'CREATE',
-        existing || null,
-        report,
-        actor,
-      )
-      if (existing) return prev.map((r) => (r.id === report.id ? report : r))
-      return [...prev, report]
-    })
+  const createCaseWorkspace = (
+    caseData: Omit<CaseWorkspace, 'id' | 'created_at' | 'blocks'>,
+    actor: string,
+  ) => {
+    const newCase: CaseWorkspace = {
+      ...caseData,
+      id: `CW-${Date.now()}`,
+      created_at: new Date().toISOString(),
+      blocks: {},
+    }
+    setCaseWorkspaces((prev) => [newCase, ...prev])
+    logAction('case_workspace', newCase.id, 'CREATE', null, newCase, actor)
+  }
+
+  const updateCaseBlock = (
+    caseId: string,
+    blockKey: keyof NeuroModelBlocks,
+    data: any,
+    actor: string,
+  ) => {
+    setCaseWorkspaces((prev) =>
+      prev.map((cw) => {
+        if (cw.id === caseId) {
+          const updatedBlocks = { ...cw.blocks, [blockKey]: data }
+          logAction(
+            'case_workspace_block',
+            `${caseId}-${blockKey}`,
+            'UPDATE_BLOCK',
+            cw.blocks[blockKey],
+            data,
+            actor,
+          )
+          return { ...cw, blocks: updatedBlocks }
+        }
+        return cw
+      }),
+    )
   }
 
   return (
@@ -207,13 +244,13 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
         organization,
         teamMembers,
         caseWorkspaces,
-        specialtyReports,
         auditLogs,
         vitalSnapshots,
         updateOrganization,
         logAction,
         updateCaseStatus,
-        saveSpecialtyReport,
+        createCaseWorkspace,
+        updateCaseBlock,
       }}
     >
       {children}
