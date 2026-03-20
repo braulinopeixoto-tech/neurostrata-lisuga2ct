@@ -19,6 +19,14 @@ export interface VitalscoreSnapshot {
   reserve_level: string
   trend: string
   model_version: string
+  alert_level?: 'Green' | 'Yellow' | 'Orange' | 'Red'
+  nfli?: number
+  dvi?: number
+  fii?: number
+  sri?: number
+  domain_scores?: Record<string, number>
+  raw_data?: Record<string, { freq: number; agr: number }>
+  recommendations?: string[]
 }
 
 export type CaseStatus =
@@ -93,6 +101,7 @@ interface TeamFlowState {
     data: any,
     actor: string,
   ) => void
+  addVitalSnapshot: (snapshot: VitalscoreSnapshot, actor: string) => void
 }
 
 const TeamFlowContext = createContext<TeamFlowState | undefined>(undefined)
@@ -143,7 +152,7 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
     },
   ])
 
-  const [vitalSnapshots] = useState<VitalscoreSnapshot[]>([
+  const [vitalSnapshots, setVitalSnapshots] = useState<VitalscoreSnapshot[]>([
     {
       id: 'VS1',
       patient_id: 'P001',
@@ -152,6 +161,12 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
       reserve_level: 'Moderada',
       trend: 'Estável',
       model_version: 'v2.1',
+      alert_level: 'Yellow',
+      nfli: 1.45,
+      dvi: 0.8,
+      fii: 1.2,
+      sri: 0.5,
+      domain_scores: { A: 1.2, B: 0.8, C: 1.8, D: 0.5, E: 1.1, F: 0.9 },
     },
   ])
 
@@ -238,6 +253,18 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
     )
   }
 
+  const addVitalSnapshot = (snapshot: VitalscoreSnapshot, actor: string) => {
+    setVitalSnapshots((prev) => [snapshot, ...prev])
+    logAction(
+      'vital_snapshot',
+      snapshot.id,
+      'CREATE_SNAPSHOT',
+      null,
+      { score: snapshot.total_score, alert: snapshot.alert_level },
+      actor,
+    )
+  }
+
   return (
     <TeamFlowContext.Provider
       value={{
@@ -251,6 +278,7 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
         updateCaseStatus,
         createCaseWorkspace,
         updateCaseBlock,
+        addVitalSnapshot,
       }}
     >
       {children}

@@ -10,6 +10,7 @@ import {
   Target,
   Network,
   PieChart,
+  HeartPulse,
 } from 'lucide-react'
 import { useTeamFlowStore } from '@/stores/useTeamFlowStore'
 import useAppStore from '@/stores/useAppStore'
@@ -24,6 +25,7 @@ import { LayerPlanning } from '@/components/neuromodel/LayerPlanning'
 import { LayerGraphics } from '@/components/neuromodel/LayerGraphics'
 import { LayerReport } from '@/components/neuromodel/LayerReport'
 import { CollaborationPanel } from '@/components/neuromodel/CollaborationPanel'
+import { LayerVitalScore } from '@/components/neuromodel/LayerVitalScore'
 
 export default function CaseWorkspaceDetail() {
   const { id } = useParams()
@@ -44,6 +46,7 @@ export default function CaseWorkspaceDetail() {
       icon: Layers,
       desc: 'Camada 2 (Blocos 5-8)',
     },
+    { id: 'vitalscore', label: 'VitalScore™ Core', icon: HeartPulse, desc: 'Check-Up Dimensional' },
     { id: 'biomarkers', label: 'Neurofisiologia', icon: BrainCircuit, desc: 'Camada 3 (Bloco 9)' },
     { id: 'convergence', label: 'Convergência IA', icon: Network, desc: 'Camada 4 (Blocos 10-11)' },
     { id: 'planning', label: 'Plano Terapêutico', icon: Target, desc: 'Camada 5 (Bloco 12)' },
@@ -62,6 +65,8 @@ export default function CaseWorkspaceDetail() {
         return <LayerTriage caseId={cw.id} />
       case 'collection':
         return <LayerCollection caseId={cw.id} />
+      case 'vitalscore':
+        return <LayerVitalScore caseId={cw.id} />
       case 'biomarkers':
         return <LayerBiomarkers caseId={cw.id} />
       case 'convergence':
@@ -149,16 +154,34 @@ export default function CaseWorkspaceDetail() {
                   }`}
                 >
                   <item.icon
-                    className={`w-5 h-5 shrink-0 mt-0.5 ${activeLayer === item.id ? 'text-indigo-600' : 'text-slate-400'}`}
+                    className={`w-5 h-5 shrink-0 mt-0.5 ${
+                      activeLayer === item.id
+                        ? item.id === 'vitalscore'
+                          ? 'text-rose-600'
+                          : 'text-indigo-600'
+                        : 'text-slate-400'
+                    }`}
                   />
                   <div>
                     <div
-                      className={`font-semibold text-sm ${activeLayer === item.id ? 'text-indigo-900' : 'text-slate-700'}`}
+                      className={`font-semibold text-sm ${
+                        activeLayer === item.id
+                          ? item.id === 'vitalscore'
+                            ? 'text-rose-900'
+                            : 'text-indigo-900'
+                          : 'text-slate-700'
+                      }`}
                     >
                       {item.label}
                     </div>
                     <div
-                      className={`text-[10px] mt-0.5 ${activeLayer === item.id ? 'text-indigo-600/80' : 'text-slate-400'}`}
+                      className={`text-[10px] mt-0.5 ${
+                        activeLayer === item.id
+                          ? item.id === 'vitalscore'
+                            ? 'text-rose-600/80'
+                            : 'text-indigo-600/80'
+                          : 'text-slate-400'
+                      }`}
                     >
                       {item.desc}
                     </div>
