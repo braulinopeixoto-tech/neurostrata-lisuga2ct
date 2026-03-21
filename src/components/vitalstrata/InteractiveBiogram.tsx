@@ -126,11 +126,12 @@ export function InteractiveBiogram({ records }: { records: VitalRecord[] }) {
                     fill="url(#colorScore)"
                     activeDot={{ r: 8, strokeWidth: 2, stroke: '#fff' }}
                     dot={(props: any) => {
-                      const { cx, cy, payload } = props
+                      const { cx, cy, payload, key, index } = props
                       const hasIntervention =
                         payload.interventions && payload.interventions.length > 0
                       return (
                         <svg
+                          key={key || `dot-${index}`}
                           x={cx - 5}
                           y={cy - 5}
                           width={10}
