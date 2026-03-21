@@ -641,6 +641,53 @@ export type Database = {
           },
         ]
       }
+      construct_definitions: {
+        Row: {
+          construct_code: string
+          created_at: string | null
+          equation: string | null
+          id: string
+          is_sentinel: boolean | null
+          max_value: number | null
+          min_value: number | null
+          name: string
+          score_version_id: string
+          weight: number | null
+        }
+        Insert: {
+          construct_code: string
+          created_at?: string | null
+          equation?: string | null
+          id?: string
+          is_sentinel?: boolean | null
+          max_value?: number | null
+          min_value?: number | null
+          name: string
+          score_version_id: string
+          weight?: number | null
+        }
+        Update: {
+          construct_code?: string
+          created_at?: string | null
+          equation?: string | null
+          id?: string
+          is_sentinel?: boolean | null
+          max_value?: number | null
+          min_value?: number | null
+          name?: string
+          score_version_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'construct_definitions_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       instrument_item_construct_links: {
         Row: {
           created_at: string | null
@@ -1265,6 +1312,351 @@ export type Database = {
         }
         Relationships: []
       }
+      score_calibration_runs: {
+        Row: {
+          calibration_metrics: Json | null
+          created_at: string | null
+          dataset_size: number | null
+          description: string | null
+          id: string
+          performed_by: string | null
+          run_name: string
+          score_version_id: string
+          weights_used: Json | null
+        }
+        Insert: {
+          calibration_metrics?: Json | null
+          created_at?: string | null
+          dataset_size?: number | null
+          description?: string | null
+          id?: string
+          performed_by?: string | null
+          run_name: string
+          score_version_id: string
+          weights_used?: Json | null
+        }
+        Update: {
+          calibration_metrics?: Json | null
+          created_at?: string | null
+          dataset_size?: number | null
+          description?: string | null
+          id?: string
+          performed_by?: string | null
+          run_name?: string
+          score_version_id?: string
+          weights_used?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_calibration_runs_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_computation_logs: {
+        Row: {
+          checksum: string
+          confidence_band: Json | null
+          created_at: string | null
+          executed_by: string | null
+          execution_type: string
+          id: string
+          inputs_used: Json
+          output_generated: Json
+          score_version_id: string
+          session_id: string | null
+          standard_error: number | null
+          weights_used: Json
+        }
+        Insert: {
+          checksum: string
+          confidence_band?: Json | null
+          created_at?: string | null
+          executed_by?: string | null
+          execution_type: string
+          id?: string
+          inputs_used: Json
+          output_generated: Json
+          score_version_id: string
+          session_id?: string | null
+          standard_error?: number | null
+          weights_used: Json
+        }
+        Update: {
+          checksum?: string
+          confidence_band?: Json | null
+          created_at?: string | null
+          executed_by?: string | null
+          execution_type?: string
+          id?: string
+          inputs_used?: Json
+          output_generated?: Json
+          score_version_id?: string
+          session_id?: string | null
+          standard_error?: number | null
+          weights_used?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_computation_logs_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_norm_reference: {
+        Row: {
+          created_at: string | null
+          id: string
+          mean_score: number | null
+          percentiles: Json | null
+          population_group: string
+          score_version_id: string
+          std_deviation: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          mean_score?: number | null
+          percentiles?: Json | null
+          population_group: string
+          score_version_id: string
+          std_deviation?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          mean_score?: number | null
+          percentiles?: Json | null
+          population_group?: string
+          score_version_id?: string
+          std_deviation?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_norm_reference_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_reliability_metrics: {
+        Row: {
+          confidence_interval_lower: number | null
+          confidence_interval_upper: number | null
+          created_at: string | null
+          id: string
+          metric_name: string
+          metric_value: number | null
+          notes: string | null
+          sample_size: number | null
+          score_version_id: string
+        }
+        Insert: {
+          confidence_interval_lower?: number | null
+          confidence_interval_upper?: number | null
+          created_at?: string | null
+          id?: string
+          metric_name: string
+          metric_value?: number | null
+          notes?: string | null
+          sample_size?: number | null
+          score_version_id: string
+        }
+        Update: {
+          confidence_interval_lower?: number | null
+          confidence_interval_upper?: number | null
+          created_at?: string | null
+          id?: string
+          metric_name?: string
+          metric_value?: number | null
+          notes?: string | null
+          sample_size?: number | null
+          score_version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_reliability_metrics_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_sensitivity_analysis: {
+        Row: {
+          calibration_run_id: string | null
+          created_at: string | null
+          id: string
+          impact_on_output: number | null
+          is_robust: boolean | null
+          notes: string | null
+          parameter_varied: string
+          score_version_id: string
+          variation_range: string | null
+        }
+        Insert: {
+          calibration_run_id?: string | null
+          created_at?: string | null
+          id?: string
+          impact_on_output?: number | null
+          is_robust?: boolean | null
+          notes?: string | null
+          parameter_varied: string
+          score_version_id: string
+          variation_range?: string | null
+        }
+        Update: {
+          calibration_run_id?: string | null
+          created_at?: string | null
+          id?: string
+          impact_on_output?: number | null
+          is_robust?: boolean | null
+          notes?: string | null
+          parameter_varied?: string
+          score_version_id?: string
+          variation_range?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_sensitivity_analysis_calibration_run_id_fkey'
+            columns: ['calibration_run_id']
+            isOneToOne: false
+            referencedRelation: 'score_calibration_runs'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'score_sensitivity_analysis_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_validation_studies: {
+        Row: {
+          created_at: string | null
+          id: string
+          methodology: string | null
+          publication_reference: string | null
+          results_summary: string | null
+          sample_size: number | null
+          score_version_id: string
+          study_title: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          methodology?: string | null
+          publication_reference?: string | null
+          results_summary?: string | null
+          sample_size?: number | null
+          score_version_id: string
+          study_title: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          methodology?: string | null
+          publication_reference?: string | null
+          results_summary?: string | null
+          sample_size?: number | null
+          score_version_id?: string
+          study_title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_validation_studies_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_validity_metrics: {
+        Row: {
+          correlation_coefficient: number | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          p_value: number | null
+          reference_instrument: string | null
+          score_version_id: string
+          validity_type: string
+        }
+        Insert: {
+          correlation_coefficient?: number | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          p_value?: number | null
+          reference_instrument?: string | null
+          score_version_id: string
+          validity_type: string
+        }
+        Update: {
+          correlation_coefficient?: number | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          p_value?: number | null
+          reference_instrument?: string | null
+          score_version_id?: string
+          validity_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'score_validity_metrics_score_version_id_fkey'
+            columns: ['score_version_id']
+            isOneToOne: false
+            referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      score_versions: {
+        Row: {
+          algorithm_type: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          status: string | null
+          updated_at: string | null
+          version_code: string
+        }
+        Insert: {
+          algorithm_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          version_code: string
+        }
+        Update: {
+          algorithm_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          version_code?: string
+        }
+        Relationships: []
+      }
       scoring_rule_sets: {
         Row: {
           created_at: string | null
@@ -1504,6 +1896,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      compare_score_versions: {
+        Args: { p_base_version_id: string; p_target_version_id: string }
+        Returns: Json
+      }
+      compute_construct_scores_v1: {
+        Args: {
+          p_inputs_json: Json
+          p_score_version_id: string
+          p_session_id: string
+        }
+        Returns: Json
+      }
+      compute_vitalscore_v1: {
+        Args: {
+          p_construct_scores: Json
+          p_score_version_id: string
+          p_session_id: string
+        }
+        Returns: Json
+      }
       create_assessment_session_full: {
         Args: {
           p_applicator_id: string
@@ -1543,6 +1955,10 @@ export type Database = {
         Args: { p_responses: Json; p_session_id: string }
         Returns: Json
       }
+      recompute_vitalscore_by_version: {
+        Args: { p_session_id: string; p_target_score_version_id: string }
+        Returns: Json
+      }
       register_clinical_event: {
         Args: {
           p_event_type: string
@@ -1551,6 +1967,16 @@ export type Database = {
           p_payload?: Json
           p_source_record_id: string
           p_source_table: string
+        }
+        Returns: Json
+      }
+      register_validation_run: {
+        Args: {
+          p_dataset_size: number
+          p_metrics: Json
+          p_run_name: string
+          p_score_version_id: string
+          p_weights: Json
         }
         Returns: Json
       }
@@ -1815,6 +2241,17 @@ export const Constants = {
 //   status: text (nullable, default: 'active'::text)
 //   file_url: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: construct_definitions
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   construct_code: text (not null)
+//   name: text (not null)
+//   weight: numeric (nullable, default: 1.0)
+//   equation: text (nullable)
+//   min_value: numeric (nullable)
+//   max_value: numeric (nullable)
+//   is_sentinel: boolean (nullable, default: false)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: instrument_item_construct_links
 //   id: uuid (not null, default: gen_random_uuid())
 //   instrument_item_id: uuid (not null)
@@ -1947,6 +2384,84 @@ export const Constants = {
 //   name: text (not null)
 //   description: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_calibration_runs
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   run_name: text (not null)
+//   description: text (nullable)
+//   dataset_size: integer (nullable)
+//   calibration_metrics: jsonb (nullable, default: '{}'::jsonb)
+//   weights_used: jsonb (nullable, default: '{}'::jsonb)
+//   performed_by: uuid (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_computation_logs
+//   id: uuid (not null, default: gen_random_uuid())
+//   execution_type: text (not null)
+//   score_version_id: uuid (not null)
+//   session_id: uuid (nullable)
+//   inputs_used: jsonb (not null)
+//   weights_used: jsonb (not null)
+//   output_generated: jsonb (not null)
+//   standard_error: numeric (nullable)
+//   confidence_band: jsonb (nullable)
+//   checksum: text (not null)
+//   executed_by: uuid (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_norm_reference
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   population_group: text (not null)
+//   mean_score: numeric (nullable)
+//   std_deviation: numeric (nullable)
+//   percentiles: jsonb (nullable, default: '{}'::jsonb)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_reliability_metrics
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   metric_name: text (not null)
+//   metric_value: numeric (nullable)
+//   confidence_interval_lower: numeric (nullable)
+//   confidence_interval_upper: numeric (nullable)
+//   sample_size: integer (nullable)
+//   notes: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_sensitivity_analysis
+//   id: uuid (not null, default: gen_random_uuid())
+//   calibration_run_id: uuid (nullable)
+//   score_version_id: uuid (not null)
+//   parameter_varied: text (not null)
+//   variation_range: text (nullable)
+//   impact_on_output: numeric (nullable)
+//   is_robust: boolean (nullable)
+//   notes: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_validation_studies
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   study_title: text (not null)
+//   methodology: text (nullable)
+//   sample_size: integer (nullable)
+//   results_summary: text (nullable)
+//   publication_reference: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_validity_metrics
+//   id: uuid (not null, default: gen_random_uuid())
+//   score_version_id: uuid (not null)
+//   validity_type: text (not null)
+//   reference_instrument: text (nullable)
+//   correlation_coefficient: numeric (nullable)
+//   p_value: numeric (nullable)
+//   notes: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: score_versions
+//   id: uuid (not null, default: gen_random_uuid())
+//   version_code: text (not null)
+//   name: text (not null)
+//   description: text (nullable)
+//   status: text (nullable, default: 'draft'::text)
+//   algorithm_type: text (nullable, default: 'linear'::text)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
 // Table: scoring_rule_sets
 //   id: uuid (not null, default: gen_random_uuid())
 //   instrument_version_id: uuid (not null)
@@ -2051,6 +2566,10 @@ export const Constants = {
 //   FOREIGN KEY consents_guardian_id_fkey: FOREIGN KEY (guardian_id) REFERENCES patient_guardians(id) ON DELETE SET NULL
 //   FOREIGN KEY consents_patient_id_fkey: FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 //   PRIMARY KEY consents_pkey: PRIMARY KEY (id)
+// Table: construct_definitions
+//   PRIMARY KEY construct_definitions_pkey: PRIMARY KEY (id)
+//   UNIQUE construct_definitions_score_version_id_construct_code_key: UNIQUE (score_version_id, construct_code)
+//   FOREIGN KEY construct_definitions_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
 // Table: instrument_item_construct_links
 //   UNIQUE instrument_item_construct_lin_instrument_item_id_taxonomy_c_key: UNIQUE (instrument_item_id, taxonomy_construct_id, link_type)
 //   FOREIGN KEY instrument_item_construct_links_instrument_item_id_fkey: FOREIGN KEY (instrument_item_id) REFERENCES instrument_items(id) ON DELETE CASCADE
@@ -2110,6 +2629,33 @@ export const Constants = {
 //   UNIQUE roles_code_key: UNIQUE (code)
 //   UNIQUE roles_name_key: UNIQUE (name)
 //   PRIMARY KEY roles_pkey: PRIMARY KEY (id)
+// Table: score_calibration_runs
+//   FOREIGN KEY score_calibration_runs_performed_by_fkey: FOREIGN KEY (performed_by) REFERENCES auth.users(id) ON DELETE SET NULL
+//   PRIMARY KEY score_calibration_runs_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_calibration_runs_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_computation_logs
+//   FOREIGN KEY score_computation_logs_executed_by_fkey: FOREIGN KEY (executed_by) REFERENCES auth.users(id) ON DELETE SET NULL
+//   PRIMARY KEY score_computation_logs_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_computation_logs_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_norm_reference
+//   PRIMARY KEY score_norm_reference_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_norm_reference_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_reliability_metrics
+//   PRIMARY KEY score_reliability_metrics_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_reliability_metrics_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_sensitivity_analysis
+//   FOREIGN KEY score_sensitivity_analysis_calibration_run_id_fkey: FOREIGN KEY (calibration_run_id) REFERENCES score_calibration_runs(id) ON DELETE CASCADE
+//   PRIMARY KEY score_sensitivity_analysis_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_sensitivity_analysis_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_validation_studies
+//   PRIMARY KEY score_validation_studies_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_validation_studies_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_validity_metrics
+//   PRIMARY KEY score_validity_metrics_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY score_validity_metrics_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: score_versions
+//   PRIMARY KEY score_versions_pkey: PRIMARY KEY (id)
+//   UNIQUE score_versions_version_code_key: UNIQUE (version_code)
 // Table: scoring_rule_sets
 //   FOREIGN KEY scoring_rule_sets_created_by_fkey: FOREIGN KEY (created_by) REFERENCES profiles(id) ON DELETE RESTRICT
 //   FOREIGN KEY scoring_rule_sets_instrument_version_id_fkey: FOREIGN KEY (instrument_version_id) REFERENCES instrument_versions(id) ON DELETE CASCADE
@@ -2233,6 +2779,15 @@ export const Constants = {
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: construct_definitions
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: instrument_item_construct_links
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -2359,6 +2914,78 @@ export const Constants = {
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: score_calibration_runs
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_computation_logs
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_norm_reference
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_reliability_metrics
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_sensitivity_analysis
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_validation_studies
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_validity_metrics
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: score_versions
+//   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: scoring_rule_sets
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -2406,6 +3033,144 @@ export const Constants = {
 //     USING: true
 
 // --- DATABASE FUNCTIONS ---
+// FUNCTION compare_score_versions(uuid, uuid)
+//   CREATE OR REPLACE FUNCTION public.compare_score_versions(p_base_version_id uuid, p_target_version_id uuid)
+//    RETURNS jsonb
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//       v_base_norms JSONB;
+//       v_target_norms JSONB;
+//       v_base_metrics JSONB;
+//       v_target_metrics JSONB;
+//   BEGIN
+//       SELECT COALESCE(jsonb_agg(row_to_json(n)), '[]'::jsonb) INTO v_base_norms
+//       FROM public.score_norm_reference n WHERE n.score_version_id = p_base_version_id;
+//
+//       SELECT COALESCE(jsonb_agg(row_to_json(n)), '[]'::jsonb) INTO v_target_norms
+//       FROM public.score_norm_reference n WHERE n.score_version_id = p_target_version_id;
+//
+//       SELECT COALESCE(jsonb_agg(row_to_json(m)), '[]'::jsonb) INTO v_base_metrics
+//       FROM public.score_reliability_metrics m WHERE m.score_version_id = p_base_version_id;
+//
+//       SELECT COALESCE(jsonb_agg(row_to_json(m)), '[]'::jsonb) INTO v_target_metrics
+//       FROM public.score_reliability_metrics m WHERE m.score_version_id = p_target_version_id;
+//
+//       RETURN jsonb_build_object(
+//           'success', true,
+//           'comparison', jsonb_build_object(
+//               'base_version', jsonb_build_object('id', p_base_version_id, 'norms', v_base_norms, 'metrics', v_base_metrics),
+//               'target_version', jsonb_build_object('id', p_target_version_id, 'norms', v_target_norms, 'metrics', v_target_metrics)
+//           )
+//       );
+//   END;
+//   $function$
+//
+// FUNCTION compute_construct_scores_v1(uuid, uuid, jsonb)
+//   CREATE OR REPLACE FUNCTION public.compute_construct_scores_v1(p_session_id uuid, p_score_version_id uuid, p_inputs_json jsonb)
+//    RETURNS jsonb
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//       v_weights JSONB;
+//       v_output JSONB;
+//       v_standard_error NUMERIC := 0.05; -- Margem base default para v1
+//       v_confidence_band JSONB := '{"lower": 0, "upper": 0}'::jsonb;
+//       v_checksum TEXT;
+//       v_log_id UUID;
+//       v_executed_by UUID;
+//   BEGIN
+//       v_executed_by := auth.uid();
+//
+//       -- Captura os pesos configurados para a versão atual
+//       SELECT COALESCE(jsonb_object_agg(construct_code, weight), '{}'::jsonb)
+//       INTO v_weights
+//       FROM public.construct_definitions
+//       WHERE score_version_id = p_score_version_id;
+//
+//       -- Processamento dos constructos baseado nos pesos e inputs (Stub computacional)
+//       v_output := jsonb_build_object(
+//           'status', 'computed',
+//           'raw_inputs', p_inputs_json
+//       );
+//
+//       -- Checksum garantindo imutabilidade dos dados utilizados
+//       v_checksum := md5(p_inputs_json::text || v_weights::text || p_score_version_id::text);
+//
+//       -- Registro da computação no ledger analítico
+//       INSERT INTO public.score_computation_logs (
+//           execution_type, score_version_id, session_id, inputs_used,
+//           weights_used, output_generated, standard_error, confidence_band,
+//           checksum, executed_by
+//       ) VALUES (
+//           'construct_computation', p_score_version_id, p_session_id, p_inputs_json,
+//           v_weights, v_output, v_standard_error, v_confidence_band,
+//           v_checksum, v_executed_by
+//       ) RETURNING id INTO v_log_id;
+//
+//       RETURN jsonb_build_object(
+//           'success', true,
+//           'log_id', v_log_id,
+//           'output', v_output,
+//           'checksum', v_checksum
+//       );
+//   END;
+//   $function$
+//
+// FUNCTION compute_vitalscore_v1(uuid, uuid, jsonb)
+//   CREATE OR REPLACE FUNCTION public.compute_vitalscore_v1(p_session_id uuid, p_score_version_id uuid, p_construct_scores jsonb)
+//    RETURNS jsonb
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//       v_weights JSONB;
+//       v_output JSONB;
+//       v_standard_error NUMERIC := 2.5;
+//       v_confidence_band JSONB := '{"lower": 0, "upper": 100}'::jsonb;
+//       v_checksum TEXT;
+//       v_log_id UUID;
+//       v_vital_score NUMERIC := 0.0;
+//       v_executed_by UUID;
+//   BEGIN
+//       v_executed_by := auth.uid();
+//
+//       -- Captura pesos
+//       SELECT COALESCE(jsonb_object_agg(construct_code, weight), '{}'::jsonb)
+//       INTO v_weights
+//       FROM public.construct_definitions
+//       WHERE score_version_id = p_score_version_id;
+//
+//       -- Cálculo do motor central VitalScore (Stub agregador de constructos)
+//       v_output := jsonb_build_object(
+//           'vital_score', v_vital_score,
+//           'alert_band', 'Green'
+//       );
+//
+//       v_checksum := md5(p_construct_scores::text || v_weights::text || p_score_version_id::text);
+//
+//       -- Registro de log com métricas estatísticas
+//       INSERT INTO public.score_computation_logs (
+//           execution_type, score_version_id, session_id, inputs_used,
+//           weights_used, output_generated, standard_error, confidence_band,
+//           checksum, executed_by
+//       ) VALUES (
+//           'vitalscore_computation', p_score_version_id, p_session_id, p_construct_scores,
+//           v_weights, v_output, v_standard_error, v_confidence_band,
+//           v_checksum, v_executed_by
+//       ) RETURNING id INTO v_log_id;
+//
+//       RETURN jsonb_build_object(
+//           'success', true,
+//           'log_id', v_log_id,
+//           'output', v_output,
+//           'checksum', v_checksum
+//       );
+//   END;
+//   $function$
+//
 // FUNCTION create_assessment_session_full(uuid, uuid, uuid, uuid, uuid, text)
 //   CREATE OR REPLACE FUNCTION public.create_assessment_session_full(p_patient_case_id uuid, p_instrument_version_id uuid, p_applicator_id uuid, p_supervisor_id uuid, p_organization_unit_id uuid, p_source_channel text DEFAULT 'web'::text)
 //    RETURNS jsonb
@@ -2779,6 +3544,54 @@ export const Constants = {
 //   END;
 //   $function$
 //
+// FUNCTION recompute_vitalscore_by_version(uuid, uuid)
+//   CREATE OR REPLACE FUNCTION public.recompute_vitalscore_by_version(p_session_id uuid, p_target_score_version_id uuid)
+//    RETURNS jsonb
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//       v_original_inputs JSONB;
+//       v_recomputed_constructs JSONB;
+//       v_recomputed_vitalscore JSONB;
+//   BEGIN
+//       -- Busca os inputs crus originais que geraram os constructos
+//       SELECT inputs_used INTO v_original_inputs
+//       FROM public.score_computation_logs
+//       WHERE session_id = p_session_id AND execution_type = 'construct_computation'
+//       ORDER BY created_at ASC LIMIT 1;
+//
+//       IF v_original_inputs IS NULL THEN
+//           RAISE EXCEPTION 'Original raw inputs not found for given session';
+//       END IF;
+//
+//       -- 1. Recalcula os constructos usando a versão alvo
+//       v_recomputed_constructs := public.compute_construct_scores_v1(
+//           p_session_id, p_target_score_version_id, v_original_inputs
+//       );
+//
+//       -- 2. Recalcula o VitalScore usando os novos constructos
+//       v_recomputed_vitalscore := public.compute_vitalscore_v1(
+//           p_session_id, p_target_score_version_id, v_recomputed_constructs->'output'
+//       );
+//
+//       -- Flaggea os novos logs como recomputações longitudinais
+//       UPDATE public.score_computation_logs
+//       SET execution_type = 'recomputation'
+//       WHERE id IN (
+//           (v_recomputed_constructs->>'log_id')::UUID,
+//           (v_recomputed_vitalscore->>'log_id')::UUID
+//       );
+//
+//       RETURN jsonb_build_object(
+//           'success', true,
+//           'session_id', p_session_id,
+//           'target_version_id', p_target_score_version_id,
+//           'vitalscore_data', v_recomputed_vitalscore
+//       );
+//   END;
+//   $function$
+//
 // FUNCTION register_clinical_event(uuid, uuid, text, text, uuid, jsonb)
 //   CREATE OR REPLACE FUNCTION public.register_clinical_event(p_patient_case_id uuid, p_patient_id uuid, p_event_type text, p_source_table text, p_source_record_id uuid, p_payload jsonb DEFAULT '{}'::jsonb)
 //    RETURNS jsonb
@@ -2812,6 +3625,30 @@ export const Constants = {
 //       RETURN jsonb_build_object(
 //           'success', true,
 //           'event_id', v_event_id
+//       );
+//   END;
+//   $function$
+//
+// FUNCTION register_validation_run(uuid, text, integer, jsonb, jsonb)
+//   CREATE OR REPLACE FUNCTION public.register_validation_run(p_score_version_id uuid, p_run_name text, p_dataset_size integer, p_metrics jsonb, p_weights jsonb)
+//    RETURNS jsonb
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//       v_run_id UUID;
+//   BEGIN
+//       INSERT INTO public.score_calibration_runs (
+//           score_version_id, run_name, dataset_size,
+//           calibration_metrics, weights_used, performed_by
+//       ) VALUES (
+//           p_score_version_id, p_run_name, p_dataset_size,
+//           p_metrics, p_weights, auth.uid()
+//       ) RETURNING id INTO v_run_id;
+//
+//       RETURN jsonb_build_object(
+//           'success', true,
+//           'calibration_run_id', v_run_id
 //       );
 //   END;
 //   $function$
@@ -2903,6 +3740,9 @@ export const Constants = {
 //   CREATE INDEX idx_audit_log_table_record ON public.audit_log USING btree (table_name, record_id)
 // Table: clinical_reports
 //   CREATE INDEX idx_clinical_reports_patient_case ON public.clinical_reports USING btree (patient_case_id)
+// Table: construct_definitions
+//   CREATE UNIQUE INDEX construct_definitions_score_version_id_construct_code_key ON public.construct_definitions USING btree (score_version_id, construct_code)
+//   CREATE INDEX idx_construct_defs_version ON public.construct_definitions USING btree (score_version_id)
 // Table: instrument_item_construct_links
 //   CREATE UNIQUE INDEX instrument_item_construct_lin_instrument_item_id_taxonomy_c_key ON public.instrument_item_construct_links USING btree (instrument_item_id, taxonomy_construct_id, link_type)
 // Table: instrument_items
@@ -2928,6 +3768,16 @@ export const Constants = {
 // Table: roles
 //   CREATE UNIQUE INDEX roles_code_key ON public.roles USING btree (code)
 //   CREATE UNIQUE INDEX roles_name_key ON public.roles USING btree (name)
+// Table: score_calibration_runs
+//   CREATE INDEX idx_calibration_runs_version ON public.score_calibration_runs USING btree (score_version_id)
+// Table: score_computation_logs
+//   CREATE INDEX idx_computation_logs_created_at ON public.score_computation_logs USING btree (created_at)
+//   CREATE INDEX idx_computation_logs_session ON public.score_computation_logs USING btree (session_id)
+//   CREATE INDEX idx_computation_logs_version ON public.score_computation_logs USING btree (score_version_id)
+// Table: score_norm_reference
+//   CREATE INDEX idx_norm_reference_version ON public.score_norm_reference USING btree (score_version_id)
+// Table: score_versions
+//   CREATE UNIQUE INDEX score_versions_version_code_key ON public.score_versions USING btree (version_code)
 // Table: scoring_rule_sets
 //   CREATE UNIQUE INDEX scoring_rule_sets_instrument_version_id_rule_set_code_versi_key ON public.scoring_rule_sets USING btree (instrument_version_id, rule_set_code, version_code)
 // Table: taxonomy_constructs

@@ -34,6 +34,7 @@ import PerformanceTimeline from '@/pages/PerformanceTimeline'
 import PatientPortal from '@/pages/PatientPortal'
 import VerifyDocument from '@/pages/VerifyDocument'
 import VitalStrata from '@/pages/VitalStrata'
+import PsychometricLab from '@/pages/PsychometricLab'
 
 import TeamFlowDashboard from '@/pages/teamflow/TeamFlowDashboard'
 import TeamManagement from '@/pages/teamflow/TeamManagement'
@@ -56,6 +57,7 @@ const App = () => (
                     <Route element={<Layout />}>
                       <Route path="/" element={<Index />} />
                       <Route path="/vitalstrata" element={<VitalStrata />} />
+                      <Route path="/psychometric-lab" element={<PsychometricLab />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/medical" element={<MedicalArea />} />
                       <Route path="/neuropsychology" element={<NeuropsychologyArea />} />

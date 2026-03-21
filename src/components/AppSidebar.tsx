@@ -21,6 +21,7 @@ import {
   GraduationCap,
   HeartPulse,
   Network,
+  TestTubes,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -77,6 +78,7 @@ export function AppSidebar() {
     { name: 'Início', path: '/', icon: LayoutDashboard },
     { name: 'TeamFlow™', path: '/teamflow', icon: Network },
     { name: 'VitalStrata™', path: '/vitalstrata', icon: HeartPulse },
+    { name: 'Laboratório Psicométrico', path: '/psychometric-lab', icon: TestTubes },
     { name: 'Área Médica', path: '/medical', icon: Stethoscope },
     { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
     { name: 'Área Nutricional', path: '/nutrition', icon: Apple },
@@ -152,12 +154,16 @@ export function AppSidebar() {
                         ? 'w-5 h-5 text-indigo-500'
                         : item.name === 'VitalStrata™'
                           ? 'w-5 h-5 text-rose-500'
-                          : 'w-5 h-5'
+                          : item.name === 'Laboratório Psicométrico'
+                            ? 'w-5 h-5 text-emerald-500'
+                            : 'w-5 h-5'
                     }
                   />
                   <span
                     className={
-                      item.name === 'TeamFlow™' || item.name === 'VitalStrata™'
+                      item.name === 'TeamFlow™' ||
+                      item.name === 'VitalStrata™' ||
+                      item.name === 'Laboratório Psicométrico'
                         ? 'font-bold text-slate-800'
                         : ''
                     }
