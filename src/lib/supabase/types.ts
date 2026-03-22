@@ -313,6 +313,50 @@ export type Database = {
           },
         ]
       }
+      assessments: {
+        Row: {
+          assessment_type: string
+          collected_by: string | null
+          created_at: string
+          id: string
+          occurred_at: string
+          payload: Json
+          person_id: string
+          source_hash: string | null
+          status: string
+        }
+        Insert: {
+          assessment_type: string
+          collected_by?: string | null
+          created_at?: string
+          id?: string
+          occurred_at?: string
+          payload: Json
+          person_id: string
+          source_hash?: string | null
+          status?: string
+        }
+        Update: {
+          assessment_type?: string
+          collected_by?: string | null
+          created_at?: string
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          person_id?: string
+          source_hash?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'assessments_person_id_fkey'
+            columns: ['person_id']
+            isOneToOne: false
+            referencedRelation: 'persons'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -365,6 +409,51 @@ export type Database = {
             columns: ['actor_profile_id']
             isOneToOne: false
             referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      biogram_events: {
+        Row: {
+          assessment_id: string | null
+          created_at: string
+          event_at: string
+          event_payload: Json
+          event_type: string
+          id: string
+          person_id: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          created_at?: string
+          event_at?: string
+          event_payload: Json
+          event_type: string
+          id?: string
+          person_id: string
+        }
+        Update: {
+          assessment_id?: string | null
+          created_at?: string
+          event_at?: string
+          event_payload?: Json
+          event_type?: string
+          id?: string
+          person_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'biogram_events_assessment_id_fkey'
+            columns: ['assessment_id']
+            isOneToOne: false
+            referencedRelation: 'assessments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'biogram_events_person_id_fkey'
+            columns: ['person_id']
+            isOneToOne: false
+            referencedRelation: 'persons'
             referencedColumns: ['id']
           },
         ]
@@ -586,6 +675,66 @@ export type Database = {
             columns: ['supervisor_professional_id']
             isOneToOne: false
             referencedRelation: 'professionals'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      computed_profiles: {
+        Row: {
+          assessment_id: string
+          class_label: string
+          computed_at: string
+          computed_hash: string
+          domain_scores: Json
+          explanations: Json
+          id: string
+          model_definition_id: string
+          nsi_score: number
+          reserve_scores: Json
+          risk_scores: Json
+          vital_score: number
+        }
+        Insert: {
+          assessment_id: string
+          class_label: string
+          computed_at?: string
+          computed_hash: string
+          domain_scores: Json
+          explanations: Json
+          id?: string
+          model_definition_id: string
+          nsi_score: number
+          reserve_scores: Json
+          risk_scores: Json
+          vital_score: number
+        }
+        Update: {
+          assessment_id?: string
+          class_label?: string
+          computed_at?: string
+          computed_hash?: string
+          domain_scores?: Json
+          explanations?: Json
+          id?: string
+          model_definition_id?: string
+          nsi_score?: number
+          reserve_scores?: Json
+          risk_scores?: Json
+          vital_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'computed_profiles_assessment_id_fkey'
+            columns: ['assessment_id']
+            isOneToOne: false
+            referencedRelation: 'assessments'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'computed_profiles_model_definition_id_fkey'
+            columns: ['model_definition_id']
+            isOneToOne: false
+            referencedRelation: 'model_definitions'
             referencedColumns: ['id']
           },
         ]
@@ -950,6 +1099,83 @@ export type Database = {
           },
         ]
       }
+      model_definitions: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          model_code: string
+          status: string
+          version: string
+        }
+        Insert: {
+          config: Json
+          created_at?: string
+          id?: string
+          model_code: string
+          status?: string
+          version: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          model_code?: string
+          status?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      model_dimensions: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          json_path: string[]
+          max_value: number | null
+          min_value: number | null
+          model_definition_id: string
+          score_type: string
+          target_value: number | null
+          tolerance_value: number | null
+          weight: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          json_path: string[]
+          max_value?: number | null
+          min_value?: number | null
+          model_definition_id: string
+          score_type: string
+          target_value?: number | null
+          tolerance_value?: number | null
+          weight: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          json_path?: string[]
+          max_value?: number | null
+          min_value?: number | null
+          model_definition_id?: string
+          score_type?: string
+          target_value?: number | null
+          tolerance_value?: number | null
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'model_dimensions_model_definition_id_fkey'
+            columns: ['model_definition_id']
+            isOneToOne: false
+            referencedRelation: 'model_definitions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       organization_units: {
         Row: {
           city: string | null
@@ -1203,6 +1429,33 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      persons: {
+        Row: {
+          birth_date: string | null
+          created_at: string
+          external_code: string | null
+          full_name: string
+          id: string
+          sex: string | null
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string
+          external_code?: string | null
+          full_name: string
+          id?: string
+          sex?: string | null
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string
+          external_code?: string | null
+          full_name?: string
+          id?: string
+          sex?: string | null
+        }
+        Relationships: []
       }
       professionals: {
         Row: {
@@ -2001,6 +2254,30 @@ export type Database = {
         }
         Returns: Json
       }
+      fn_clamp: {
+        Args: { p_max: number; p_min: number; p_value: number }
+        Returns: number
+      }
+      fn_compute_vitalscore: {
+        Args: {
+          p_assessment_id: string
+          p_model_code?: string
+          p_model_version?: string
+        }
+        Returns: string
+      }
+      fn_normalize_direct: {
+        Args: { p_max: number; p_min: number; p_value: number }
+        Returns: number
+      }
+      fn_normalize_inverse: {
+        Args: { p_max: number; p_min: number; p_value: number }
+        Returns: number
+      }
+      fn_normalize_window: {
+        Args: { p_target: number; p_tolerance: number; p_value: number }
+        Returns: number
+      }
       generate_assessment_result: {
         Args: {
           p_construct_scores?: Json
@@ -2250,6 +2527,16 @@ export const Constants = {
 //   source_channel: text (nullable)
 //   raw_payload_checksum: text (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: assessments
+//   id: uuid (not null, default: gen_random_uuid())
+//   person_id: uuid (not null)
+//   assessment_type: text (not null)
+//   status: text (not null, default: 'draft'::text)
+//   occurred_at: timestamp with time zone (not null, default: now())
+//   collected_by: uuid (nullable)
+//   payload: jsonb (not null)
+//   source_hash: text (nullable)
+//   created_at: timestamp with time zone (not null, default: now())
 // Table: audit_log
 //   id: bigint (not null, default: nextval('audit_log_id_seq'::regclass))
 //   occurred_at: timestamp with time zone (nullable, default: now())
@@ -2264,6 +2551,14 @@ export const Constants = {
 //   ip_address: inet (nullable)
 //   previous_hash: text (nullable)
 //   hash: text (nullable)
+// Table: biogram_events
+//   id: uuid (not null, default: gen_random_uuid())
+//   person_id: uuid (not null)
+//   assessment_id: uuid (nullable)
+//   event_type: text (not null)
+//   event_payload: jsonb (not null)
+//   event_at: timestamp with time zone (not null, default: now())
+//   created_at: timestamp with time zone (not null, default: now())
 // Table: case_team_assignments
 //   id: uuid (not null, default: gen_random_uuid())
 //   patient_case_id: uuid (not null)
@@ -2305,6 +2600,19 @@ export const Constants = {
 //   signed_at: timestamp with time zone (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
+// Table: computed_profiles
+//   id: uuid (not null, default: gen_random_uuid())
+//   assessment_id: uuid (not null)
+//   model_definition_id: uuid (not null)
+//   vital_score: numeric (not null)
+//   nsi_score: numeric (not null)
+//   class_label: text (not null)
+//   domain_scores: jsonb (not null)
+//   risk_scores: jsonb (not null)
+//   reserve_scores: jsonb (not null)
+//   explanations: jsonb (not null)
+//   computed_at: timestamp with time zone (not null, default: now())
+//   computed_hash: text (not null)
 // Table: consents
 //   id: uuid (not null, default: gen_random_uuid())
 //   patient_id: uuid (not null)
@@ -2381,6 +2689,25 @@ export const Constants = {
 //   notes: text (nullable)
 //   created_by: uuid (not null)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: model_definitions
+//   id: uuid (not null, default: gen_random_uuid())
+//   model_code: text (not null)
+//   version: text (not null)
+//   status: text (not null, default: 'active'::text)
+//   config: jsonb (not null)
+//   created_at: timestamp with time zone (not null, default: now())
+// Table: model_dimensions
+//   id: uuid (not null, default: gen_random_uuid())
+//   model_definition_id: uuid (not null)
+//   code: text (not null)
+//   json_path: _text (not null)
+//   score_type: text (not null)
+//   weight: numeric (not null)
+//   min_value: numeric (nullable)
+//   max_value: numeric (nullable)
+//   target_value: numeric (nullable)
+//   tolerance_value: numeric (nullable)
+//   created_at: timestamp with time zone (not null, default: now())
 // Table: organization_units
 //   id: uuid (not null, default: gen_random_uuid())
 //   organization_id: uuid (not null)
@@ -2438,6 +2765,13 @@ export const Constants = {
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
 //   archived_at: timestamp with time zone (nullable)
+// Table: persons
+//   id: uuid (not null, default: gen_random_uuid())
+//   external_code: text (nullable)
+//   full_name: text (not null)
+//   birth_date: date (nullable)
+//   sex: text (nullable)
+//   created_at: timestamp with time zone (not null, default: now())
 // Table: professionals
 //   id: uuid (not null, default: gen_random_uuid())
 //   profile_id: uuid (not null)
@@ -2633,9 +2967,16 @@ export const Constants = {
 //   FOREIGN KEY assessment_sessions_patient_id_fkey: FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
 //   PRIMARY KEY assessment_sessions_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY assessment_sessions_supervisor_id_fkey: FOREIGN KEY (supervisor_id) REFERENCES professionals(id) ON DELETE SET NULL
+// Table: assessments
+//   FOREIGN KEY assessments_person_id_fkey: FOREIGN KEY (person_id) REFERENCES persons(id) ON DELETE CASCADE
+//   PRIMARY KEY assessments_pkey: PRIMARY KEY (id)
 // Table: audit_log
 //   FOREIGN KEY audit_log_actor_profile_id_fkey: FOREIGN KEY (actor_profile_id) REFERENCES profiles(id) ON DELETE SET NULL
 //   PRIMARY KEY audit_log_pkey: PRIMARY KEY (id)
+// Table: biogram_events
+//   FOREIGN KEY biogram_events_assessment_id_fkey: FOREIGN KEY (assessment_id) REFERENCES assessments(id) ON DELETE SET NULL
+//   FOREIGN KEY biogram_events_person_id_fkey: FOREIGN KEY (person_id) REFERENCES persons(id) ON DELETE CASCADE
+//   PRIMARY KEY biogram_events_pkey: PRIMARY KEY (id)
 // Table: case_team_assignments
 //   FOREIGN KEY case_team_assignments_patient_case_id_fkey: FOREIGN KEY (patient_case_id) REFERENCES patient_cases(id) ON DELETE CASCADE
 //   PRIMARY KEY case_team_assignments_pkey: PRIMARY KEY (id)
@@ -2654,6 +2995,10 @@ export const Constants = {
 //   FOREIGN KEY clinical_reports_patient_case_id_fkey: FOREIGN KEY (patient_case_id) REFERENCES patient_cases(id) ON DELETE CASCADE
 //   PRIMARY KEY clinical_reports_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY clinical_reports_supervisor_professional_id_fkey: FOREIGN KEY (supervisor_professional_id) REFERENCES professionals(id) ON DELETE SET NULL
+// Table: computed_profiles
+//   FOREIGN KEY computed_profiles_assessment_id_fkey: FOREIGN KEY (assessment_id) REFERENCES assessments(id) ON DELETE CASCADE
+//   FOREIGN KEY computed_profiles_model_definition_id_fkey: FOREIGN KEY (model_definition_id) REFERENCES model_definitions(id)
+//   PRIMARY KEY computed_profiles_pkey: PRIMARY KEY (id)
 // Table: consents
 //   FOREIGN KEY consents_guardian_id_fkey: FOREIGN KEY (guardian_id) REFERENCES patient_guardians(id) ON DELETE SET NULL
 //   FOREIGN KEY consents_patient_id_fkey: FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE
@@ -2686,6 +3031,12 @@ export const Constants = {
 //   FOREIGN KEY instrument_versions_instrument_id_fkey: FOREIGN KEY (instrument_id) REFERENCES assessment_instruments(id) ON DELETE CASCADE
 //   UNIQUE instrument_versions_instrument_id_version_code_key: UNIQUE (instrument_id, version_code)
 //   PRIMARY KEY instrument_versions_pkey: PRIMARY KEY (id)
+// Table: model_definitions
+//   UNIQUE model_definitions_model_code_version_key: UNIQUE (model_code, version)
+//   PRIMARY KEY model_definitions_pkey: PRIMARY KEY (id)
+// Table: model_dimensions
+//   FOREIGN KEY model_dimensions_model_definition_id_fkey: FOREIGN KEY (model_definition_id) REFERENCES model_definitions(id) ON DELETE CASCADE
+//   PRIMARY KEY model_dimensions_pkey: PRIMARY KEY (id)
 // Table: organization_units
 //   FOREIGN KEY organization_units_organization_id_fkey: FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
 //   UNIQUE organization_units_organization_id_name_key: UNIQUE (organization_id, name)
@@ -2705,6 +3056,9 @@ export const Constants = {
 //   UNIQUE patients_organization_id_external_code_key: UNIQUE (organization_id, external_code)
 //   FOREIGN KEY patients_organization_id_fkey: FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
 //   PRIMARY KEY patients_pkey: PRIMARY KEY (id)
+// Table: persons
+//   UNIQUE persons_external_code_key: UNIQUE (external_code)
+//   PRIMARY KEY persons_pkey: PRIMARY KEY (id)
 // Table: professionals
 //   PRIMARY KEY professionals_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY professionals_profile_id_fkey: FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE
@@ -2822,6 +3176,11 @@ export const Constants = {
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: assessments
+//   Policy "auth_insert_assessments" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "auth_read_assessments" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: audit_log
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -2830,6 +3189,11 @@ export const Constants = {
 //   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: biogram_events
+//   Policy "auth_insert_biogram_events" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "auth_read_biogram_events" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: case_team_assignments
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
@@ -2866,6 +3230,11 @@ export const Constants = {
 //   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: computed_profiles
+//   Policy "auth_insert_computed_profiles" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "auth_read_computed_profiles" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: consents
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
@@ -2931,6 +3300,12 @@ export const Constants = {
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
+// Table: model_definitions
+//   Policy "auth_read_model_definitions" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: model_dimensions
+//   Policy "auth_read_model_dimensions" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
 // Table: organization_units
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -2975,6 +3350,11 @@ export const Constants = {
 //   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: persons
+//   Policy "auth_insert_persons" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "auth_read_persons" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: professionals
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
@@ -3345,6 +3725,197 @@ export const Constants = {
 //           'session_id', v_session_id
 //       );
 //   END;
+//   $function$
+//
+// FUNCTION fn_clamp(numeric, numeric, numeric)
+//   CREATE OR REPLACE FUNCTION public.fn_clamp(p_value numeric, p_min numeric, p_max numeric)
+//    RETURNS numeric
+//    LANGUAGE sql
+//    IMMUTABLE
+//   AS $function$
+//     SELECT GREATEST(p_min, LEAST(p_value, p_max));
+//   $function$
+//
+// FUNCTION fn_compute_vitalscore(uuid, text, text)
+//   CREATE OR REPLACE FUNCTION public.fn_compute_vitalscore(p_assessment_id uuid, p_model_code text DEFAULT 'VitalScore'::text, p_model_version text DEFAULT '1.0.0'::text)
+//    RETURNS uuid
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   DECLARE
+//     v_assessment record;
+//     v_model record;
+//     v_dimension record;
+//     v_domain_scores jsonb := '{}'::jsonb;
+//     v_sum numeric := 0;
+//     v_raw numeric;
+//     v_score numeric;
+//     v_vital_score numeric := 0;
+//     v_nsi_score numeric := 0;
+//     v_class_label text := 'indefinido';
+//     v_result_id uuid;
+//     v_distinctiveness numeric := 50;
+//     v_coherence numeric := 50;
+//     v_temporal numeric := 50;
+//   BEGIN
+//     SELECT * INTO v_assessment
+//     FROM public.assessments
+//     WHERE id = p_assessment_id;
+//
+//     IF NOT FOUND THEN
+//       RAISE EXCEPTION 'assessment not found';
+//     END IF;
+//
+//     SELECT * INTO v_model
+//     FROM public.model_definitions
+//     WHERE model_code = p_model_code
+//       AND version = p_model_version
+//       AND status = 'active'
+//     LIMIT 1;
+//
+//     IF NOT FOUND THEN
+//       RAISE EXCEPTION 'model definition not found';
+//     END IF;
+//
+//     FOR v_dimension IN
+//       SELECT * FROM public.model_dimensions WHERE model_definition_id = v_model.id
+//     LOOP
+//       -- extrair o valor bruto do JSON
+//       v_raw := NULLIF(v_assessment.payload #>> v_dimension.json_path, '')::numeric;
+//
+//       IF v_raw IS NULL THEN
+//         v_score := 0;
+//       ELSIF v_dimension.score_type = 'direct' THEN
+//         v_score := public.fn_normalize_direct(v_raw, coalesce(v_dimension.min_value, 0), coalesce(v_dimension.max_value, 100));
+//       ELSIF v_dimension.score_type = 'inverse' THEN
+//         v_score := public.fn_normalize_inverse(v_raw, coalesce(v_dimension.min_value, 0), coalesce(v_dimension.max_value, 100));
+//       ELSIF v_dimension.score_type = 'window' THEN
+//         v_score := public.fn_normalize_window(v_raw, coalesce(v_dimension.target_value, 0), coalesce(v_dimension.tolerance_value, 1));
+//       ELSE
+//         v_score := 0;
+//       END IF;
+//
+//       v_sum := v_sum + (v_score * v_dimension.weight);
+//
+//       v_domain_scores := v_domain_scores || jsonb_build_object(
+//         v_dimension.code,
+//         jsonb_build_object(
+//           'raw', v_raw,
+//           'score', round(v_score, 2),
+//           'weight', v_dimension.weight,
+//           'weighted_score', round(v_score * v_dimension.weight, 2)
+//         )
+//       );
+//     END LOOP;
+//
+//     v_vital_score := round(v_sum, 2);
+//
+//     v_distinctiveness := coalesce((v_assessment.payload->>'distinctiveness_proxy')::numeric, 50);
+//     v_coherence := coalesce((v_assessment.payload->>'coherence_proxy')::numeric, 50);
+//     v_temporal := coalesce((v_assessment.payload->>'temporal_proxy')::numeric, 50);
+//
+//     v_nsi_score := round(
+//         (0.40 * v_distinctiveness)
+//       + (0.25 * v_coherence)
+//       + (0.35 * v_temporal),
+//       2
+//     );
+//
+//     IF v_vital_score < 25 THEN
+//       v_class_label := 'colapso_funcional_grave';
+//     ELSIF v_vital_score < 40 THEN
+//       v_class_label := 'fragilidade_severa';
+//     ELSIF v_vital_score < 55 THEN
+//       v_class_label := 'vulnerabilidade_moderada';
+//     ELSIF v_vital_score < 70 THEN
+//       v_class_label := 'funcionalidade_instavel';
+//     ELSIF v_vital_score < 85 THEN
+//       v_class_label := 'funcionalidade_preservada';
+//     ELSE
+//       v_class_label := 'alta_reserva_funcional';
+//     END IF;
+//
+//     INSERT INTO public.computed_profiles (
+//       assessment_id,
+//       model_definition_id,
+//       vital_score,
+//       nsi_score,
+//       class_label,
+//       domain_scores,
+//       risk_scores,
+//       reserve_scores,
+//       explanations,
+//       computed_hash
+//     ) VALUES (
+//       v_assessment.id,
+//       v_model.id,
+//       v_vital_score,
+//       v_nsi_score,
+//       v_class_label,
+//       v_domain_scores,
+//       '{}'::jsonb,
+//       '{}'::jsonb,
+//       jsonb_build_object(
+//         'distinctiveness', v_distinctiveness,
+//         'coherence', v_coherence,
+//         'temporal_continuity', v_temporal
+//       ),
+//       md5(v_assessment.payload::text || v_model.config::text || now()::text)
+//     )
+//     RETURNING id INTO v_result_id;
+//
+//     INSERT INTO public.biogram_events (
+//       person_id,
+//       assessment_id,
+//       event_type,
+//       event_payload
+//     ) VALUES (
+//       v_assessment.person_id,
+//       v_assessment.id,
+//       'profile_computed',
+//       jsonb_build_object(
+//         'computed_profile_id', v_result_id,
+//         'vital_score', v_vital_score,
+//         'nsi_score', v_nsi_score,
+//         'class_label', v_class_label
+//       )
+//     );
+//
+//     RETURN v_result_id;
+//   END;
+//   $function$
+//
+// FUNCTION fn_normalize_direct(numeric, numeric, numeric)
+//   CREATE OR REPLACE FUNCTION public.fn_normalize_direct(p_value numeric, p_min numeric, p_max numeric)
+//    RETURNS numeric
+//    LANGUAGE sql
+//    IMMUTABLE
+//   AS $function$
+//     SELECT CASE
+//       WHEN p_max = p_min THEN 0
+//       ELSE public.fn_clamp(((p_value - p_min) / NULLIF((p_max - p_min),0)) * 100, 0, 100)
+//     END;
+//   $function$
+//
+// FUNCTION fn_normalize_inverse(numeric, numeric, numeric)
+//   CREATE OR REPLACE FUNCTION public.fn_normalize_inverse(p_value numeric, p_min numeric, p_max numeric)
+//    RETURNS numeric
+//    LANGUAGE sql
+//    IMMUTABLE
+//   AS $function$
+//     SELECT 100 - public.fn_normalize_direct(p_value, p_min, p_max);
+//   $function$
+//
+// FUNCTION fn_normalize_window(numeric, numeric, numeric)
+//   CREATE OR REPLACE FUNCTION public.fn_normalize_window(p_value numeric, p_target numeric, p_tolerance numeric)
+//    RETURNS numeric
+//    LANGUAGE sql
+//    IMMUTABLE
+//   AS $function$
+//     SELECT CASE
+//       WHEN p_tolerance <= 0 THEN 0
+//       ELSE 100 * exp(-power((p_value - p_target), 2) / (2 * power(p_tolerance, 2)))
+//     END;
 //   $function$
 //
 // FUNCTION generate_assessment_result(uuid, uuid, jsonb, text, text, jsonb)
@@ -3874,6 +4445,8 @@ export const Constants = {
 //   CREATE UNIQUE INDEX instrument_sections_instrument_version_id_code_key ON public.instrument_sections USING btree (instrument_version_id, code)
 // Table: instrument_versions
 //   CREATE UNIQUE INDEX instrument_versions_instrument_id_version_code_key ON public.instrument_versions USING btree (instrument_id, version_code)
+// Table: model_definitions
+//   CREATE UNIQUE INDEX model_definitions_model_code_version_key ON public.model_definitions USING btree (model_code, version)
 // Table: organization_units
 //   CREATE UNIQUE INDEX organization_units_organization_id_name_key ON public.organization_units USING btree (organization_id, name)
 // Table: patient_cases
@@ -3882,6 +4455,8 @@ export const Constants = {
 //   CREATE INDEX idx_patients_org ON public.patients USING btree (organization_id)
 //   CREATE INDEX idx_patients_status ON public.patients USING btree (status)
 //   CREATE UNIQUE INDEX patients_organization_id_external_code_key ON public.patients USING btree (organization_id, external_code)
+// Table: persons
+//   CREATE UNIQUE INDEX persons_external_code_key ON public.persons USING btree (external_code)
 // Table: professionals
 //   CREATE UNIQUE INDEX professionals_profile_id_key ON public.professionals USING btree (profile_id)
 // Table: profile_roles
