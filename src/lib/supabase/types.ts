@@ -317,11 +317,13 @@ export type Database = {
         Row: {
           action: string
           actor_profile_id: string | null
+          hash: string | null
           id: number
           ip_address: unknown
           new_data: Json | null
           occurred_at: string | null
           old_data: Json | null
+          previous_hash: string | null
           reason: string | null
           record_id: string | null
           request_id: string | null
@@ -330,11 +332,13 @@ export type Database = {
         Insert: {
           action: string
           actor_profile_id?: string | null
+          hash?: string | null
           id?: number
           ip_address?: unknown
           new_data?: Json | null
           occurred_at?: string | null
           old_data?: Json | null
+          previous_hash?: string | null
           reason?: string | null
           record_id?: string | null
           request_id?: string | null
@@ -343,11 +347,13 @@ export type Database = {
         Update: {
           action?: string
           actor_profile_id?: string | null
+          hash?: string | null
           id?: number
           ip_address?: unknown
           new_data?: Json | null
           occurred_at?: string | null
           old_data?: Json | null
+          previous_hash?: string | null
           reason?: string | null
           record_id?: string | null
           request_id?: string | null
@@ -684,6 +690,74 @@ export type Database = {
             columns: ['score_version_id']
             isOneToOne: false
             referencedRelation: 'score_versions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      dsm_domains: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          name: string
+          neuro_unit: string | null
+          rdoc_domain: string | null
+          risk_flag: boolean | null
+          severity_weight: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id: string
+          name: string
+          neuro_unit?: string | null
+          rdoc_domain?: string | null
+          risk_flag?: boolean | null
+          severity_weight?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          neuro_unit?: string | null
+          rdoc_domain?: string | null
+          risk_flag?: boolean | null
+          severity_weight?: number | null
+        }
+        Relationships: []
+      }
+      dsm_level1_questions: {
+        Row: {
+          created_at: string | null
+          domain_id: string
+          id: string
+          question: string
+          question_type: string | null
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          domain_id: string
+          id?: string
+          question: string
+          question_type?: string | null
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          domain_id?: string
+          id?: string
+          question?: string
+          question_type?: string | null
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dsm_level1_questions_domain_id_fkey'
+            columns: ['domain_id']
+            isOneToOne: false
+            referencedRelation: 'dsm_domains'
             referencedColumns: ['id']
           },
         ]
@@ -2188,6 +2262,8 @@ export const Constants = {
 //   reason: text (nullable)
 //   request_id: text (nullable)
 //   ip_address: inet (nullable)
+//   previous_hash: text (nullable)
+//   hash: text (nullable)
 // Table: case_team_assignments
 //   id: uuid (not null, default: gen_random_uuid())
 //   patient_case_id: uuid (not null)
@@ -2251,6 +2327,22 @@ export const Constants = {
 //   min_value: numeric (nullable)
 //   max_value: numeric (nullable)
 //   is_sentinel: boolean (nullable, default: false)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: dsm_domains
+//   id: text (not null)
+//   name: text (not null)
+//   category: text (nullable, default: 'Level1'::text)
+//   rdoc_domain: text (nullable)
+//   neuro_unit: text (nullable)
+//   severity_weight: numeric (nullable, default: 1.0)
+//   risk_flag: boolean (nullable, default: false)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: dsm_level1_questions
+//   id: uuid (not null, default: gen_random_uuid())
+//   domain_id: text (not null)
+//   question: text (not null)
+//   question_type: text (nullable, default: 'likert_0_4'::text)
+//   weight: numeric (nullable, default: 1.0)
 //   created_at: timestamp with time zone (nullable, default: now())
 // Table: instrument_item_construct_links
 //   id: uuid (not null, default: gen_random_uuid())
@@ -2570,6 +2662,11 @@ export const Constants = {
 //   PRIMARY KEY construct_definitions_pkey: PRIMARY KEY (id)
 //   UNIQUE construct_definitions_score_version_id_construct_code_key: UNIQUE (score_version_id, construct_code)
 //   FOREIGN KEY construct_definitions_score_version_id_fkey: FOREIGN KEY (score_version_id) REFERENCES score_versions(id) ON DELETE CASCADE
+// Table: dsm_domains
+//   PRIMARY KEY dsm_domains_pkey: PRIMARY KEY (id)
+// Table: dsm_level1_questions
+//   FOREIGN KEY dsm_level1_questions_domain_id_fkey: FOREIGN KEY (domain_id) REFERENCES dsm_domains(id) ON DELETE CASCADE
+//   PRIMARY KEY dsm_level1_questions_pkey: PRIMARY KEY (id)
 // Table: instrument_item_construct_links
 //   UNIQUE instrument_item_construct_lin_instrument_item_id_taxonomy_c_key: UNIQUE (instrument_item_id, taxonomy_construct_id, link_type)
 //   FOREIGN KEY instrument_item_construct_links_instrument_item_id_fkey: FOREIGN KEY (instrument_item_id) REFERENCES instrument_items(id) ON DELETE CASCADE
@@ -2787,6 +2884,16 @@ export const Constants = {
 //   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: dsm_domains
+//   Policy "Enable insert access for authenticated users" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: true
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: true
+//   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: true
+// Table: dsm_level1_questions
+//   Policy "Enable read access for authenticated users" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: instrument_item_construct_links
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
@@ -3513,32 +3620,48 @@ export const Constants = {
 //     v_new_data JSONB;
 //     v_actor_id UUID;
 //     v_record_id UUID;
+//     v_prev_hash TEXT;
+//     v_current_hash TEXT;
 //   BEGIN
 //     v_actor_id := auth.uid();
+//
+//     -- Recupera o último hash para o encadeamento (block-chaining)
+//     SELECT hash INTO v_prev_hash FROM public.audit_log ORDER BY id DESC LIMIT 1;
+//     IF v_prev_hash IS NULL THEN
+//         v_prev_hash := 'genesis_block';
+//     END IF;
 //
 //     IF (TG_OP = 'UPDATE') THEN
 //       v_old_data := to_jsonb(OLD);
 //       v_new_data := to_jsonb(NEW);
 //       EXECUTE 'SELECT $1.id' USING NEW INTO v_record_id;
-//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, old_data, new_data)
-//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_old_data, v_new_data);
+//
+//       v_current_hash := md5(v_prev_hash || COALESCE(v_actor_id::text, 'system') || TG_TABLE_NAME || v_record_id::text || TG_OP || v_new_data::text);
+//
+//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, old_data, new_data, previous_hash, hash)
+//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_old_data, v_new_data, v_prev_hash, v_current_hash);
 //       RETURN NEW;
 //     ELSIF (TG_OP = 'DELETE') THEN
 //       v_old_data := to_jsonb(OLD);
 //       EXECUTE 'SELECT $1.id' USING OLD INTO v_record_id;
-//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, old_data)
-//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_old_data);
+//
+//       v_current_hash := md5(v_prev_hash || COALESCE(v_actor_id::text, 'system') || TG_TABLE_NAME || v_record_id::text || TG_OP || v_old_data::text);
+//
+//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, old_data, previous_hash, hash)
+//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_old_data, v_prev_hash, v_current_hash);
 //       RETURN OLD;
 //     ELSIF (TG_OP = 'INSERT') THEN
 //       v_new_data := to_jsonb(NEW);
 //       EXECUTE 'SELECT $1.id' USING NEW INTO v_record_id;
-//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, new_data)
-//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_new_data);
+//
+//       v_current_hash := md5(v_prev_hash || COALESCE(v_actor_id::text, 'system') || TG_TABLE_NAME || v_record_id::text || TG_OP || v_new_data::text);
+//
+//       INSERT INTO public.audit_log (actor_profile_id, table_name, record_id, action, new_data, previous_hash, hash)
+//       VALUES (v_actor_id, TG_TABLE_NAME, v_record_id, TG_OP, v_new_data, v_prev_hash, v_current_hash);
 //       RETURN NEW;
 //     END IF;
 //     RETURN NULL;
 //   EXCEPTION WHEN OTHERS THEN
-//     -- Fallback if table doesn't have an 'id' column
 //     IF (TG_OP = 'UPDATE' OR TG_OP = 'INSERT') THEN RETURN NEW; END IF;
 //     RETURN OLD;
 //   END;

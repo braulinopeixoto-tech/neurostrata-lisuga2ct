@@ -41,7 +41,7 @@ export default function Index() {
       shadow: 'shadow-indigo-500/20',
       protection: 'Responsabilidade Técnica & Ledger Clínico',
       details:
-        'Acesso total aos módulos do NeuroModel™, Motor de Convergência DSM e Gestão Macro. Suas ações são assinadas digitalmente e gravadas no Trust Layer™ garantindo a rastreabilidade e autoria inquestionável.',
+        'Acesso total aos módulos do NeuroModel™, Motor de Convergência DSM e Gestão Macro. Suas ações são assinadas digitalmente e gravadas no Trust Layer™ garantindo a rastreabilidade e autoria inquestionável. O motor NSL (NeuroSingularity Language) está ativo para cálculos audíveis.',
     },
     {
       id: 'mydata',
@@ -69,7 +69,7 @@ export default function Index() {
       shadow: 'shadow-slate-500/20',
       protection: 'Validade Jurídica & Logs Imutáveis',
       details:
-        'Acesso de leitura restrito focado em perícia e auditoria. Todas as visualizações são registradas na cadeia de blocos (Trust Layer™) para garantir o compliance e a cadeia de custódia das evidências.',
+        'Acesso de leitura restrito focado em perícia e auditoria. Todas as visualizações são registradas na cadeia de blocos (Trust Layer™) para garantir o compliance e a cadeia de custódia das evidências computadas pelo NSL Engine.',
     },
   ]
 
@@ -89,15 +89,16 @@ export default function Index() {
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 uppercase tracking-widest text-[10px] font-bold">
-              Gateway de Integridade Ativo
+              Gateway de Integridade Ativo • Motor NSL Online
             </Badge>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
             <ShieldCheck className="w-8 h-8 text-emerald-400" /> Matriz de Proteção Global
           </h1>
           <p className="text-slate-400 mt-2 max-w-2xl text-sm leading-relaxed">
-            A infraestrutura NeuroStrata opera sob a Trust Layer™. Todos os dados processados pelo
-            motor DSM são criptografados e assegurados por uma cadeia de custódia imutável (Ledger
+            A infraestrutura NeuroStrata opera sob a Trust Layer™. Todos os dados processados pela{' '}
+            <strong className="text-emerald-400">NSL (NeuroSingularity Language)</strong> são
+            avaliados no banco de dados e assegurados por uma cadeia de custódia imutável (Ledger
             Clínico).
           </p>
         </div>

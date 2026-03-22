@@ -157,14 +157,14 @@ export function TeamFlowProvider({ children }: { children: ReactNode }) {
       id: 'VS1',
       patient_id: 'P001',
       case_workspace_id: 'CW1',
-      total_score: 62,
+      total_score: 52.29, // Calculated from the NSL mock
       reserve_level: 'Moderada',
       trend: 'Estável',
-      model_version: 'v2.1',
+      model_version: '1.0.0 (NSL)',
       alert_level: 'Yellow',
       nfli: 1.45,
       dvi: 0.8,
-      fii: 1.2,
+      fii: 0.845, // Map to NSI mock
       sri: 0.5,
       domain_scores: { A: 1.2, B: 0.8, C: 1.8, D: 0.5, E: 1.1, F: 0.9 },
     },
