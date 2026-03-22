@@ -22,6 +22,7 @@ import {
   HeartPulse,
   Network,
   TestTubes,
+  ChevronRight,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -34,7 +35,11 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar'
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import useAppStore from '@/stores/useAppStore'
 
 export function AppSidebar() {
@@ -76,26 +81,32 @@ export function AppSidebar() {
 
   const navItems = [
     { name: 'Início', path: '/', icon: LayoutDashboard },
+    { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
     { name: 'TeamFlow™', path: '/teamflow', icon: Network },
     { name: 'VitalStrata™', path: '/vitalstrata', icon: HeartPulse },
     { name: 'Laboratório Psicométrico', path: '/psychometric-lab', icon: TestTubes },
-    { name: 'Área Médica', path: '/medical', icon: Stethoscope },
-    { name: 'Área Neuropsicológica', path: '/neuropsychology', icon: Brain },
-    { name: 'Área Nutricional', path: '/nutrition', icon: Apple },
-    { name: 'Área Fono', path: '/speech-therapy', icon: MessageSquare },
-    { name: 'Área Psicopedagogia', path: '/psychopedagogy', icon: GraduationCap },
-    { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
-    { name: 'Pacientes', path: '/patients', icon: Users },
-    { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
     { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
     { name: 'Gestão Metabólica', path: '/gestao-metabolica', icon: FlaskConical },
     { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
     { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
+    { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
     { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
+    { name: 'Pacientes', path: '/patients', icon: Users },
+    { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
+    {
+      name: 'Especialidades',
+      icon: Stethoscope,
+      subItems: [
+        { name: 'Área Médica', path: '/medical', icon: Stethoscope },
+        { name: 'Neuropsicologia', path: '/neuropsychology', icon: Brain },
+        { name: 'Nutrição Funcional', path: '/nutrition', icon: Apple },
+        { name: 'Fonoaudiologia', path: '/speech-therapy', icon: MessageSquare },
+        { name: 'Psicopedagogia', path: '/psychopedagogy', icon: GraduationCap },
+      ],
+    },
+    { name: 'Portal do Paciente', path: '/patient-portal', icon: UserCircle },
     { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
     { name: 'Portal do Defensor', path: '/defensor-portal', icon: Scale },
-    { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
-    { name: 'Portal do Paciente', path: '/patient-portal', icon: UserCircle },
   ]
 
   return (
@@ -138,42 +149,81 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
         <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton
-                asChild
-                isActive={
-                  location.pathname === item.path ||
-                  (item.path !== '/' && location.pathname.startsWith(item.path))
-                }
-              >
-                <Link to={item.path} className="flex items-center gap-3">
-                  <item.icon
-                    className={
-                      item.name === 'TeamFlow™'
-                        ? 'w-5 h-5 text-indigo-500'
-                        : item.name === 'VitalStrata™'
-                          ? 'w-5 h-5 text-rose-500'
-                          : item.name === 'Laboratório Psicométrico'
-                            ? 'w-5 h-5 text-emerald-500'
-                            : 'w-5 h-5'
-                    }
-                  />
-                  <span
-                    className={
-                      item.name === 'TeamFlow™' ||
-                      item.name === 'VitalStrata™' ||
-                      item.name === 'Laboratório Psicométrico'
-                        ? 'font-bold text-slate-800'
-                        : ''
-                    }
-                  >
-                    {item.name}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {navItems.map((item) => {
+            if (item.subItems) {
+              const isSubItemActive = item.subItems.some((sub) =>
+                location.pathname.startsWith(sub.path),
+              )
+              return (
+                <Collapsible
+                  key={item.name}
+                  defaultOpen={isSubItemActive}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton tooltip={item.name} isActive={isSubItemActive}>
+                        <item.icon className="w-5 h-5" />
+                        <span>{item.name}</span>
+                        <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.subItems.map((sub) => (
+                          <SidebarMenuSubItem key={sub.path}>
+                            <SidebarMenuSubButton asChild isActive={location.pathname === sub.path}>
+                              <Link to={sub.path}>
+                                <sub.icon className="w-4 h-4 mr-2" />
+                                <span>{sub.name}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              )
+            }
+            return (
+              <SidebarMenuItem key={item.path}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={
+                    location.pathname === item.path ||
+                    (item.path !== '/' && location.pathname.startsWith(item.path))
+                  }
+                  tooltip={item.name}
+                >
+                  <Link to={item.path} className="flex items-center gap-3">
+                    <item.icon
+                      className={
+                        item.name === 'TeamFlow™'
+                          ? 'w-5 h-5 text-indigo-500'
+                          : item.name === 'VitalStrata™'
+                            ? 'w-5 h-5 text-rose-500'
+                            : item.name === 'Laboratório Psicométrico'
+                              ? 'w-5 h-5 text-emerald-500'
+                              : 'w-5 h-5'
+                      }
+                    />
+                    <span
+                      className={
+                        item.name === 'TeamFlow™' ||
+                        item.name === 'VitalStrata™' ||
+                        item.name === 'Laboratório Psicométrico'
+                          ? 'font-bold text-slate-800'
+                          : ''
+                      }
+                    >
+                      {item.name}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="p-4">
