@@ -3177,10 +3177,13 @@ export const Constants = {
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: assessments
-//   Policy "auth_insert_assessments" (INSERT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_insert_assessments" (INSERT, PERMISSIVE) roles={public}
 //     WITH CHECK: true
-//   Policy "auth_read_assessments" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_read_assessments" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
+//   Policy "auth_update_assessments" (UPDATE, PERMISSIVE) roles={public}
+//     USING: true
+//     WITH CHECK: true
 // Table: audit_log
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -3191,10 +3194,13 @@ export const Constants = {
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: biogram_events
-//   Policy "auth_insert_biogram_events" (INSERT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_insert_biogram_events" (INSERT, PERMISSIVE) roles={public}
 //     WITH CHECK: true
-//   Policy "auth_read_biogram_events" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_read_biogram_events" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
+//   Policy "auth_update_biogram_events" (UPDATE, PERMISSIVE) roles={public}
+//     USING: true
+//     WITH CHECK: true
 // Table: case_team_assignments
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -3232,10 +3238,13 @@ export const Constants = {
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: computed_profiles
-//   Policy "auth_insert_computed_profiles" (INSERT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_insert_computed_profiles" (INSERT, PERMISSIVE) roles={public}
 //     WITH CHECK: true
-//   Policy "auth_read_computed_profiles" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_read_computed_profiles" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
+//   Policy "auth_update_computed_profiles" (UPDATE, PERMISSIVE) roles={public}
+//     USING: true
+//     WITH CHECK: true
 // Table: consents
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true
@@ -3301,10 +3310,10 @@ export const Constants = {
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: model_definitions
-//   Policy "auth_read_model_definitions" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_read_model_definitions" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
 // Table: model_dimensions
-//   Policy "auth_read_model_dimensions" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_read_model_dimensions" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
 // Table: organization_units
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
@@ -3352,10 +3361,15 @@ export const Constants = {
 //   Policy "Enable update access for authenticated users" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: true
 // Table: persons
-//   Policy "auth_insert_persons" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "auth_read_persons" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "auth_delete_persons" (DELETE, PERMISSIVE) roles={public}
 //     USING: true
+//   Policy "auth_insert_persons" (INSERT, PERMISSIVE) roles={public}
+//     WITH CHECK: true
+//   Policy "auth_read_persons" (SELECT, PERMISSIVE) roles={public}
+//     USING: true
+//   Policy "auth_update_persons" (UPDATE, PERMISSIVE) roles={public}
+//     USING: true
+//     WITH CHECK: true
 // Table: professionals
 //   Policy "Enable delete access for authenticated users" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: true

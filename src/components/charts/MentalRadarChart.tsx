@@ -6,52 +6,44 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from 'recharts'
+import { MENTAL_RADAR_DATA } from '@/lib/mock-data'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 
-const MENTAL_RADAR_DATA = [
-  { subject: 'Atenção', A: 120, B: 110, fullMark: 150 },
-  { subject: 'Memória', A: 98, B: 130, fullMark: 150 },
-  { subject: 'Funções Executivas', A: 86, B: 130, fullMark: 150 },
-  { subject: 'Linguagem', A: 99, B: 100, fullMark: 150 },
-  { subject: 'Visuoespacial', A: 85, B: 90, fullMark: 150 },
-  { subject: 'Regulação Emocional', A: 65, B: 85, fullMark: 150 },
-]
-
 export function MentalRadarChart() {
-  const chartConfig = {
-    A: { label: 'Paciente', color: 'hsl(var(--primary))' },
-    B: { label: 'Referência', color: 'hsl(var(--muted-foreground))' },
+  const config = {
+    A: { label: 'Linha de Base', color: 'hsl(var(--muted-foreground))' },
+    B: { label: 'Estado Atual', color: 'hsl(var(--amber-500))' },
   }
 
   return (
-    <div className="h-[300px] w-full">
-      <ChartContainer config={chartConfig} className="w-full h-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={MENTAL_RADAR_DATA}>
-            <PolarGrid />
-            <PolarAngleAxis
-              dataKey="subject"
-              tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
-            />
-            <PolarRadiusAxis angle={30} domain={[0, 150]} />
-            <Radar
-              name="Referência"
-              dataKey="B"
-              stroke="hsl(var(--muted-foreground))"
-              fill="hsl(var(--muted-foreground))"
-              fillOpacity={0.3}
-            />
-            <Radar
-              name="Paciente"
-              dataKey="A"
-              stroke="hsl(var(--primary))"
-              fill="hsl(var(--primary))"
-              fillOpacity={0.6}
-            />
-            <ChartTooltip content={<ChartTooltipContent />} />
-          </RadarChart>
-        </ResponsiveContainer>
-      </ChartContainer>
-    </div>
+    <ChartContainer config={config} className="h-[350px] w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={MENTAL_RADAR_DATA}>
+          <PolarGrid stroke="hsl(var(--border))" />
+          <PolarAngleAxis
+            dataKey="subject"
+            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 600 }}
+          />
+          <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+          <Radar
+            name="Linha de Base"
+            dataKey="A"
+            stroke="hsl(var(--muted-foreground))"
+            strokeWidth={2}
+            fill="hsl(var(--muted-foreground))"
+            fillOpacity={0.2}
+          />
+          <Radar
+            name="Estado Atual"
+            dataKey="B"
+            stroke="hsl(var(--amber-500))"
+            strokeWidth={3}
+            fill="hsl(var(--amber-500))"
+            fillOpacity={0.5}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
+        </RadarChart>
+      </ResponsiveContainer>
+    </ChartContainer>
   )
 }

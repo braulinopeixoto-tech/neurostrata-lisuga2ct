@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -41,6 +41,12 @@ import TeamManagement from '@/pages/teamflow/TeamManagement'
 import CaseWorkspaceList from '@/pages/teamflow/CaseWorkspaceList'
 import CaseWorkspaceDetail from '@/pages/teamflow/CaseWorkspaceDetail'
 
+// New V2 Architecture Pages
+import ClinicalJourney from '@/pages/ClinicalJourney'
+import DiagnosticCore from '@/pages/DiagnosticCore'
+import Interventions from '@/pages/Interventions'
+import TrustLayer from '@/pages/TrustLayer'
+
 const App = () => (
   <AppStoreProvider>
     <ReportStoreProvider>
@@ -56,6 +62,13 @@ const App = () => (
                     <Route path="/verify/:id" element={<VerifyDocument />} />
                     <Route element={<Layout />}>
                       <Route path="/" element={<Index />} />
+
+                      {/* V2 Core Architecture */}
+                      <Route path="/clinical-journey" element={<ClinicalJourney />} />
+                      <Route path="/diagnostic-core" element={<DiagnosticCore />} />
+                      <Route path="/interventions" element={<Interventions />} />
+                      <Route path="/trust-layer" element={<TrustLayer />} />
+
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
                       <Route path="/dashboard" element={<Dashboard />} />

@@ -1,28 +1,17 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard,
   Users,
   ActivitySquare,
-  BookOpen,
-  Settings,
   BrainCircuit,
-  Stethoscope,
-  FlaskConical,
-  Compass,
-  ShieldAlert,
-  FileArchive,
-  TrendingUp,
-  Activity,
+  Target,
+  ShieldCheck,
   UserCircle,
+  ShieldAlert,
   Scale,
   Brain,
-  Apple,
-  MessageSquare,
-  GraduationCap,
-  HeartPulse,
-  Network,
-  TestTubes,
+  Settings,
   ChevronRight,
+  Database,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -35,11 +24,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
 } from '@/components/ui/sidebar'
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import useAppStore from '@/stores/useAppStore'
 
 export function AppSidebar() {
@@ -79,53 +64,66 @@ export function AppSidebar() {
 
   const riskStatus = activePatient ? getRiskStatus(activePatient.score) : null
 
-  const navItems = [
-    { name: 'Início', path: '/', icon: LayoutDashboard },
-    { name: 'Gestão Macro', path: '/dashboard', icon: Activity },
-    { name: 'TeamFlow™', path: '/teamflow', icon: Network },
-    { name: 'VitalStrata™', path: '/vitalstrata', icon: HeartPulse },
-    { name: 'Laboratório Psicométrico', path: '/psychometric-lab', icon: TestTubes },
-    { name: 'Nova Avaliação', path: '/assessment', icon: ActivitySquare },
-    { name: 'Gestão Metabólica', path: '/gestao-metabolica', icon: FlaskConical },
-    { name: 'Neuronavegação Guiada', path: '/neuronavigation', icon: Compass },
-    { name: 'Biblioteca de Protocolos', path: '/protocols', icon: BookOpen },
-    { name: 'Evolução e Performance', path: '/performance-timeline', icon: TrendingUp },
-    { name: 'Central de Relatórios', path: '/report-center', icon: FileArchive },
-    { name: 'Pacientes', path: '/patients', icon: Users },
-    { name: 'Profissionais', path: '/professionals', icon: Stethoscope },
+  const coreNavItems = [
+    { name: 'Pacientes', path: '/patients', icon: Users, color: 'text-slate-500' },
     {
-      name: 'Especialidades',
-      icon: Stethoscope,
-      subItems: [
-        { name: 'Área Médica', path: '/medical', icon: Stethoscope },
-        { name: 'Neuropsicologia', path: '/neuropsychology', icon: Brain },
-        { name: 'Nutrição Funcional', path: '/nutrition', icon: Apple },
-        { name: 'Fonoaudiologia', path: '/speech-therapy', icon: MessageSquare },
-        { name: 'Psicopedagogia', path: '/psychopedagogy', icon: GraduationCap },
-      ],
+      name: '1. Jornada Clínica',
+      path: '/clinical-journey',
+      icon: ActivitySquare,
+      color: 'text-blue-600',
     },
-    { name: 'Portal do Paciente', path: '/patient-portal', icon: UserCircle },
-    { name: 'Portal do Auditor', path: '/auditor-portal', icon: ShieldAlert },
-    { name: 'Portal do Defensor', path: '/defensor-portal', icon: Scale },
+    {
+      name: '2. Núcleo Diagnóstico',
+      path: '/diagnostic-core',
+      icon: BrainCircuit,
+      color: 'text-amber-500',
+    },
+    { name: '3. Intervenções', path: '/interventions', icon: Target, color: 'text-emerald-600' },
+    {
+      name: '4. Auditoria (Trust Layer)',
+      path: '/trust-layer',
+      icon: ShieldCheck,
+      color: 'text-slate-900',
+    },
+  ]
+
+  const portalNavItems = [
+    {
+      name: 'Portal do Paciente',
+      path: '/patient-portal',
+      icon: UserCircle,
+      color: 'text-slate-500',
+    },
+    {
+      name: 'Portal do Auditor',
+      path: '/auditor-portal',
+      icon: ShieldAlert,
+      color: 'text-slate-500',
+    },
+    { name: 'Portal do Defensor', path: '/defensor-portal', icon: Scale, color: 'text-slate-500' },
   ]
 
   return (
     <Sidebar variant="inset" className="border-r border-border">
       <SidebarHeader className="p-4 flex items-center justify-center">
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-          <BrainCircuit className="w-6 h-6 text-accent" />
+        <Link
+          to="/"
+          className="flex items-center gap-2 font-bold text-xl text-slate-900 tracking-tight"
+        >
+          <Brain className="w-6 h-6 text-slate-900" />
           <span>NeuroStrata</span>
         </Link>
       </SidebarHeader>
+
       <SidebarContent className="px-2 pt-4">
         {activePatient && riskStatus && (
           <SidebarGroup className="mb-2 p-0">
-            <SidebarGroupLabel className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-              Alerta de Risco: Paciente Atual
+            <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+              Contexto do Paciente
             </SidebarGroupLabel>
             <SidebarGroupContent className="px-2">
               <div
-                className={`p-3 rounded-lg border ${riskStatus.bg} ${riskStatus.border} flex flex-col items-center gap-3`}
+                className={`p-3 rounded-lg border ${riskStatus.bg} ${riskStatus.border} flex flex-col items-center gap-3 shadow-sm`}
               >
                 <span
                   className={`text-[11px] font-bold ${riskStatus.color} uppercase text-center tracking-wider`}
@@ -148,91 +146,64 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
-        <SidebarMenu>
-          {navItems.map((item) => {
-            if (item.subItems) {
-              const isSubItemActive = item.subItems.some((sub) =>
-                location.pathname.startsWith(sub.path),
-              )
-              return (
-                <Collapsible
-                  key={item.name}
-                  defaultOpen={isSubItemActive}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.name} isActive={isSubItemActive}>
-                        <item.icon className="w-5 h-5" />
-                        <span>{item.name}</span>
-                        <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.subItems.map((sub) => (
-                          <SidebarMenuSubItem key={sub.path}>
-                            <SidebarMenuSubButton asChild isActive={location.pathname === sub.path}>
-                              <Link to={sub.path}>
-                                <sub.icon className="w-4 h-4 mr-2" />
-                                <span>{sub.name}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              )
-            }
-            return (
-              <SidebarMenuItem key={item.path}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={
-                    location.pathname === item.path ||
-                    (item.path !== '/' && location.pathname.startsWith(item.path))
-                  }
-                  tooltip={item.name}
-                >
-                  <Link to={item.path} className="flex items-center gap-3">
-                    <item.icon
-                      className={
-                        item.name === 'TeamFlow™'
-                          ? 'w-5 h-5 text-indigo-500'
-                          : item.name === 'VitalStrata™'
-                            ? 'w-5 h-5 text-rose-500'
-                            : item.name === 'Laboratório Psicométrico'
-                              ? 'w-5 h-5 text-emerald-500'
-                              : 'w-5 h-5'
-                      }
-                    />
-                    <span
-                      className={
-                        item.name === 'TeamFlow™' ||
-                        item.name === 'VitalStrata™' ||
-                        item.name === 'Laboratório Psicométrico'
-                          ? 'font-bold text-slate-800'
-                          : ''
-                      }
-                    >
-                      {item.name}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )
-          })}
-        </SidebarMenu>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            Motor Clínico OS
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {coreNavItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={
+                      location.pathname === item.path ||
+                      (item.path !== '/' && location.pathname.startsWith(item.path))
+                    }
+                    className="data-[active=true]:bg-slate-100 data-[active=true]:shadow-sm transition-all"
+                  >
+                    <Link to={item.path} className="flex items-center gap-3">
+                      <item.icon className={`w-5 h-5 ${item.color}`} />
+                      <span className="font-semibold text-slate-800 tracking-tight">
+                        {item.name}
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            Portais Externos
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {portalNavItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton asChild isActive={location.pathname === item.path}>
+                    <Link to={item.path} className="flex items-center gap-3">
+                      <item.icon className="w-4 h-4 text-slate-400" />
+                      <span className="text-slate-600 font-medium">{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4">
+
+      <SidebarFooter className="p-4 border-t">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link to="/settings" className="flex items-center gap-3">
+              <Link to="/settings" className="flex items-center gap-3 text-slate-500">
                 <Settings className="w-5 h-5" />
-                <span>Configurações</span>
+                <span className="font-medium">Configurações Base</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
