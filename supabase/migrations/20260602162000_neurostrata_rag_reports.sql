@@ -3,7 +3,7 @@ create extension if not exists vector;
 create table if not exists public.ns_knowledge_notes (
   id uuid primary key default gen_random_uuid(),
   source_path text not null,
-  obsidian_id text,
+  external_note_id text,
   chunk_index integer not null default 0,
   title text not null,
   note_type text,
@@ -49,18 +49,6 @@ create table if not exists public.ns_ai_reports (
   reviewed_by uuid,
   reviewed_at timestamptz,
   created_at timestamptz not null default now()
-);
-
-create table if not exists public.ns_ingestion_jobs (
-  id uuid primary key default gen_random_uuid(),
-  vault_path text,
-  status text not null default 'running',
-  notes_seen integer not null default 0,
-  chunks_indexed integer not null default 0,
-  skipped_notes integer not null default 0,
-  error_message text,
-  started_at timestamptz not null default now(),
-  completed_at timestamptz
 );
 
 create or replace function public.match_ns_notes(
@@ -109,7 +97,6 @@ $$;
 
 alter table public.ns_knowledge_notes enable row level security;
 alter table public.ns_ai_reports enable row level security;
-alter table public.ns_ingestion_jobs enable row level security;
 
 drop policy if exists "auth_read_ns_knowledge_notes" on public.ns_knowledge_notes;
 create policy "auth_read_ns_knowledge_notes"
@@ -122,7 +109,3 @@ create policy "auth_read_ns_ai_reports"
 drop policy if exists "auth_insert_ns_ai_reports" on public.ns_ai_reports;
 create policy "auth_insert_ns_ai_reports"
   on public.ns_ai_reports for insert to authenticated with check (true);
-
-drop policy if exists "auth_read_ns_ingestion_jobs" on public.ns_ingestion_jobs;
-create policy "auth_read_ns_ingestion_jobs"
-  on public.ns_ingestion_jobs for select to authenticated using (true);
