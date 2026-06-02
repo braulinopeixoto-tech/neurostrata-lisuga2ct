@@ -7,7 +7,7 @@ const corsHeaders = {
 const OPENAI_API_URL = 'https://api.openai.com/v1'
 const EMBEDDING_MODEL = 'text-embedding-3-small'
 const DEFAULT_REPORT_MODEL = 'gpt-5.4-mini'
-const PROMPT_VERSION = 'neurostrata-dnda-v1'
+const PROMPT_VERSION = 'neurostrata-dnda-v2-template'
 
 type ReportData = Record<string, unknown>
 
@@ -23,6 +23,104 @@ type RetrievedSource = {
   content: string
   similarity: number
 }
+
+const REQUIRED_REPORT_TEMPLATE = `# RELATÓRIO DE CONVERGÊNCIA NEUROSTRATA
+
+## DNDA — Diagnóstico Neurofuncional Dimensional Auditável
+
+**Status:** Rascunho técnico assistido por IA para revisão profissional
+**Versão do relatório:** {{report_version}}
+**Data:** {{date}}
+**Profissional responsável pela revisão:** {{professional_name}}
+**Paciente:** {{patient_identifier}}
+**Idade:** {{patient_age}}
+**Fonte primária:** Anamnese clínica + notas vetorizadas NeuroStrata
+**Modelo de análise:** NeuroStrata Convergence Agent
+**Prompt version:** {{prompt_version}}
+
+---
+
+## 1. Finalidade do relatório
+
+## 2. Entrada analisada
+
+### 2.1 Anamnese fornecida
+
+### 2.2 Fontes vetorizadas recuperadas
+
+### 2.3 Qualidade da base de evidência
+
+## 3. Achados
+
+### 3.1 Achados clínicos centrais
+
+### 3.2 Achados comportamentais e desenvolvimentais
+
+### 3.3 Achados cognitivos
+
+### 3.4 Achados emocionais e autonômicos
+
+### 3.5 Achados escolares, ocupacionais ou funcionais
+
+### 3.6 Achados neurofisiológicos disponíveis
+
+## 4. Pipeline neurofuncional NeuroStrata
+
+### 4.1 Coordenada MNI/Talairach → região → rede → função → RDoC → estado → intervenção
+
+## 5. Classificação do estado neurofuncional
+
+### 5.1 Energia cerebral
+
+### 5.2 Integração de rede
+
+### 5.3 Organização funcional
+
+## 6. Convergência neurofuncional
+
+### 6.1 Redes prioritárias envolvidas
+
+### 6.2 Domínios RDoC prováveis
+
+### 6.3 Big Five e assinatura comportamental
+
+## 7. Hipótese dominante
+
+### 7.1 Hipótese neurofuncional principal
+
+### 7.2 Hipóteses diferenciais
+
+### 7.3 Grau de confiança
+
+### 7.4 Dados necessários para fortalecer ou refutar a hipótese
+
+## 8. Riscos
+
+### 8.1 Riscos clínicos imediatos
+
+### 8.2 Riscos neurofuncionais
+
+### 8.3 Riscos de intervenção
+
+### 8.4 Alertas de não intervenção precoce
+
+## 9. Intervenção por fases
+
+### Fase 1 — Base
+
+### Fase 2 — Integração
+
+### Fase 3 — Especialização
+
+## 10. Vetor adaptativo da neurosingularidade
+
+## 11. Síntese executiva
+
+## 12. Conclusão técnica
+
+## 13. Registro de auditoria
+
+Documento gerado como rascunho técnico assistido por IA, dependente de revisão e validação profissional.`
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -55,30 +153,52 @@ function compactReportData(data: ReportData = {}) {
 }
 
 function buildSearchText(inputAnamnesis: string, reportData: ReportData, patientContext: unknown) {
-  return [
-    inputAnamnesis,
-    JSON.stringify(compactReportData(reportData)),
-    JSON.stringify(patientContext ?? {}),
-  ]
+  return [inputAnamnesis, JSON.stringify(compactReportData(reportData)), JSON.stringify(patientContext ?? {})]
     .filter(Boolean)
     .join('\n\n')
     .slice(0, 24000)
 }
 
 function buildSystemPrompt() {
-  return `Voce e o NeuroStrata Convergence Agent. Gere um rascunho tecnico assistido por IA para revisao profissional, nunca um laudo final.
+  return `Você é o NeuroStrata Convergence Agent, um agente de IA clínico-operacional especializado em organizar anamnese, notas clínicas vetorizadas, biomarcadores, qEEG, sLORETA/eLORETA, redes neurais, Big Five, RDoC e protocolos de intervenção em um relatório neurofuncional convergente, rastreável e auditável.
 
-Regras obrigatorias:
-- Separar dado observado, nota recuperada, inferencia, hipotese, lacuna e recomendacao.
-- Nao inventar qEEG, sLORETA/eLORETA, coordenadas, escalas, diagnosticos, medicamentos ou historico.
-- Quando faltar dado, declarar a lacuna.
-- Usar citacoes internas no formato [source_id: id, note_type: tipo, similarity: valor].
-- Se o dado vier apenas da entrada atual, usar [source: input_anamnesis].
-- Classificar energia cerebral, integracao de rede e organizacao funcional como indeterminada quando nao houver evidencias suficientes.
-- Organizar intervencao por fases: base, integracao e especializacao.
-- Finalizar com: Documento gerado como rascunho tecnico assistido por IA, dependente de revisao e validacao profissional.
+Sua função não é substituir o profissional. Sua função é produzir um rascunho técnico estruturado para revisão humana.
 
-Retorne somente JSON valido conforme o schema solicitado.`
+Regras obrigatórias:
+1. Nunca interpretar o paciente por sintoma isolado.
+2. Nunca transformar narrativa clínica em diagnóstico fechado sem biomarcadores, testes, escalas ou validação profissional.
+3. Sempre separar fato observado, dado recuperado, inferência, hipótese e lacuna.
+4. Sempre indicar o nível de evidência de cada conclusão.
+5. Sempre declarar quando uma informação não está disponível.
+6. Nunca inventar qEEG, sLORETA, coordenada MNI/Talairach, escore, escala, diagnóstico, medicamento ou histórico que não esteja no input ou nas fontes recuperadas.
+7. Sempre usar linguagem técnica, mas compreensível para relatório clínico.
+8. Sempre classificar energia cerebral, integração de rede e organização funcional; use indeterminada quando não houver dado suficiente.
+9. Sempre estruturar a hipótese pelo pipeline: coordenada MNI/Talairach → região → rede → função → domínio RDoC → estado neurofuncional → intervenção.
+10. Se não houver coordenada, escrever exatamente: “Coordenada não disponível. Inferência baseada apenas em narrativa clínica e notas recuperadas.”
+11. Sempre organizar a intervenção em fases: base → integração → especialização.
+12. Nunca sugerir estimulação precoce em cérebro hipoativo, exausto, metabolicamente instável ou com sinais de baixa reserva funcional.
+13. Sempre apontar riscos, lacunas e dados necessários para confirmar/refutar a hipótese.
+14. Sempre preservar a noção de DNDA como Diagnóstico Neurofuncional Dimensional Auditável.
+15. Sempre preservar a noção de neurosingularidade: nenhum diagnóstico, traço, biomarcador ou narrativa isolada esgota a realidade funcional do sujeito.
+
+Critérios de evidência:
+- Nível A: biomarcadores objetivos, qEEG, sLORETA/eLORETA, EEG, HRV, exames, escalas padronizadas, testes neuropsicológicos, dados longitudinais mensuráveis.
+- Nível B: observações clínicas estruturadas, anamnese dirigida, registros multidisciplinares, dados escolares/funcionais documentados.
+- Nível C: narrativa clínica livre, relato de familiares, autorrelato, observações não padronizadas.
+- Nível D: inferência do agente a partir de convergência sem marcador direto.
+
+Regras de citação interna:
+- Para cada achado relevante, citar a fonte interna usando: [source_id: {{id}}, note_type: {{note_type}}, similarity: {{similarity}}]
+- Se um achado vier apenas da anamnese atual, marcar: [source: input_anamnesis]
+- Se houver conflito entre fontes, criar seção “Conflitos de evidência” e não escolher uma versão sem justificar.
+
+Formato obrigatório:
+- O campo report_markdown deve seguir o template NeuroStrata informado, com todas as seções numeradas.
+- Não gerar síntese curta fora do template.
+- Não usar DSM, CID ou rótulo diagnóstico como conclusão principal; usar apenas como diferencial se houver suporte.
+- Finalizar exatamente com: “Documento gerado como rascunho técnico assistido por IA, dependente de revisão e validação profissional.”
+
+Retorne somente JSON válido conforme o schema solicitado.`
 }
 
 function buildUserPrompt(params: {
@@ -89,12 +209,14 @@ function buildUserPrompt(params: {
 }) {
   return JSON.stringify(
     {
-      task: 'Gerar Relatorio de Convergencia NeuroStrata DNDA em Markdown e campos estruturados para preencher o editor.',
+      task: 'Gerar Quick Report DNDA NeuroStrata completo, no template obrigatório, em Markdown e JSON persistível.',
       output_language: 'pt-BR',
       status: 'draft_for_human_review',
+      report_template: REQUIRED_REPORT_TEMPLATE,
       input_anamnesis: params.inputAnamnesis,
       report_data: compactReportData(params.reportData),
       patient_context: params.patientContext ?? {},
+      available_biomarkers: compactReportData(params.reportData).neurophysio ?? null,
       retrieved_notes: params.retrievedSources.map((source) => ({
         id: source.id,
         title: source.title,
@@ -104,45 +226,23 @@ function buildUserPrompt(params: {
         similarity: source.similarity,
         content: source.content,
       })),
-      required_json_shape: {
-        report_markdown: 'string',
-        report_fields: {
-          reason: 'string',
-          history: 'string',
-          behavior: 'string',
-          cognitive: 'string',
-          rdoc: 'string',
-          bigFive: 'string',
-          psychicFunc: 'string',
-          neurophysio: 'string',
-          integration: 'string',
-          hypotheses: 'string',
-          intervention: 'string',
-          conclusion: 'string',
-        },
-        evidence_quality: {
-          level_a: ['string'],
-          level_b: ['string'],
-          level_c: ['string'],
-          level_d: ['string'],
-        },
-        neurofunctional_classification: {
-          brain_energy: 'hipoativa | hiperativa | instavel | mista | indeterminada',
-          network_integration: 'acoplada | desacoplada | hiperacoplada | instavel | indeterminada',
-          functional_organization: 'coerente | difusa | fragmentada | compensatoria | indeterminada',
-        },
-        risks: {
-          clinical: ['string'],
-          neurofunctional: ['string'],
-          intervention: ['string'],
-          red_flags: ['string'],
-        },
-        missing_data: ['string'],
-        audit: {
-          prompt_version: PROMPT_VERSION,
-          human_reviewer_required: true,
-        },
-      },
+      required_sections: [
+        'Finalidade do relatório',
+        'Entrada analisada',
+        'Fontes vetorizadas recuperadas',
+        'Qualidade da base de evidência',
+        'Achados',
+        'Pipeline neurofuncional NeuroStrata',
+        'Classificação do estado neurofuncional',
+        'Convergência neurofuncional',
+        'Hipótese dominante',
+        'Riscos',
+        'Intervenção por fases',
+        'Vetor adaptativo da neurosingularidade',
+        'Síntese executiva',
+        'Conclusão técnica',
+        'Registro de auditoria',
+      ],
     },
     null,
     2,
@@ -159,20 +259,7 @@ function buildReportJsonSchema() {
       report_fields: {
         type: 'object',
         additionalProperties: false,
-        required: [
-          'reason',
-          'history',
-          'behavior',
-          'cognitive',
-          'rdoc',
-          'bigFive',
-          'psychicFunc',
-          'neurophysio',
-          'integration',
-          'hypotheses',
-          'intervention',
-          'conclusion',
-        ],
+        required: ['reason', 'history', 'behavior', 'cognitive', 'rdoc', 'bigFive', 'psychicFunc', 'neurophysio', 'integration', 'hypotheses', 'intervention', 'conclusion'],
         properties: {
           reason: { type: 'string' },
           history: { type: 'string' },
@@ -188,26 +275,11 @@ function buildReportJsonSchema() {
           conclusion: { type: 'string' },
         },
       },
-      evidence_quality: {
-        type: 'object',
-        additionalProperties: true,
-      },
-      neurofunctional_classification: {
-        type: 'object',
-        additionalProperties: true,
-      },
-      risks: {
-        type: 'object',
-        additionalProperties: true,
-      },
-      missing_data: {
-        type: 'array',
-        items: { type: 'string' },
-      },
-      audit: {
-        type: 'object',
-        additionalProperties: true,
-      },
+      evidence_quality: { type: 'object', additionalProperties: true },
+      neurofunctional_classification: { type: 'object', additionalProperties: true },
+      risks: { type: 'object', additionalProperties: true },
+      missing_data: { type: 'array', items: { type: 'string' } },
+      audit: { type: 'object', additionalProperties: true },
     },
   }
 }
@@ -215,16 +287,11 @@ function buildReportJsonSchema() {
 async function openaiEmbedding(openaiKey: string, input: string) {
   const response = await fetch(`${OPENAI_API_URL}/embeddings`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${openaiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${openaiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: EMBEDDING_MODEL, input }),
   })
 
-  if (!response.ok) {
-    throw new Error(`embedding_failed: ${await response.text()}`)
-  }
+  if (!response.ok) throw new Error(`embedding_failed: ${await response.text()}`)
 
   const payload = await response.json()
   return payload.data[0].embedding
@@ -237,27 +304,18 @@ function toPgVector(embedding: number[]) {
 async function generateReport(openaiKey: string, body: Record<string, unknown>) {
   const response = await fetch(`${OPENAI_API_URL}/responses`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${openaiKey}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${openaiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
 
-  if (!response.ok) {
-    throw new Error(`report_generation_failed: ${await response.text()}`)
-  }
+  if (!response.ok) throw new Error(`report_generation_failed: ${await response.text()}`)
 
   const payload = await response.json()
   const text =
     payload.output_text ??
-    payload.output?.flatMap((item: any) => item.content ?? [])
-      ?.map((content: any) => content.text ?? '')
-      ?.join('')
+    payload.output?.flatMap((item: any) => item.content ?? [])?.map((content: any) => content.text ?? '')?.join('')
 
-  if (!text) {
-    throw new Error('report_generation_failed: empty model output')
-  }
+  if (!text) throw new Error('report_generation_failed: empty model output')
 
   return JSON.parse(text)
 }
@@ -269,13 +327,8 @@ async function sha256Hex(value: string) {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
-  }
-
-  if (req.method !== 'POST') {
-    return jsonResponse({ error: 'method_not_allowed' }, 405)
-  }
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
+  if (req.method !== 'POST') return jsonResponse({ error: 'method_not_allowed' }, 405)
 
   try {
     const openaiKey = Deno.env.get('OPENAI_KEY')
@@ -283,9 +336,7 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
     if (!openaiKey) return jsonResponse({ error: 'missing_OPENAI_KEY_secret' }, 500)
-    if (!supabaseUrl || !serviceRoleKey) {
-      return jsonResponse({ error: 'missing_supabase_service_secrets' }, 500)
-    }
+    if (!supabaseUrl || !serviceRoleKey) return jsonResponse({ error: 'missing_supabase_service_secrets' }, 500)
 
     const requestBody = await req.json()
     const inputAnamnesis = String(requestBody.inputAnamnesis ?? '')
@@ -296,19 +347,13 @@ Deno.serve(async (req) => {
     const reasoningEffort = String(requestBody.reasoningEffort ?? 'medium')
 
     const searchText = buildSearchText(inputAnamnesis, reportData, patientContext)
-    if (searchText.trim().length < 20) {
-      return jsonResponse({ error: 'insufficient_input' }, 400)
-    }
+    if (searchText.trim().length < 20) return jsonResponse({ error: 'insufficient_input' }, 400)
 
     const queryEmbedding = await openaiEmbedding(openaiKey, searchText)
 
     const matchResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/match_ns_notes`, {
       method: 'POST',
-      headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         query_embedding: toPgVector(queryEmbedding),
         match_count: matchCount,
@@ -318,59 +363,29 @@ Deno.serve(async (req) => {
       }),
     })
 
-    if (!matchResponse.ok) {
-      throw new Error(`match_notes_failed: ${await matchResponse.text()}`)
-    }
+    if (!matchResponse.ok) throw new Error(`match_notes_failed: ${await matchResponse.text()}`)
 
     const retrievedSources = (await matchResponse.json()) as RetrievedSource[]
     const modelJson = await generateReport(openaiKey, {
       model,
       input: [
         { role: 'system', content: buildSystemPrompt() },
-        {
-          role: 'user',
-          content: buildUserPrompt({
-            inputAnamnesis,
-            reportData,
-            patientContext,
-            retrievedSources,
-          }),
-        },
+        { role: 'user', content: buildUserPrompt({ inputAnamnesis, reportData, patientContext, retrievedSources }) },
       ],
       reasoning: { effort: reasoningEffort },
       text: {
         verbosity: 'medium',
-        format: {
-          type: 'json_schema',
-          name: 'neurostrata_dnda_report',
-          strict: false,
-          schema: buildReportJsonSchema(),
-        },
+        format: { type: 'json_schema', name: 'neurostrata_dnda_report', strict: false, schema: buildReportJsonSchema() },
       },
     })
 
     const reportMarkdown = String(modelJson.report_markdown ?? '')
     const reportFields = modelJson.report_fields ?? {}
-    const hash = await sha256Hex(
-      JSON.stringify({
-        inputAnamnesis,
-        reportData: compactReportData(reportData),
-        patientContext,
-        retrievedSources: retrievedSources.map((source) => source.id),
-        reportMarkdown,
-        model,
-        promptVersion: PROMPT_VERSION,
-      }),
-    )
+    const hash = await sha256Hex(JSON.stringify({ inputAnamnesis, reportData: compactReportData(reportData), patientContext, retrievedSources: retrievedSources.map((source) => source.id), reportMarkdown, model, promptVersion: PROMPT_VERSION }))
 
     const insertResponse = await fetch(`${supabaseUrl}/rest/v1/ns_ai_reports`, {
       method: 'POST',
-      headers: {
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
+      headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, 'Content-Type': 'application/json', Prefer: 'return=representation' },
       body: JSON.stringify({
         patient_id: requestBody.patientId ?? null,
         status: 'draft_for_human_review',
@@ -378,15 +393,7 @@ Deno.serve(async (req) => {
         report_markdown: reportMarkdown,
         report_json: modelJson,
         report_fields: reportFields,
-        retrieved_sources: retrievedSources.map((source) => ({
-          id: source.id,
-          source_path: source.source_path,
-          title: source.title,
-          note_type: source.note_type,
-          axis: source.axis,
-          evidence_level: source.evidence_level,
-          similarity: source.similarity,
-        })),
+        retrieved_sources: retrievedSources.map((source) => ({ id: source.id, source_path: source.source_path, title: source.title, note_type: source.note_type, axis: source.axis, evidence_level: source.evidence_level, similarity: source.similarity })),
         model,
         embedding_model: EMBEDDING_MODEL,
         prompt_version: PROMPT_VERSION,
@@ -394,24 +401,10 @@ Deno.serve(async (req) => {
       }),
     })
 
-    if (!insertResponse.ok) {
-      throw new Error(`save_report_failed: ${await insertResponse.text()}`)
-    }
+    if (!insertResponse.ok) throw new Error(`save_report_failed: ${await insertResponse.text()}`)
 
     const [savedReport] = await insertResponse.json()
-
-    return jsonResponse({
-      reportId: savedReport.id,
-      status: 'draft_for_human_review',
-      model,
-      embeddingModel: EMBEDDING_MODEL,
-      promptVersion: PROMPT_VERSION,
-      reportHash: hash,
-      reportMarkdown,
-      reportFields,
-      reportJson: modelJson,
-      retrievedSources,
-    })
+    return jsonResponse({ reportId: savedReport.id, status: 'draft_for_human_review', model, embeddingModel: EMBEDDING_MODEL, promptVersion: PROMPT_VERSION, reportHash: hash, reportMarkdown, reportFields, reportJson: modelJson, retrievedSources })
   } catch (error) {
     console.error(error)
     return jsonResponse({ error: error instanceof Error ? error.message : 'unknown_error' }, 500)

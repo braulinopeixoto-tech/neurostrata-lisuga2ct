@@ -3,6 +3,7 @@ import { Sparkles, FileSignature, Stethoscope, AlertCircle, RefreshCw } from 'lu
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/use-toast'
 import useAppStore from '@/stores/useAppStore'
 import { generateDndaReportDraft, type DndaReportResult } from '@/services/dnda-report-ai'
 
@@ -36,7 +37,7 @@ export function StepQuickReport({
       const result = await generateDndaReportDraft({
         inputAnamnesis,
         reportData: {
-          reason: 'Relatorio medico rapido a partir dos dados dimensionais preenchidos no assessment.',
+          reason: 'Quick Report DNDA a partir dos dados dimensionais preenchidos no assessment.',
           history: JSON.stringify({
             age: currentAssessmentData.age,
             medications: currentAssessmentData.medications,
@@ -63,6 +64,12 @@ export function StepQuickReport({
       setAiResult(result)
       setQuickReportDraft(result.reportMarkdown)
       setIsGenerated(true)
+    } catch (error) {
+      toast({
+        title: 'Falha ao gerar Quick Report',
+        description: error instanceof Error ? error.message : 'Erro inesperado na geracao do relatorio.',
+        variant: 'destructive',
+      })
     } finally {
       setIsGenerating(false)
     }
@@ -72,10 +79,10 @@ export function StepQuickReport({
     <div className="space-y-8 animate-fade-in">
       <div>
         <h2 className="text-xl font-semibold flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-blue-600" /> Relatorio Medico Rapido com IA
+          <Sparkles className="w-5 h-5 text-blue-600" /> Quick Report DNDA com IA
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Gera uma sintese DNDA como rascunho tecnico, usando dados dimensionais e notas vetorizadas.
+          Gera o Relatorio de Convergencia NeuroStrata como rascunho tecnico, usando dados dimensionais e notas vetorizadas.
         </p>
       </div>
 
@@ -84,10 +91,10 @@ export function StepQuickReport({
           <FileSignature className="w-12 h-12 text-slate-300 mb-4" />
           <p className="text-slate-500 mb-6 text-center max-w-md">
             A IA processara RDoC, Big Five, funcoes psiquicas e biomarcadores registrados para
-            estruturar um rascunho clinico auditavel para {patientName || 'o paciente selecionado'}.
+            estruturar um relatorio DNDA auditavel para {patientName || 'o paciente selecionado'}.
           </p>
           <Button onClick={handleGenerate} className="bg-blue-600 hover:bg-blue-700 text-white">
-            <Sparkles className="w-4 h-4 mr-2" /> Gerar sintese de evidencias clinicas
+            <Sparkles className="w-4 h-4 mr-2" /> Gerar Relatorio de Convergencia
           </Button>
         </div>
       )}
@@ -96,7 +103,7 @@ export function StepQuickReport({
         <div className="p-8 border rounded-xl bg-slate-50 flex flex-col items-center justify-center space-y-4">
           <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
           <p className="text-sm font-medium text-slate-600 animate-pulse">
-            Recuperando notas vetorizadas e sintetizando rascunho DNDA...
+            Recuperando notas vetorizadas e montando o template DNDA...
           </p>
         </div>
       )}
@@ -108,7 +115,7 @@ export function StepQuickReport({
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-slate-200">
               <Sparkles className="w-5 h-5 text-blue-600" />
               <h3 className="text-lg font-bold text-slate-800 tracking-tight">
-                Sintese de inteligencia clinica
+                Relatorio de Convergencia NeuroStrata
               </h3>
             </div>
 
@@ -116,9 +123,9 @@ export function StepQuickReport({
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                 Rascunho DNDA assistido por IA
               </h4>
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+              <pre className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-sans">
                 {aiResult?.reportMarkdown || quickReportDraft}
-              </p>
+              </pre>
             </section>
 
             {aiResult?.retrievedSources?.length ? (
@@ -147,11 +154,10 @@ export function StepQuickReport({
 
           <div className="pt-4 border-t">
             <Label className="text-base font-bold text-slate-800 flex items-center gap-2 mb-3">
-              <Stethoscope className="w-5 h-5 text-accent" /> Revisao humana do rascunho
+              <Stethoscope className="w-5 h-5 text-accent" /> Revisao humana do relatorio
             </Label>
             <p className="text-xs text-muted-foreground mb-3">
-              Edite a conclusao tecnica, conduta, limites interpretativos e observacoes antes de
-              salvar.
+              Edite o rascunho antes de salvar. O documento deve permanecer dependente de revisao e validacao profissional.
             </p>
             <Textarea
               className="min-h-[220px] text-sm leading-relaxed bg-white border-slate-300 focus-visible:ring-accent resize-y"
