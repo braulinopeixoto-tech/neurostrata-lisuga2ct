@@ -13,7 +13,6 @@
     "lint:fix": "oxlint src --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "sync:obsidian": "node scripts/sync-obsidian-knowledge.mjs",
     "preview": "vite preview",
     "test": "echo \"there are no tests for this project\" && exit 0",
     "test:watch": "echo \"there are no tests for this project\" && exit 0"
