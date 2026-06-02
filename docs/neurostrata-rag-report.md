@@ -5,7 +5,7 @@
 Conectar o gerador de relatorio rapido e o painel de IA do laudo a uma Edge Function Supabase que:
 
 1. vetoriza a entrada com `text-embedding-3-small`;
-2. recupera notas governadas do Obsidian no Supabase;
+2. recupera notas governadas ja vetorizadas no Supabase;
 3. gera um rascunho DNDA com `gpt-5.4-mini`;
 4. salva o relatorio como `draft_for_human_review`.
 
@@ -31,15 +31,9 @@ supabase db push
 supabase functions deploy generate-dnda-report
 ```
 
-3. Sincronizar as notas do Obsidian:
+3. Vetorizar as notas do Obsidian por processo local fora deste repositorio.
 
-```bash
-set OBSIDIAN_VAULT_PATH=C:\Users\User\OneDrive\Documentos\NEURO DASH SKIP\VitalStrata_OS
-set SUPABASE_URL=https://SEU-PROJETO.supabase.co
-set SUPABASE_SERVICE_ROLE_KEY=...
-set OPENAI_KEY=...
-npm run sync:obsidian
-```
+A sincronizacao do vault Obsidian nao e versionada neste projeto porque envolve caminho local, politica de privacidade e controle direto da base de conhecimento.
 
 ## Guardrails clinicos
 
