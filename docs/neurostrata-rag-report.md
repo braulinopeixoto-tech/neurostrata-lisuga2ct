@@ -31,9 +31,9 @@ supabase db push
 supabase functions deploy generate-dnda-report
 ```
 
-3. Vetorizar as notas do Obsidian por processo local fora deste repositorio.
+3. Popular a tabela `ns_knowledge_notes` por processo externo/local controlado fora deste repositorio.
 
-A sincronizacao do vault Obsidian nao e versionada neste projeto porque envolve caminho local, politica de privacidade e controle direto da base de conhecimento.
+A etapa de carga da base de conhecimento nao e versionada neste projeto porque depende de politica local de privacidade e governanca dos dados.
 
 ## Guardrails clinicos
 
