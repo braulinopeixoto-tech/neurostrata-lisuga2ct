@@ -34,3 +34,6 @@ screenshot.png
 
 # Environment variables
 .env*
+
+# Obsidian staging bodies are non-canonical; canonical notes live in the vault.
+docs/obsidian-note-bodies/
