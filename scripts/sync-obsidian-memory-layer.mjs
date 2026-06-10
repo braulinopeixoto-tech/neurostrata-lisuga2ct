@@ -5,9 +5,9 @@ import { resolveObsidianVault } from './resolve-obsidian-vault.mjs'
 
 const VAULT_ID = 'b1a32fcb40985ffc'
 const ROOT_SENSETRUST_NOTE_PATH = '00_ABRIR_ULTIMA_NOTA_SENSETRUST.md'
-const LAST_SENSETRUST_NOTE_PATH = '05_SENSETRUST/Supabase Execution Proof.md'
+const LAST_SENSETRUST_NOTE_PATH = '05_SENSETRUST/SenseTrust RLS Hardening v0.2.md'
 const ROOT_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\00_ABRIR_ULTIMA_NOTA_SENSETRUST.md`
-const LAST_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\05_SENSETRUST\Supabase Execution Proof.md`
+const LAST_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\05_SENSETRUST\SenseTrust RLS Hardening v0.2.md`
 const now = new Date()
 const isoNow = now.toISOString()
 const today = isoNow.slice(0, 10)
@@ -166,6 +166,7 @@ const mocSenseTrustBody = `# MOC SenseTrust
 - [[00_ABRIR_ULTIMA_NOTA_SENSETRUST]]
 - [[SenseTrust Layer MVP Foundation]]
 - [[Supabase Execution Proof]]
+- [[SenseTrust RLS Hardening v0.2]]
 - [[SenseTrust RLS Hardening]]
 - [[ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target]]
 - [[CODEX-20260606-001-SenseTrust-MVP]]
@@ -249,6 +250,15 @@ const criticalNotes = [
     linked_mocs: ['MOC_SenseTrust', 'MOC_Supabase'],
   },
   {
+    path: '05_SENSETRUST/SenseTrust RLS Hardening v0.2.md',
+    type: 'execution_proof',
+    module: 'SenseTrust',
+    status: 'blocked',
+    fallback: '# SenseTrust RLS Hardening v0.2\n\nStatus: BLOQUEADO ate aplicacao no Supabase remoto, commit seletivo e validacao SQL Editor.\n\n## Escopo\n\n- RLS forte por papel.\n- Sem leitura anon direta de verification_tokens.\n- Funcao publica segura verify_public_certificate.\n- Audit events append-only.\n- Report versions signed bloqueadas contra edicao direta.',
+    links: ['MOC_SenseTrust', 'MOC_Supabase', 'MOC_Codex_Sessions'],
+    linked_mocs: ['MOC_SenseTrust', 'MOC_Supabase'],
+  },
+  {
     path: '08_CODEX_RUNBOOKS/CODEX-20260606-001-SenseTrust-MVP.md',
     type: 'codex_session',
     module: 'SenseTrust',
@@ -283,7 +293,7 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 ## Abrir Última Nota SenseTrust
 
 > [!success] Última nota criada/atualizada
-> [[Supabase Execution Proof]]
+> [[SenseTrust RLS Hardening v0.2]]
 
 ## Painel rápido SenseTrust
 
@@ -292,6 +302,7 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 > - ${wikiLink('00_MEMORY_INDEX/MEMORY_MANIFEST.md', 'Memory Manifest')}
 > - ${wikiLink('05_SENSETRUST/SenseTrust Layer MVP Foundation.md', 'SenseTrust Layer MVP Foundation')}
 > - ${wikiLink('05_SENSETRUST/Supabase Execution Proof.md', 'Supabase Execution Proof')}
+> - ${wikiLink('05_SENSETRUST/SenseTrust RLS Hardening v0.2.md', 'SenseTrust RLS Hardening v0.2')}
 > - ${wikiLink('05_SENSETRUST/SenseTrust RLS Hardening.md', 'SenseTrust RLS Hardening')}
 > - ${wikiLink('09_ADR_DECISIONS/ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target.md', 'ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target')}
 > - ${wikiLink('08_CODEX_RUNBOOKS/CODEX-20260606-001-SenseTrust-MVP.md', 'CODEX-20260606-001-SenseTrust-MVP')}
@@ -302,7 +313,7 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 - Supabase Bootstrap: APROVADO.
 - Git Proof Closure: APROVADO.
 - Obsidian Memory Sync: APROVADO.
-- RLS forte: PENDENTE.
+- RLS forte: EM HARDENING v0.2, aplicacao remota pendente.
 - QR PDF: PENDENTE.
 - Uso clínico real: BLOQUEADO.
 
@@ -331,6 +342,7 @@ Esta nota e a porta de entrada operacional do padrao NATE/SenseTrust dentro do v
 - [[_LAST_SYNC]]
 - [[MOC_SenseTrust]]
 - [[MEMORY_MANIFEST]]
+- [[SenseTrust RLS Hardening v0.2]]
 - [[Supabase Execution Proof]]
 `
 
@@ -350,7 +362,7 @@ const lastSyncBody = `# Last Sync
 - Executor: Codex
 - Vault ID: ${VAULT_ID}
 - Nota raiz SenseTrust: [[00_ABRIR_ULTIMA_NOTA_SENSETRUST]]
-- Ultima nota SenseTrust: ${wikiLink(LAST_SENSETRUST_NOTE_PATH, 'Supabase Execution Proof')}
+- Ultima nota SenseTrust: ${wikiLink(LAST_SENSETRUST_NOTE_PATH, 'SenseTrust RLS Hardening v0.2')}
 
 ## Arquivos criados/alterados
 
@@ -359,12 +371,12 @@ ${changedFiles.map((file) => `- [[${path.basename(file, '.md')}]] (${file})`).jo
 ## Status
 
 - Obsidian: root note automation consolidated.
-- Supabase: Bootstrap aprovado; RLS forte pendente.
+- Supabase: Bootstrap aprovado; RLS Hardening v0.2 preparado, aplicacao remota pendente.
 - Git: reconciliacao Git/migrations pendente.
 
 ## Proximos passos
 
-- RLS Hardening v0.2.
+- Aplicar RLS Hardening v0.2 via Supabase SQL Editor.
 - QR PDF final.
 - Reconciliacao Git/migrations.
 - Confirmacao visual do grafo Obsidian apos abertura por URI.
