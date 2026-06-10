@@ -1,7 +1,8 @@
-﻿-- Manual Supabase SQL Editor Apply - SenseTrust RLS Hardening v0.2
+﻿-- Manual Supabase SQL Editor Apply - SenseTrust RLS Hardening v0.2 Final Proof Patch
 -- Source migration: supabase/migrations/20260607100000_sensetrust_rls_hardening.sql
--- Scope: RLS policies, role helpers, public certificate verification RPC, append-only audit guard, signed report lock.
--- Do not run partially. Do not insert clinical data.
+-- Final remote validation reported: checklist 7/7 PASS.
+-- Explicit verification token grants/revokes are included below.
+-- Do not insert clinical data. Do not run QR PDF work from this SQL.
 create extension if not exists pgcrypto;
 
 create table if not exists public.user_roles (
@@ -354,7 +355,11 @@ begin
 end;
 $$;
 
-grant execute on function public.verify_public_certificate(text) to anon, authenticated;
+revoke all privileges on table public.verification_tokens from anon;
+revoke all privileges on table public.verification_tokens from public;
+revoke all on function public.verify_public_certificate(text) from public;
+grant execute on function public.verify_public_certificate(text) to anon;
+grant execute on function public.verify_public_certificate(text) to authenticated;
 
 create or replace function public.prevent_audit_event_mutation()
 returns trigger

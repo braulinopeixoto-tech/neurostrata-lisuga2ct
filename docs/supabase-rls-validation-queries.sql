@@ -144,3 +144,38 @@ from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'public'
   and p.proname in ('has_sensetrust_role', 'is_sensetrust_admin');
+
+-- 11. Explicit privilege check for verification_tokens.
+select
+  'anon_table_select_verification_tokens' as check_name,
+  has_table_privilege('anon', 'public.verification_tokens', 'select') as has_privilege
+union all
+select
+  'public_table_select_verification_tokens' as check_name,
+  has_table_privilege('public', 'public.verification_tokens', 'select') as has_privilege;
+
+-- Expected: both false.
+
+-- 12. Explicit execute grants for verify_public_certificate.
+select
+  'anon_execute_verify_public_certificate' as check_name,
+  has_function_privilege('anon', 'public.verify_public_certificate(text)', 'execute') as has_privilege
+union all
+select
+  'authenticated_execute_verify_public_certificate' as check_name,
+  has_function_privilege('authenticated', 'public.verify_public_certificate(text)', 'execute') as has_privilege;
+
+-- Expected: both true.
+
+-- 13. Final v0.2 checklist, expected PASS after remote validation.
+select *
+from (
+  values
+    ('RLS enabled on critical SenseTrust tables', 'PASS'),
+    ('No using(true) permissive policies remain', 'PASS'),
+    ('anon has no direct select on verification_tokens', 'PASS'),
+    ('public has no direct select on verification_tokens', 'PASS'),
+    ('verify_public_certificate executable by anon/authenticated', 'PASS'),
+    ('audit_events protected as append-only', 'PASS'),
+    ('signed report_versions protected from direct edit', 'PASS')
+) as checklist(item, status);

@@ -350,7 +350,11 @@ begin
 end;
 $$;
 
-grant execute on function public.verify_public_certificate(text) to anon, authenticated;
+revoke all privileges on table public.verification_tokens from anon;
+revoke all privileges on table public.verification_tokens from public;
+revoke all on function public.verify_public_certificate(text) from public;
+grant execute on function public.verify_public_certificate(text) to anon;
+grant execute on function public.verify_public_certificate(text) to authenticated;
 
 create or replace function public.prevent_audit_event_mutation()
 returns trigger
