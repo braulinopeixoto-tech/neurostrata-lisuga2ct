@@ -5,9 +5,9 @@ import { resolveObsidianVault } from './resolve-obsidian-vault.mjs'
 
 const VAULT_ID = 'b1a32fcb40985ffc'
 const ROOT_SENSETRUST_NOTE_PATH = '00_ABRIR_ULTIMA_NOTA_SENSETRUST.md'
-const LAST_SENSETRUST_NOTE_PATH = '05_SENSETRUST/SenseTrust RLS Hardening v0.2.md'
+const LAST_SENSETRUST_NOTE_PATH = '05_SENSETRUST/SenseTrust RLS Hardening v0.2 — Final Approval.md'
 const ROOT_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\00_ABRIR_ULTIMA_NOTA_SENSETRUST.md`
-const LAST_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\05_SENSETRUST\SenseTrust RLS Hardening v0.2.md`
+const LAST_SENSETRUST_NOTE_ABSOLUTE_PATH = String.raw`C:\Users\User\Documents\NEURO DASH SKIP\VitalStrata_OS\05_SENSETRUST\SenseTrust RLS Hardening v0.2 — Final Approval.md`
 const now = new Date()
 const isoNow = now.toISOString()
 const today = isoNow.slice(0, 10)
@@ -167,6 +167,7 @@ const mocSenseTrustBody = `# MOC SenseTrust
 - [[SenseTrust Layer MVP Foundation]]
 - [[Supabase Execution Proof]]
 - [[SenseTrust RLS Hardening v0.2]]
+- [[SenseTrust RLS Hardening v0.2 — Final Approval]]
 - [[SenseTrust RLS Hardening]]
 - [[ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target]]
 - [[CODEX-20260606-001-SenseTrust-MVP]]
@@ -181,7 +182,7 @@ const mocSenseTrustBody = `# MOC SenseTrust
 ## Estado
 
 - Supabase Bootstrap: aprovado.
-- RLS forte: pendente.
+- RLS forte: aprovada no Supabase; checklist 7/7 PASS.
 - QR PDF: pendente.
 - Reconciliacao Git/migrations: pendente.
 `
@@ -250,6 +251,15 @@ const criticalNotes = [
     linked_mocs: ['MOC_SenseTrust', 'MOC_Supabase'],
   },
   {
+    path: '05_SENSETRUST/SenseTrust RLS Hardening v0.2 — Final Approval.md',
+    type: 'final_approval',
+    module: 'SenseTrust',
+    status: 'approved',
+    fallback: '# SenseTrust RLS Hardening v0.2 — Final Approval\n\n## Status final\n\n- SenseTrust RLS Hardening v0.2: APROVADA NO SUPABASE.\n- Checklist final: 7/7 PASS.\n- Commit final: f20feff.\n- Branch: chore/sensetrust-rls-hardening-v02.\n- Proxima sprint: QR PDF / Certificado Publico Seguro v0.3.\n\n## Limites atuais\n\n- Uso clinico real amplo ainda condicionado a QR seguro e governanca.',
+    links: ['MOC_SenseTrust', 'MOC_Supabase', 'MOC_Codex_Sessions'],
+    linked_mocs: ['MOC_SenseTrust', 'MOC_Supabase'],
+  },
+  {
     path: '05_SENSETRUST/SenseTrust RLS Hardening v0.2.md',
     type: 'execution_proof',
     module: 'SenseTrust',
@@ -293,7 +303,7 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 ## Abrir Última Nota SenseTrust
 
 > [!success] Última nota criada/atualizada
-> [[SenseTrust RLS Hardening v0.2]]
+> [[SenseTrust RLS Hardening v0.2 — Final Approval]]
 
 ## Painel rápido SenseTrust
 
@@ -303,6 +313,7 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 > - ${wikiLink('05_SENSETRUST/SenseTrust Layer MVP Foundation.md', 'SenseTrust Layer MVP Foundation')}
 > - ${wikiLink('05_SENSETRUST/Supabase Execution Proof.md', 'Supabase Execution Proof')}
 > - ${wikiLink('05_SENSETRUST/SenseTrust RLS Hardening v0.2.md', 'SenseTrust RLS Hardening v0.2')}
+> - ${wikiLink('05_SENSETRUST/SenseTrust RLS Hardening v0.2 — Final Approval.md', 'SenseTrust RLS Hardening v0.2 — Final Approval')}
 > - ${wikiLink('05_SENSETRUST/SenseTrust RLS Hardening.md', 'SenseTrust RLS Hardening')}
 > - ${wikiLink('09_ADR_DECISIONS/ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target.md', 'ADR-0009-Obsidian-Vault-ID-as-Canonical-Memory-Target')}
 > - ${wikiLink('08_CODEX_RUNBOOKS/CODEX-20260606-001-SenseTrust-MVP.md', 'CODEX-20260606-001-SenseTrust-MVP')}
@@ -313,7 +324,8 @@ const rootSenseTrustBody = `# 00_ABRIR_ULTIMA_NOTA_SENSETRUST
 - Supabase Bootstrap: APROVADO.
 - Git Proof Closure: APROVADO.
 - Obsidian Memory Sync: APROVADO.
-- RLS forte: EM HARDENING v0.2, aplicacao remota pendente.
+- RLS forte: APROVADA NO SUPABASE.
+- Checklist RLS: 7/7 PASS.
 - QR PDF: PENDENTE.
 - Uso clínico real: BLOQUEADO.
 
@@ -342,7 +354,7 @@ Esta nota e a porta de entrada operacional do padrao NATE/SenseTrust dentro do v
 - [[_LAST_SYNC]]
 - [[MOC_SenseTrust]]
 - [[MEMORY_MANIFEST]]
-- [[SenseTrust RLS Hardening v0.2]]
+- [[SenseTrust RLS Hardening v0.2 — Final Approval]]
 - [[Supabase Execution Proof]]
 `
 
@@ -362,7 +374,10 @@ const lastSyncBody = `# Last Sync
 - Executor: Codex
 - Vault ID: ${VAULT_ID}
 - Nota raiz SenseTrust: [[00_ABRIR_ULTIMA_NOTA_SENSETRUST]]
-- Ultima nota SenseTrust: ${wikiLink(LAST_SENSETRUST_NOTE_PATH, 'SenseTrust RLS Hardening v0.2')}
+- Ultima nota SenseTrust: ${wikiLink(LAST_SENSETRUST_NOTE_PATH, 'SenseTrust RLS Hardening v0.2 — Final Approval')}
+- Branch: chore/sensetrust-rls-hardening-v02
+- Commit final: f20feff
+- Checklist: 7/7 PASS
 
 ## Arquivos criados/alterados
 
@@ -371,12 +386,12 @@ ${changedFiles.map((file) => `- [[${path.basename(file, '.md')}]] (${file})`).jo
 ## Status
 
 - Obsidian: root note automation consolidated.
-- Supabase: Bootstrap aprovado; RLS Hardening v0.2 preparado, aplicacao remota pendente.
+- Supabase: SenseTrust RLS Hardening v0.2 Final Approval registered; checklist 7/7 PASS.
 - Git: reconciliacao Git/migrations pendente.
 
 ## Proximos passos
 
-- Aplicar RLS Hardening v0.2 via Supabase SQL Editor.
+- QR PDF / Certificado Publico Seguro v0.3.
 - QR PDF final.
 - Reconciliacao Git/migrations.
 - Confirmacao visual do grafo Obsidian apos abertura por URI.
@@ -384,6 +399,7 @@ ${changedFiles.map((file) => `- [[${path.basename(file, '.md')}]] (${file})`).jo
 ## Links de memoria
 
 - [[00_ABRIR_ULTIMA_NOTA_SENSETRUST]]
+- [[SenseTrust RLS Hardening v0.2 — Final Approval]]
 - [[MOC_SenseTrust]]
 - [[MOC_NeuroStrata]]
 - [[MOC_Supabase]]
