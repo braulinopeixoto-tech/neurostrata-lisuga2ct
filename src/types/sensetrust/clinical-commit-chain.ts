@@ -12,6 +12,8 @@ export type ClinicalCommitType =
   | 'amended'
   | 'revoked'
   | 'superseded'
+  | 'status_expired'
+  | 'integrity_invalidated'
 
 export type ClinicalCommitStatus =
   | 'draft'
@@ -20,6 +22,7 @@ export type ClinicalCommitStatus =
   | 'amended'
   | 'revoked'
   | 'superseded'
+  | 'expired'
   | 'invalid_integrity'
 
 export interface ClinicalCommitActor {
