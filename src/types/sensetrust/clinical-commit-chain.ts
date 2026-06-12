@@ -14,6 +14,7 @@ export type ClinicalCommitType =
   | 'superseded'
   | 'status_expired'
   | 'integrity_invalidated'
+  | 'emission_timestamped'
 
 export type ClinicalCommitStatus =
   | 'draft'
