@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
-import { PublicCertificateVerification } from '@/components/sensetrust/PublicCertificateVerification'
+import { ExpandedPublicVerificationPortal } from '@/components/sensetrust/ExpandedPublicVerificationPortal'
 
 export default function VerifyDocument() {
   const { id: token } = useParams()
-  return <PublicCertificateVerification token={token} />
+  return <ExpandedPublicVerificationPortal token={token} />
 }
