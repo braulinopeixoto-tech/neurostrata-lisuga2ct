@@ -46,6 +46,8 @@ import ClinicalJourney from '@/pages/ClinicalJourney'
 import DiagnosticCore from '@/pages/DiagnosticCore'
 import Interventions from '@/pages/Interventions'
 import TrustLayer from '@/pages/TrustLayer'
+import SenseTrustPrototypeUX from '@/pages/SenseTrustPrototypeUX'
+import SenseTrustPublicPrototype from '@/pages/SenseTrustPublicPrototype'
 
 const App = () => (
   <AppStoreProvider>
@@ -68,6 +70,8 @@ const App = () => (
                       <Route path="/diagnostic-core" element={<DiagnosticCore />} />
                       <Route path="/interventions" element={<Interventions />} />
                       <Route path="/trust-layer" element={<TrustLayer />} />
+                      <Route path="/sensetrust-prototype-ux" element={<SenseTrustPrototypeUX />} />
+                      <Route path="/sensetrust-public-prototype" element={<SenseTrustPublicPrototype />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
