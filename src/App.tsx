@@ -49,6 +49,7 @@ import TrustLayer from '@/pages/TrustLayer'
 import SenseTrustPrototypeUX from '@/pages/SenseTrustPrototypeUX'
 import SenseTrustPublicPrototype from '@/pages/SenseTrustPublicPrototype'
 import SenseTrustDemoReadiness from '@/pages/SenseTrustDemoReadiness'
+import SenseTrustPartnerDemoKit from '@/pages/SenseTrustPartnerDemoKit'
 
 const App = () => (
   <AppStoreProvider>
@@ -74,6 +75,7 @@ const App = () => (
                       <Route path="/sensetrust-prototype-ux" element={<SenseTrustPrototypeUX />} />
                       <Route path="/sensetrust-public-prototype" element={<SenseTrustPublicPrototype />} />
                       <Route path="/sensetrust-demo-readiness" element={<SenseTrustDemoReadiness />} />
+                      <Route path="/sensetrust-partner-demo-kit" element={<SenseTrustPartnerDemoKit />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
