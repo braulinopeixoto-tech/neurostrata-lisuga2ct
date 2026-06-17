@@ -1,0 +1,5 @@
+import type { SenseTrustEvidenceVaultExecutiveReport } from '@/types/sensetrust/pilot-evidence-vault'
+
+export function EvidenceVaultExecutiveReportPanel({ reports }: { reports: SenseTrustEvidenceVaultExecutiveReport[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Evidence vault executive report</p><div className="mt-4 grid gap-3 md:grid-cols-2">{reports.map((report) => <div key={report.report_id} className="rounded-md bg-slate-50 p-3"><p className="font-mono text-xs font-bold text-slate-500">{report.pilot_id}</p><p className="mt-2 text-sm font-bold text-slate-900">{report.executive_summary}</p><p className="mt-1 text-xs text-slate-600">Completeness: {report.completeness_summary}</p><p className="mt-1 text-xs text-slate-600">Acceptance: {report.acceptance_summary}</p><p className="mt-1 text-xs text-rose-700">Risks: {report.risk_summary}</p><p className="mt-2 text-xs font-black text-slate-800">{report.recommendation}</p></div>)}</div></section>
+}

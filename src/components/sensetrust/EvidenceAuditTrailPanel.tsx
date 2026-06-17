@@ -1,0 +1,5 @@
+import type { SenseTrustEvidenceAuditTrailItem } from '@/types/sensetrust/pilot-evidence-vault'
+
+export function EvidenceAuditTrailPanel({ items }: { items: SenseTrustEvidenceAuditTrailItem[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Evidence audit trail</p><div className="mt-4 grid gap-3 md:grid-cols-2">{items.slice(0, 12).map((item) => <div key={item.audit_id} className="rounded-md bg-slate-50 p-3"><p className="font-mono text-xs font-bold text-slate-500">{item.timestamp_simulated} / {item.logical_hash}</p><p className="mt-2 text-sm font-black text-slate-900">{item.action}</p><p className="mt-1 text-xs text-slate-600">{item.evidence_id}: {item.previous_state} to {item.new_state}</p><p className="mt-1 text-xs font-bold text-emerald-700">metadata_only / {item.simulated_actor}</p></div>)}</div></section>
+}
