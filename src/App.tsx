@@ -51,6 +51,7 @@ import SenseTrustPublicPrototype from '@/pages/SenseTrustPublicPrototype'
 import SenseTrustDemoReadiness from '@/pages/SenseTrustDemoReadiness'
 import SenseTrustPartnerDemoKit from '@/pages/SenseTrustPartnerDemoKit'
 import SenseTrustMeetingIntelligence from '@/pages/SenseTrustMeetingIntelligence'
+import SenseTrustPipelineGovernance from '@/pages/SenseTrustPipelineGovernance'
 
 const App = () => (
   <AppStoreProvider>
@@ -78,6 +79,7 @@ const App = () => (
                       <Route path="/sensetrust-demo-readiness" element={<SenseTrustDemoReadiness />} />
                       <Route path="/sensetrust-partner-demo-kit" element={<SenseTrustPartnerDemoKit />} />
                       <Route path="/sensetrust-meeting-intelligence" element={<SenseTrustMeetingIntelligence />} />
+                      <Route path="/sensetrust-pipeline-governance" element={<SenseTrustPipelineGovernance />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
