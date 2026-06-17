@@ -55,6 +55,7 @@ import SenseTrustPipelineGovernance from '@/pages/SenseTrustPipelineGovernance'
 import SenseTrustInstitutionalPilotControlRoom from '@/pages/SenseTrustInstitutionalPilotControlRoom'
 import SenseTrustPilotEvidenceVault from '@/pages/SenseTrustPilotEvidenceVault'
 import SenseTrustPilotCertificateVerification from '@/pages/SenseTrustPilotCertificateVerification'
+import SenseTrustInstitutionalPilotCloseout from '@/pages/SenseTrustInstitutionalPilotCloseout'
 
 const App = () => (
   <AppStoreProvider>
@@ -86,6 +87,7 @@ const App = () => (
                       <Route path="/sensetrust-institutional-pilot-control-room" element={<SenseTrustInstitutionalPilotControlRoom />} />
                       <Route path="/sensetrust-pilot-evidence-vault" element={<SenseTrustPilotEvidenceVault />} />
                       <Route path="/sensetrust-pilot-certificate-verification" element={<SenseTrustPilotCertificateVerification />} />
+                      <Route path="/sensetrust-institutional-pilot-closeout" element={<SenseTrustInstitutionalPilotCloseout />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
