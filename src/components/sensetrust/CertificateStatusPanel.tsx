@@ -1,0 +1,5 @@
+import type { SenseTrustPilotCertificateStatus } from '@/types/sensetrust/pilot-certificate-verification'
+
+export function CertificateStatusPanel({ statuses }: { statuses: SenseTrustPilotCertificateStatus[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Certificate status</p><div className="mt-4 grid gap-3 md:grid-cols-2">{statuses.map((item) => <div key={item.status_id} className="rounded-md bg-slate-50 p-3"><p className="text-sm font-black text-slate-900">{item.current_status}</p><p className="mt-1 text-xs text-slate-600">Previous: {item.previous_status}</p><p className="mt-1 text-xs text-slate-600">Next: {item.next_allowed_status.join(', ')}</p><p className="mt-1 text-xs text-rose-700">Blockers: {item.blockers.join(', ')}</p><p className="mt-1 text-xs font-bold text-slate-700">Review: {item.human_review_required ? 'human' : 'none'} / {item.legal_review_required ? 'legal' : 'no legal'}</p></div>)}</div></section>
+}

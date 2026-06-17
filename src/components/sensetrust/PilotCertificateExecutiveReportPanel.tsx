@@ -1,0 +1,5 @@
+import type { SenseTrustPilotCertificateExecutiveReport } from '@/types/sensetrust/pilot-certificate-verification'
+
+export function PilotCertificateExecutiveReportPanel({ reports }: { reports: SenseTrustPilotCertificateExecutiveReport[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Pilot certificate executive report</p><div className="mt-4 grid gap-3 md:grid-cols-2">{reports.map((report) => <div key={report.report_id} className="rounded-md bg-slate-50 p-3"><p className="text-sm font-black text-slate-900">{report.executive_summary}</p><p className="mt-1 text-xs text-slate-600">Certificates/verifications/QR: {report.certificate_count} / {report.verification_preview_count} / {report.qr_preview_count}</p><p className="mt-1 text-xs text-rose-700">Risks: {report.risk_summary}</p><p className="mt-1 text-xs text-slate-600">Blockers: {report.blocker_summary}</p><p className="mt-2 text-xs font-black text-slate-800">{report.recommendation}</p></div>)}</div></section>
+}

@@ -1,0 +1,5 @@
+import type { SenseTrustPublicVerificationPreview } from '@/types/sensetrust/pilot-certificate-verification'
+
+export function PublicVerificationPreviewPanel({ previews }: { previews: SenseTrustPublicVerificationPreview[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Public verification preview</p><div className="mt-4 grid gap-3 md:grid-cols-2">{previews.map((item) => <div key={item.verification_preview_id} className="rounded-md bg-slate-50 p-3"><p className="font-mono text-xs font-bold text-slate-500">{item.verification_url_simulated}</p><p className="mt-2 text-sm font-black text-slate-900">{item.verification_result}</p><p className="mt-1 text-xs text-slate-600">Visible: {item.visible_public_fields.join(', ')}</p><p className="mt-1 text-xs text-slate-600">Hidden: {item.hidden_private_fields.join(', ')}</p><p className="mt-1 text-xs text-rose-700">Blocked: {item.blocked_fields.join(', ')}</p><p className="mt-2 text-xs font-bold text-slate-700">{item.disclaimer}</p></div>)}</div></section>
+}

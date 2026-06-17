@@ -1,0 +1,5 @@
+import type { SenseTrustPilotCertificatePreview } from '@/types/sensetrust/pilot-certificate-verification'
+
+export function PilotCertificatePreviewPanel({ certificates }: { certificates: SenseTrustPilotCertificatePreview[] }) {
+  return <section className="rounded-md border bg-white p-5 shadow-sm"><p className="text-lg font-black text-slate-950">Pilot certificate preview</p><div className="mt-4 grid gap-3 md:grid-cols-2">{certificates.map((item) => <div key={item.certificate_id} className="rounded-md bg-slate-50 p-3"><p className="font-mono text-xs font-bold text-slate-500">{item.certificate_id} / {item.certificate_status}</p><p className="mt-2 text-sm font-black text-slate-900">{item.certificate_title}</p><p className="mt-1 text-xs text-slate-600">Pilot/vault/ledger: {item.pilot_id} / {item.evidence_vault_id} / {item.acceptance_ledger_id}</p><p className="mt-1 text-xs text-slate-600">Hash: {item.logical_certificate_hash}</p><p className="mt-1 text-xs text-slate-600">Evidence: {item.evidence_summary.evidence_count} / acceptance: {item.acceptance_summary.acceptance_state}</p></div>)}</div></section>
+}
