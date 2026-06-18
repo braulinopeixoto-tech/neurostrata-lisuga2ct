@@ -60,6 +60,7 @@ import SenseTrustInstitutionalReadinessScaleGate from '@/pages/SenseTrustInstitu
 import SenseTrustStrategicScaleOperatingModel from '@/pages/SenseTrustStrategicScaleOperatingModel'
 import SenseTrustStrategicScaleSimulationConsole from '@/pages/SenseTrustStrategicScaleSimulationConsole'
 import SenseTrustStrategicScaleEvidenceSimulator from '@/pages/SenseTrustStrategicScaleEvidenceSimulator'
+import SenseTrustStrategicPartnerReadinessRoom from '@/pages/SenseTrustStrategicPartnerReadinessRoom'
 
 const App = () => (
   <AppStoreProvider>
@@ -96,6 +97,7 @@ const App = () => (
                       <Route path="/sensetrust-strategic-scale-operating-model" element={<SenseTrustStrategicScaleOperatingModel />} />
                       <Route path="/sensetrust-strategic-scale-simulation-console" element={<SenseTrustStrategicScaleSimulationConsole />} />
                       <Route path="/sensetrust-strategic-scale-evidence-simulator" element={<SenseTrustStrategicScaleEvidenceSimulator />} />
+                      <Route path="/sensetrust-strategic-partner-readiness-room" element={<SenseTrustStrategicPartnerReadinessRoom />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
