@@ -69,8 +69,8 @@ function Test-BuildToolAvailable($Manifest) {
 }
 
 function Clear-LeanGeneratedPackageLockIfUntracked {
-  $tracked = git ls-files --error-unmatch package-lock.json 2>$null
-  if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath "package-lock.json")) {
+  $tracked = git ls-files package-lock.json
+  if ([string]::IsNullOrWhiteSpace($tracked) -and (Test-Path -LiteralPath "package-lock.json")) {
     Remove-Item -LiteralPath "package-lock.json" -Force
   }
 }
