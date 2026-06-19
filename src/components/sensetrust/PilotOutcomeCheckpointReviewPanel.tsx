@@ -1,0 +1,3 @@
+import type { PilotOutcomeCheckpointReview } from '@/types/sensetrust/strategic-pilot-outcome-closeout-decision-room'
+export function PilotOutcomeCheckpointReviewPanel({ reviews }: { reviews: PilotOutcomeCheckpointReview[] }) { return <Panel title="Checkpoint review" items={reviews.map((x) => `${x.checkpoint}: ${x.status}`)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 grid gap-2 sm:grid-cols-3">{items.map((x) => <p key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</p>)}</div></section> }

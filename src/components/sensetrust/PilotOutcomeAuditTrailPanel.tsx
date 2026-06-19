@@ -1,0 +1,2 @@
+import type { PilotOutcomeAuditTrail } from '@/types/sensetrust/strategic-pilot-outcome-closeout-decision-room'
+export function PilotOutcomeAuditTrailPanel({ trails }: { trails: PilotOutcomeAuditTrail[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Audit trail</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{trails.map((x) => <article key={x.id} className="rounded bg-slate-50 p-2 text-sm"><p className="font-bold">append_only_simulated</p>{x.events.map((event) => <p key={event}>{event}</p>)}</article>)}</div></section> }

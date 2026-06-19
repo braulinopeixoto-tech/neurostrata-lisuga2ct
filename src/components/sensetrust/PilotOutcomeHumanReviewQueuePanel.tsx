@@ -1,0 +1,3 @@
+import type { PilotOutcomeHumanReviewQueue } from '@/types/sensetrust/strategic-pilot-outcome-closeout-decision-room'
+export function PilotOutcomeHumanReviewQueuePanel({ queues }: { queues: PilotOutcomeHumanReviewQueue[] }) { return <Panel title="Human review queue" items={queues.flatMap((x) => x.reasons.map((reason) => `${x.roomId}: ${reason}`))} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><ul className="mt-2 space-y-2">{items.map((x) => <li key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</li>)}</ul></section> }

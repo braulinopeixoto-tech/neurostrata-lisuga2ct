@@ -1,0 +1,2 @@
+import type { PilotOutcomeRiskReview } from '@/types/sensetrust/strategic-pilot-outcome-closeout-decision-room'
+export function PilotOutcomeRiskReviewPanel({ reviews }: { reviews: PilotOutcomeRiskReview[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Risk review</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{reviews.map((x) => <article key={x.id} className="rounded bg-slate-50 p-2 text-sm"><b>{x.risk}</b><p>{x.mitigation}</p><p className="font-bold text-rose-700">{x.status}</p></article>)}</div></section> }

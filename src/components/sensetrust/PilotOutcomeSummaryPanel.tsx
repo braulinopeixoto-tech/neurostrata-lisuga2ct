@@ -1,0 +1,3 @@
+import type { PilotOutcomeSummary } from '@/types/sensetrust/strategic-pilot-outcome-closeout-decision-room'
+export function PilotOutcomeSummaryPanel({ summaries }: { summaries: PilotOutcomeSummary[] }) { return <Panel title="Outcome summaries" items={summaries.map((x) => `${x.confidenceLevel}: ${x.summary}`)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><ul className="mt-2 space-y-2">{items.map((x) => <li key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</li>)}</ul></section> }
