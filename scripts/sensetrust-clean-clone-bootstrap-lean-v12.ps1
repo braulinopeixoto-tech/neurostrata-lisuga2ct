@@ -23,6 +23,10 @@ if ($LASTEXITCODE -ne 0) { throw "CLEAN_CLONE_BLOCKED_base_branch_failed" }
 if ($InstallDependencies.IsPresent) {
   npm.cmd install --legacy-peer-deps --no-audit --no-fund
   if ($LASTEXITCODE -ne 0) { throw "CLEAN_CLONE_BLOCKED_install_failed" }
+  $tracked = git ls-files --error-unmatch package-lock.json 2>$null
+  if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath "package-lock.json")) {
+    Remove-Item -LiteralPath "package-lock.json" -Force
+  }
 }
 npm.cmd run build
 if ($LASTEXITCODE -ne 0) { throw "CLEAN_CLONE_BLOCKED_build_failed" }

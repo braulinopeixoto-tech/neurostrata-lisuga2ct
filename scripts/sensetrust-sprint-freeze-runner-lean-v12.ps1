@@ -68,6 +68,13 @@ function Test-BuildToolAvailable($Manifest) {
   if (!(Test-Path -LiteralPath $packageJson)) { Block-LeanFreeze "LEAN_FREEZE_BLOCKED_missing_dependencies_run_npm_install_legacy_peer_deps" }
 }
 
+function Clear-LeanGeneratedPackageLockIfUntracked {
+  $tracked = git ls-files --error-unmatch package-lock.json 2>$null
+  if ($LASTEXITCODE -ne 0 -and (Test-Path -LiteralPath "package-lock.json")) {
+    Remove-Item -LiteralPath "package-lock.json" -Force
+  }
+}
+
 function Get-LeanFreezeManifest($Path) {
   Test-Manifest $Path
   $manifest = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
@@ -233,6 +240,7 @@ function Invoke-LeanFreeze {
   Push-LeanFreezeBranch $manifest
   $remoteCommit = Get-RemoteCommit $manifest
   Assert-RemoteHashMatchesLocal $localCommit $remoteCommit
+  Clear-LeanGeneratedPackageLockIfUntracked
   Assert-GitStatusClean
   Write-LeanFreezeLog "LOCAL_COMMIT=$localCommit"
   Write-LeanFreezeLog "REMOTE_COMMIT=$remoteCommit"
