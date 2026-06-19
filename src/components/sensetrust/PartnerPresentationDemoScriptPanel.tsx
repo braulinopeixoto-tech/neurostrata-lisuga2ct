@@ -1,0 +1,2 @@
+import type { PartnerPresentationDemoScript } from '@/types/sensetrust/demo-distribution-partner-presentation-kit'
+export function PartnerPresentationDemoScriptPanel({ scripts }: { scripts: PartnerPresentationDemoScript[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Demo scripts</h2>{scripts.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-2 text-sm"><p className="font-bold">{x.title}</p><p>{x.steps.join(' -> ')}</p></article>)}</section> }

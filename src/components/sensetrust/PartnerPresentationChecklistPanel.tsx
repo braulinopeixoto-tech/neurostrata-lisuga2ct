@@ -1,0 +1,3 @@
+import type { PartnerPresentationPostMeetingChecklist, PartnerPresentationPreMeetingChecklist } from '@/types/sensetrust/demo-distribution-partner-presentation-kit'
+export function PartnerPresentationChecklistPanel({ pre, post }: { pre: PartnerPresentationPreMeetingChecklist[]; post: PartnerPresentationPostMeetingChecklist[] }) { return <Panel title="Meeting checklists" items={[...pre.flatMap((x) => x.items), ...post.flatMap((x) => x.items)]} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{items.map((x) => <p key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</p>)}</div></section> }

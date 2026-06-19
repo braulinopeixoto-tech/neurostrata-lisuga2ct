@@ -70,6 +70,7 @@ import SenseTrustStrategicPilotOutcomeCloseoutDecisionRoom from '@/pages/SenseTr
 import SenseTrustInstitutionalHandoffRoom from '@/pages/SenseTrustInstitutionalHandoffRoom'
 import SenseTrustCommandCenterIntegration from '@/pages/SenseTrustCommandCenterIntegration'
 import SenseTrustPilotOSReleaseCandidate from '@/pages/SenseTrustPilotOSReleaseCandidate'
+import SenseTrustDemoDistributionPartnerPresentationKit from '@/pages/SenseTrustDemoDistributionPartnerPresentationKit'
 
 const App = () => (
   <AppStoreProvider>
@@ -116,6 +117,7 @@ const App = () => (
                       <Route path="/sensetrust/institutional-handoff-room" element={<SenseTrustInstitutionalHandoffRoom />} />
                       <Route path="/sensetrust/command-center" element={<SenseTrustCommandCenterIntegration />} />
                       <Route path="/sensetrust/pilot-os-release-candidate" element={<SenseTrustPilotOSReleaseCandidate />} />
+                      <Route path="/sensetrust/demo-distribution-partner-presentation-kit" element={<SenseTrustDemoDistributionPartnerPresentationKit />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />

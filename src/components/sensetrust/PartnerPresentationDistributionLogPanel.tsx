@@ -1,0 +1,2 @@
+import type { PartnerPresentationDistributionLog } from '@/types/sensetrust/demo-distribution-partner-presentation-kit'
+export function PartnerPresentationDistributionLogPanel({ logs }: { logs: PartnerPresentationDistributionLog[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Distribution logs</h2>{logs.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-2 text-sm"><p className="font-bold">no_real_email no_real_crm no_real_lead_collection</p><p>{x.events.join(' / ')}</p></article>)}</section> }

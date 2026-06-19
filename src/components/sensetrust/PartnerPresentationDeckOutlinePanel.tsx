@@ -1,0 +1,2 @@
+import type { PartnerPresentationDeckOutline } from '@/types/sensetrust/demo-distribution-partner-presentation-kit'
+export function PartnerPresentationDeckOutlinePanel({ outlines }: { outlines: PartnerPresentationDeckOutline[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Deck outlines</h2>{outlines.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-2 text-sm"><p className="font-bold">{x.title}</p><p>{x.sections.join(' -> ')}</p></article>)}</section> }
