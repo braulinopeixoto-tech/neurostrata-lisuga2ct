@@ -62,3 +62,56 @@ Esta memoria nao cria feature clinica, nao usa dado clinico, nao altera LGPD, na
 ## Recomendacoes para v3.4
 
 Antes de implementar v3.4, executar o preflight e congelar v3.3 com o runner. Nao avancar com freeze incompleto.
+
+## v1.1 - FETCH_HEAD ACL Recovery
+
+Incidente observado: na sprint SenseTrust v3.4 Strategic Partner Readiness Room, a implementacao local foi concluida, o teste principal passou, as regressÃµes v3.3 ate v1.0 passaram, o teste da Git Freeze Automation Memory passou, o build passou, o Obsidian foi atualizado e a root note apontou para `[[37_STRATEGIC_PARTNER_READINESS_ROOM_v34]]`. Mesmo assim, o freeze foi bloqueado antes de branch, copia, commit ou push por ACL persistente em `.git\FETCH_HEAD` no CleanRepo.
+
+Codigo operacional do bloqueio: `FREEZE_BLOCKED_preflight_failed_FETCH_HEAD_ACL`.
+
+Causa provavel: ACL resistente, heranca quebrada, ownership incorreto ou arquivo travado dentro de `.git`, especialmente em `FETCH_HEAD`. Esse estado impede que o Git atualize refs com seguranca e pode produzir falso freeze se for ignorado.
+
+O runner bloqueou corretamente porque o Git e a trilha auditavel da SenseTrust nao podem declarar sucesso quando `FETCH_HEAD` continua inacessivel. Forcar commit/push manual apos esse bloqueio quebra a governanca do Git como trilha auditavel e pode criar branch vazia, hash remoto antigo ou divergencia entre SourceRepo, CleanRepo, Obsidian e GitHub.
+
+Nao se deve forcar commit manual apos `PREFLIGHT_BLOCKED_FETCH_HEAD_ACL`. Primeiro e necessario reparar ACL/ownership do CleanRepo, depois reexecutar o runner completo com o manifesto da sprint.
+
+Solucao elevada:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\User\OneDrive\Documentos\NeuroSTrata Skip P01\scripts\sensetrust-git-preflight-repair.ps1"
+```
+
+Executar em PowerShell como Administrador quando o usuario comum nao tiver privilegio de propriedade sobre `C:\Users\User\Documents\NeuroStrata_Git\neurostrata-lisuga2ct\.git`.
+
+Comportamento esperado do preflight v1.1:
+
+- Registrar CleanRepo, principal e se a execucao caiu em `C:\WINDOWS\system32`.
+- Validar CleanRepo e `.git`.
+- Encerrar processos que podem travar Git.
+- Aplicar reparo especifico em `.git\FETCH_HEAD` com `takeown`, `icacls`, `attrib -R -H -S`, `Remove-Item` e fallback por rename `FETCH_HEAD.blocked.<timestamp>.bak`.
+- Emitir `PREFLIGHT_FETCH_HEAD_CLEARED` quando o arquivo foi removido ou renomeado.
+- Emitir `PREFLIGHT_BLOCKED_FETCH_HEAD_ACL` quando o arquivo continua inacessivel.
+- Emitir `PREFLIGHT_BLOCKED_CLEAN_REPO_MISSING`, `PREFLIGHT_BLOCKED_GIT_DIR_MISSING`, `PREFLIGHT_BLOCKED_GIT_STATUS_FAILED` ou `PREFLIGHT_PASS` conforme o caso.
+
+Comportamento esperado do runner v1.1:
+
+- Se receber `PREFLIGHT_BLOCKED_FETCH_HEAD_ACL`, emitir `FREEZE_BLOCKED_preflight_failed_FETCH_HEAD_ACL`.
+- Nao criar branch.
+- Nao copiar arquivos.
+- Nao rodar testes como se o freeze estivesse apto.
+- Nao fazer commit.
+- Nao fazer push.
+- Nao simular sucesso.
+- Preservar bloqueio contra branch vazia, falso freeze, script Obsidian errado, teste principal, regressÃµes, build, status Git limpo, `ls-remote`, hash remoto igual ao commit local e commit novo diferente da base.
+
+Criterios para liberar novo freeze:
+
+- `PREFLIGHT_PASS`.
+- `FETCH_HEAD` ausente apos reparo.
+- `git status --short` funcional no CleanRepo.
+- Runner da sprint emite `FREEZE_PASS`.
+- Branch remota existe.
+- Commit local e hash remoto coincidem.
+- Obsidian, GitHub e docs permanecem alinhados.
+
+Esta memoria v1.1 preserva NeuroStrata, VitalStrata, DNDA, BLC, SenseTrust, Trust Layer, metadata_only, LGPD, Obsidian e Git como trilha auditavel. DNDA significa exatamente DiagnÃ³stico Neurofuncional Dimensional AuditÃ¡vel.

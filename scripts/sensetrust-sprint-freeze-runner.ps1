@@ -21,6 +21,13 @@ function Run-Checked($Command, $Reason) {
   if ($LASTEXITCODE -ne 0) { Block $Reason }
 }
 
+function Block-FetchHeadAcl($SourceRepo) {
+  $repairCommand = "powershell -NoProfile -ExecutionPolicy Bypass -File `"$SourceRepo\scripts\sensetrust-git-preflight-repair.ps1`""
+  Write-Output "PowerShell como Administrador:"
+  Write-Output $repairCommand
+  Block "FREEZE_BLOCKED_preflight_failed_FETCH_HEAD_ACL"
+}
+
 try {
   if ((Get-Location).Path -ieq "C:\WINDOWS\system32") { Block "running_from_system32" }
   if (!(Test-Path -LiteralPath $ManifestPath)) { Block "manifest_not_found" }
@@ -34,8 +41,14 @@ try {
 
   $preflight = Join-Path $manifest.sourceRepo "scripts\sensetrust-git-preflight-repair.ps1"
   if (!(Test-Path -LiteralPath $preflight)) { Block "preflight_script_not_found" }
-  & powershell -ExecutionPolicy Bypass -File $preflight -CleanRepo $manifest.cleanRepo -SourceRepo $manifest.sourceRepo
-  if ($LASTEXITCODE -ne 0) { Block "preflight_failed" }
+  $preflightOutput = & powershell -ExecutionPolicy Bypass -File $preflight -CleanRepo $manifest.cleanRepo -SourceRepo $manifest.sourceRepo 2>&1
+  $preflightOutput | ForEach-Object { Write-Output $_ }
+  if ($LASTEXITCODE -ne 0) {
+    if (($preflightOutput -join "`n") -match "PREFLIGHT_BLOCKED_FETCH_HEAD_ACL") {
+      Block-FetchHeadAcl $manifest.sourceRepo
+    }
+    Block "preflight_failed"
+  }
 
   Set-Location -LiteralPath $manifest.cleanRepo
   if ((Get-Location).Path -ieq "C:\WINDOWS\system32") { Block "running_from_system32_after_preflight" }
