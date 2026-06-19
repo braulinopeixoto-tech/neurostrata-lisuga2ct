@@ -1,0 +1,3 @@
+import type { CommandCenterReadinessSnapshot } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterReadinessSnapshotPanel({ snapshots }: { snapshots: CommandCenterReadinessSnapshot[] }) { return <Panel title="Readiness snapshot" items={snapshots.map((x) => `${x.summary}: ${x.scores.join('/')}`)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2>{items.map((x) => <p key={x} className="mt-2 rounded bg-slate-50 p-2 text-sm">{x}</p>)}</section> }

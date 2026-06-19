@@ -1,0 +1,2 @@
+import type { CommandCenterProofChain } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterProofChainPanel({ chains }: { chains: CommandCenterProofChain[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Proof chain</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{chains.flatMap((x) => x.steps).map((step) => <article key={step.id} className="rounded bg-slate-50 p-2 text-sm"><p className="font-bold">{step.version}</p><p>{step.proofLabel}</p><p>{step.guardrailStatus}</p></article>)}</div></section> }

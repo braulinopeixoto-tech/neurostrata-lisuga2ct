@@ -1,0 +1,3 @@
+import type { CommandCenterDemoScenario } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterDemoScenarioPanel({ scenarios }: { scenarios: CommandCenterDemoScenario[] }) { return <Panel title="Demo scenarios" items={scenarios.map((x) => `${x.audienceType}: ${x.title} / no real submission`)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 grid gap-2 lg:grid-cols-4">{items.map((x) => <p key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</p>)}</div></section> }

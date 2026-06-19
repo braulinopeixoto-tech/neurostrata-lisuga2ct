@@ -1,0 +1,2 @@
+import type { CommandCenterInstitutionalView } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterInstitutionalViewPanel({ views }: { views: CommandCenterInstitutionalView[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Institutional views</h2><div className="mt-2 grid gap-2 lg:grid-cols-4">{views.map((x) => <article key={x.id} className="rounded bg-slate-50 p-2 text-sm"><p className="font-bold">{x.title}</p><p>{x.narrative}</p></article>)}</div></section> }

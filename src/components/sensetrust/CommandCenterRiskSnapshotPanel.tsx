@@ -1,0 +1,2 @@
+import type { CommandCenterRiskSnapshot } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterRiskSnapshotPanel({ snapshots }: { snapshots: CommandCenterRiskSnapshot[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Risk snapshot</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{snapshots.flatMap((x) => x.risks.map((risk) => `${x.commandCenterId}: ${risk}`)).map((risk) => <p key={risk} className="rounded bg-rose-50 p-2 text-sm">{risk}</p>)}</div></section> }

@@ -1,0 +1,2 @@
+import type { CommandCenterGuardrailSnapshot } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterGuardrailSnapshotPanel({ snapshots }: { snapshots: CommandCenterGuardrailSnapshot[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Guardrail snapshot</h2><div className="mt-2 flex flex-wrap gap-2">{snapshots.flatMap((x) => x.guardrails).map((x) => <span key={x} className="rounded bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-800">{x}</span>)}</div></section> }

@@ -1,0 +1,2 @@
+import type { CommandCenterVersionNode } from '@/types/sensetrust/command-center-integration'
+export function CommandCenterVersionTrailPanel({ nodes }: { nodes: CommandCenterVersionNode[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Version trail</h2><div className="mt-2 grid gap-2 lg:grid-cols-4">{nodes.map((x) => <article key={x.id} className="rounded bg-slate-50 p-2 text-sm"><p className="font-black">{x.version}</p><p>{x.label}</p><p>{x.status} / {x.readinessScore}</p></article>)}</div></section> }
