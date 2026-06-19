@@ -1,0 +1,3 @@
+import type { PilotOSReleaseCandidateVersionMap } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateVersionMapPanel({ maps }: { maps: PilotOSReleaseCandidateVersionMap[] }) { return <Panel title="Version map" items={maps.flatMap((x) => [`command center ${x.commandCenterRoute}`, ...x.versions])} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 flex flex-wrap gap-2">{items.map((x) => <span key={x} className="rounded bg-slate-100 px-2 py-1 text-sm">{x}</span>)}</div></section> }

@@ -1,0 +1,3 @@
+import type { PilotOSReleaseCandidateNavigationMap } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateNavigationMapPanel({ maps }: { maps: PilotOSReleaseCandidateNavigationMap[] }) { return <Panel title="Navigation map" items={maps.flatMap((x) => x.routes)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{items.map((x) => <p key={x} className="rounded bg-slate-50 p-2 text-sm">{x}</p>)}</div></section> }

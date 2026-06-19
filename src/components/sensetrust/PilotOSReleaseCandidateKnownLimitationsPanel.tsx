@@ -1,0 +1,2 @@
+import type { PilotOSReleaseCandidateKnownLimitation } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateKnownLimitationsPanel({ limitations }: { limitations: PilotOSReleaseCandidateKnownLimitation[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Known limitations</h2>{limitations.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-2 text-sm"><p className="font-bold">{x.limitation}</p><p>{x.mitigation}</p></article>)}</section> }

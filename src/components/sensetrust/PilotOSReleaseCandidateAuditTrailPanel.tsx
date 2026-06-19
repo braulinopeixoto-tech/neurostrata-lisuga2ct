@@ -1,0 +1,2 @@
+import type { PilotOSReleaseCandidateAuditTrail } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateAuditTrailPanel({ trails }: { trails: PilotOSReleaseCandidateAuditTrail[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Audit trail</h2>{trails.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-2 text-sm"><p className="font-bold">append_only_simulated</p>{x.events.map((event) => <p key={event}>{event}</p>)}</article>)}</section> }

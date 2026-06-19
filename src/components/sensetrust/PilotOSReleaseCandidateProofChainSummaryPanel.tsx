@@ -1,0 +1,2 @@
+import type { PilotOSReleaseCandidateProofChainSummary } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateProofChainSummaryPanel({ summaries }: { summaries: PilotOSReleaseCandidateProofChainSummary[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Proof chain summary</h2>{summaries.map((x) => <article key={x.id} className="mt-2 rounded bg-slate-50 p-3 text-sm"><p>{x.summary}</p><p className="mt-2">{x.steps.join(' -> ')}</p></article>)}</section> }

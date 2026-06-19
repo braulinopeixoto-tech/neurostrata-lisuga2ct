@@ -1,0 +1,3 @@
+import type { PilotOSReleaseCandidateRiskRegister } from '@/types/sensetrust/pilot-os-release-candidate'
+export function PilotOSReleaseCandidateRiskRegisterPanel({ registers }: { registers: PilotOSReleaseCandidateRiskRegister[] }) { return <Panel title="Risk register" items={registers.flatMap((x) => x.risks)} /> }
+function Panel({ title, items }: { title: string; items: string[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">{title}</h2><div className="mt-2 grid gap-2 lg:grid-cols-3">{items.map((x) => <p key={x} className="rounded bg-rose-50 p-2 text-sm">{x}</p>)}</div></section> }
