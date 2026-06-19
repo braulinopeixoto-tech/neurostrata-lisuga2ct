@@ -1,0 +1,2 @@
+import type { InstitutionalHandoffRiskRegister } from '@/types/sensetrust/institutional-handoff-room'
+export function InstitutionalHandoffRiskRegisterPanel({ registers }: { registers: InstitutionalHandoffRiskRegister[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Risk register</h2><div className="mt-2 grid gap-2 lg:grid-cols-4">{registers.map((x) => <article key={x.id} className="rounded bg-rose-50 p-2 text-sm"><p className="font-bold">{x.roomId}</p>{x.risks.map((risk) => <p key={risk}>{risk}</p>)}</article>)}</div></section> }

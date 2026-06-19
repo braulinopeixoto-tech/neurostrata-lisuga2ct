@@ -1,0 +1,2 @@
+import type { InstitutionalHandoffDecisionRecord } from '@/types/sensetrust/institutional-handoff-room'
+export function InstitutionalHandoffDecisionRecordPanel({ records }: { records: InstitutionalHandoffDecisionRecord[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="font-black">Decision records</h2><div className="mt-2 grid gap-2 lg:grid-cols-4">{records.map((x) => <article key={x.id} className="rounded bg-slate-50 p-2 text-sm"><p className="font-black text-emerald-700">{x.decision}</p><p>{x.rationale}</p></article>)}</div></section> }
