@@ -62,6 +62,7 @@ import SenseTrustStrategicScaleSimulationConsole from '@/pages/SenseTrustStrateg
 import SenseTrustStrategicScaleEvidenceSimulator from '@/pages/SenseTrustStrategicScaleEvidenceSimulator'
 import SenseTrustStrategicPartnerReadinessRoom from '@/pages/SenseTrustStrategicPartnerReadinessRoom'
 import SenseTrustStrategicPartnerEngagementControlRoom from '@/pages/SenseTrustStrategicPartnerEngagementControlRoom'
+import SenseTrustStrategicPartnershipConversionDecisionRoom from '@/pages/SenseTrustStrategicPartnershipConversionDecisionRoom'
 
 const App = () => (
   <AppStoreProvider>
@@ -100,6 +101,7 @@ const App = () => (
                       <Route path="/sensetrust-strategic-scale-evidence-simulator" element={<SenseTrustStrategicScaleEvidenceSimulator />} />
                       <Route path="/sensetrust-strategic-partner-readiness-room" element={<SenseTrustStrategicPartnerReadinessRoom />} />
                       <Route path="/sensetrust-strategic-partner-engagement-control-room" element={<SenseTrustStrategicPartnerEngagementControlRoom />} />
+                      <Route path="/sensetrust-strategic-partnership-conversion-decision-room" element={<SenseTrustStrategicPartnershipConversionDecisionRoom />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
