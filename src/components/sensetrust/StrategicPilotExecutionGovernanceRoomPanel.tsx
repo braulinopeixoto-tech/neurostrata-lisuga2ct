@@ -1,0 +1,5 @@
+import type { ReactNode } from 'react'
+import type { StrategicPilotExecutionGovernanceRoom } from '@/types/sensetrust/strategic-pilot-execution-governance-room'
+export function StrategicPilotExecutionGovernanceRoomPanel({ rooms }: { rooms: StrategicPilotExecutionGovernanceRoom[] }) { return <Panel title="Execution Governance Rooms">{rooms.map((x) => <Card key={x.roomId} title={x.simulatedOrganizationName} detail={`${x.pilotExecutionStage} / ${x.recommendedDecision}`} />)}</Panel> }
+function Panel({ title, children }: { title: string; children: ReactNode }) { return <section className="rounded-md border bg-white p-4"><h2 className="text-base font-black text-slate-950">{title}</h2><div className="mt-3 grid gap-2 md:grid-cols-3">{children}</div></section> }
+function Card({ title, detail }: { title: string; detail: string }) { return <div className="rounded-md bg-slate-50 p-3"><p className="font-bold text-slate-900">{title}</p><p className="text-xs text-slate-600">{detail}</p><p className="mt-2 text-xs font-bold uppercase text-rose-700">simulated_only / metadata_only / human_review_required</p></div> }

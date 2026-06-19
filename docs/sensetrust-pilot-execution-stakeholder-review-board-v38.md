@@ -1,0 +1,10 @@
+# SenseTrust Pilot Execution Stakeholder Review Board v3.8
+
+## Objetivo
+Organizar revisão simulada por governança, legal, ciência, regulação, ética, técnica, comercial e revisão humana, a partir de v3.7, v3.6 e v1.2 Lean.
+
+## Critérios
+Go/Pause/Refine/Stop dependem de evidências mínimas, decisão humana obrigatória e rastreabilidade BLC.
+
+## Limites
+Trust Layer, NeuroStrata, VitalStrata, DNDA, metadata_only, LGPD, neurodireitos, simulated_only, no real pilot, no real clinical operation, no clinical data, no patient data, no contract, no client, no partnership, no diagnostic truth certification. DNDA significa Diagnóstico Neurofuncional Dimensional Auditável.

@@ -64,6 +64,7 @@ import SenseTrustStrategicPartnerReadinessRoom from '@/pages/SenseTrustStrategic
 import SenseTrustStrategicPartnerEngagementControlRoom from '@/pages/SenseTrustStrategicPartnerEngagementControlRoom'
 import SenseTrustStrategicPartnershipConversionDecisionRoom from '@/pages/SenseTrustStrategicPartnershipConversionDecisionRoom'
 import SenseTrustStrategicPartnershipPilotProposalRoom from '@/pages/SenseTrustStrategicPartnershipPilotProposalRoom'
+import SenseTrustStrategicPilotExecutionGovernanceRoom from '@/pages/SenseTrustStrategicPilotExecutionGovernanceRoom'
 
 const App = () => (
   <AppStoreProvider>
@@ -104,6 +105,7 @@ const App = () => (
                       <Route path="/sensetrust-strategic-partner-engagement-control-room" element={<SenseTrustStrategicPartnerEngagementControlRoom />} />
                       <Route path="/sensetrust-strategic-partnership-conversion-decision-room" element={<SenseTrustStrategicPartnershipConversionDecisionRoom />} />
                       <Route path="/sensetrust-strategic-partnership-pilot-proposal-room" element={<SenseTrustStrategicPartnershipPilotProposalRoom />} />
+                      <Route path="/sensetrust/strategic-pilot-execution-governance-room" element={<SenseTrustStrategicPilotExecutionGovernanceRoom />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />

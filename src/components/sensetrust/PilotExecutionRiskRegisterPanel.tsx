@@ -1,20 +1,2 @@
-import type { SenseTrustPilotExecutionRisk } from '@/types/sensetrust/institutional-pilot-control-room'
-
-export function PilotExecutionRiskRegisterPanel({ risks }: { risks: SenseTrustPilotExecutionRisk[] }) {
-  return (
-    <section className="rounded-md border bg-white p-5 shadow-sm">
-      <p className="text-lg font-black text-slate-950">Execution risk register</p>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        {risks.slice(0, 12).map((risk) => (
-          <div key={risk.risk_id} className="rounded-md bg-slate-50 p-3">
-            <p className="font-mono text-xs font-bold uppercase text-rose-700">{risk.risk_level}</p>
-            <p className="mt-2 text-sm font-black text-slate-900">{risk.risk_title}</p>
-            <p className="mt-1 text-xs text-slate-600">{risk.impact}</p>
-            <p className="mt-2 text-xs text-slate-600">Mitigation: {risk.mitigation}</p>
-            <p className="mt-1 text-xs font-bold text-slate-700">Rule: {risk.interruption_rule_reference}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  )
-}
+import type { PilotExecutionRiskRegister } from '@/types/sensetrust/strategic-pilot-execution-governance-room'
+export function PilotExecutionRiskRegisterPanel({ registers }: { registers: PilotExecutionRiskRegister[] }) { return <section className="rounded-md border bg-white p-4"><h2 className="text-base font-black text-slate-950">Risk Register</h2><div className="mt-3 grid gap-2 md:grid-cols-3">{registers.map((x) => <div key={x.id} className="rounded-md bg-slate-50 p-3"><p className="font-bold text-slate-900">{x.highestRisk}</p><p className="text-xs text-slate-600">{x.items.length} risks / no_real_pilot</p></div>)}</div></section> }
