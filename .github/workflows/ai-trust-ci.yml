@@ -1,0 +1,46 @@
+name: AI Trust CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - feature/ai-trust-engine-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  ai-trust-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+
+      - name: Enable Corepack and pin pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: AI Trust scoped typecheck
+        run: pnpm run typecheck:ai-trust
+
+      - name: AI Trust lint
+        run: pnpm exec oxlint src/features/ai-trust src/test/setup.ts vitest.config.ts
+
+      - name: AI Trust tests
+        run: pnpm exec vitest run src/features/ai-trust
+
+      - name: Application build
+        run: pnpm run build
