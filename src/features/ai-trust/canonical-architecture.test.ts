@@ -16,7 +16,7 @@ describe('canonical NeuroStrata AI Trust architecture', () => {
       (file) =>
         /\.(ts|tsx)$/.test(file) &&
         !/\.test\.(ts|tsx)$/.test(file) &&
-        !file.endsWith('lib\\supabase\\types.ts'),
+        !file.replaceAll('\\', '/').endsWith('lib/supabase/types.ts'),
     )
     const initializers = modules.flatMap((file) => {
       const matches = readFileSync(file, 'utf8').match(/\bcreateClient\s*(?:<[^>]+>)?\s*\(/g) ?? []
