@@ -10,8 +10,9 @@ import {
   Scale,
   Brain,
   Settings,
-  ChevronRight,
   Database,
+  LayoutDashboard,
+  LogOut,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -26,10 +27,12 @@ import {
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
 import useAppStore from '@/stores/useAppStore'
+import { useAuth } from '@/hooks/use-auth'
 
 export function AppSidebar() {
   const location = useLocation()
   const { patients } = useAppStore()
+  const { signOut } = useAuth()
 
   const activePatientMatch = location.pathname.match(/^\/patients\/([^/]+)/)
   const activePatientId = activePatientMatch ? activePatientMatch[1] : null
@@ -65,6 +68,12 @@ export function AppSidebar() {
   const riskStatus = activePatient ? getRiskStatus(activePatient.score) : null
 
   const coreNavItems = [
+    {
+      name: 'Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+      color: 'text-indigo-600',
+    },
     { name: 'Pacientes', path: '/patients', icon: Users, color: 'text-slate-500' },
     {
       name: '1. Jornada Clínica',
@@ -84,6 +93,12 @@ export function AppSidebar() {
       path: '/trust-layer',
       icon: ShieldCheck,
       color: 'text-slate-900',
+    },
+    {
+      name: 'AI Trust Preview',
+      path: '/ai-trust-preview',
+      icon: Database,
+      color: 'text-emerald-700',
     },
   ]
 
@@ -205,6 +220,12 @@ export function AppSidebar() {
                 <Settings className="w-5 h-5" />
                 <span className="font-medium">Configurações Base</span>
               </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => void signOut()} className="text-slate-500">
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Encerrar sessão</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

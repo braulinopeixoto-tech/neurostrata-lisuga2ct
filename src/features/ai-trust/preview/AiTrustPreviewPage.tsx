@@ -41,8 +41,6 @@ function PreviewConfigurationError({ message }: { message: string }) {
 function ConfiguredAiTrustPreviewPage({ gateway }: { gateway: PreviewGateway }) {
   const [session, setSession] = useState<PreviewSession | null>(null)
   const [organization, setOrganization] = useState<PreviewOrganizationContext | null>(null)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [resourceId, setResourceId] = useState(DEFAULT_PREVIEW_RESOURCE_ID)
   const [events, setEvents] = useState<PersistedTrustEvent[]>([])
   const [chainValid, setChainValid] = useState<boolean | null>(null)
@@ -97,19 +95,6 @@ function ConfiguredAiTrustPreviewPage({ gateway }: { gateway: PreviewGateway }) 
       setLoading(false)
     }
   }
-
-  const signIn = () =>
-    run(async () => {
-      const nextSession = await gateway.signIn(email, password)
-      await establishContext(nextSession)
-      setPassword('')
-    })
-
-  const signOut = () =>
-    run(async () => {
-      await gateway.signOut()
-      await establishContext(null)
-    })
 
   const loadChain = () =>
     run(async () => {
@@ -192,33 +177,10 @@ function ConfiguredAiTrustPreviewPage({ gateway }: { gateway: PreviewGateway }) 
             </div>
           </div>
 
-          {!session ? (
-            <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-              <Input
-                aria-label="Synthetic staging email"
-                type="email"
-                autoComplete="username"
-                placeholder="synthetic@example.invalid"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-              <Input
-                aria-label="Synthetic staging password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Staging password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <Button onClick={signIn} disabled={loading || !email || !password}>
-                Autenticar
-              </Button>
-            </div>
-          ) : (
-            <Button variant="outline" onClick={signOut} disabled={loading}>
-              Encerrar sessão sintética
-            </Button>
-          )}
+          <p className="rounded-lg border border-dashed p-3 text-sm text-slate-600">
+            A autenticação é gerenciada pelo contexto único do NeuroStrata. Esta rota não coleta
+            credenciais e aceita somente a sessão já restaurada.
+          </p>
         </CardContent>
       </Card>
 

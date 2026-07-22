@@ -8,8 +8,6 @@ function createGateway(overrides: Partial<PreviewGateway> = {}): PreviewGateway 
   return {
     getSession: vi.fn().mockResolvedValue(null),
     subscribeToSession: vi.fn(() => () => undefined),
-    signIn: vi.fn(),
-    signOut: vi.fn().mockResolvedValue(undefined),
     resolveOrganization: vi.fn(),
     appendSyntheticEvent: vi.fn(),
     loadChain: vi.fn().mockResolvedValue({ events: [], valid: true, errors: [] }),
