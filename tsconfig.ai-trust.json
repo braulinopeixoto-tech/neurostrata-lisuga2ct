@@ -5,7 +5,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vitest/globals", "@testing-library/jest-dom", "node"]
+    "types": ["vitest/globals", "@testing-library/jest-dom", "vite/client", "node"]
   },
   "include": ["src/features/ai-trust/**/*.ts", "src/features/ai-trust/**/*.tsx", "src/test/setup.ts"]
 }
