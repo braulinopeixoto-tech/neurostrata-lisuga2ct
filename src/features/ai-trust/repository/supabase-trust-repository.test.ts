@@ -6,17 +6,23 @@ import { createPersistedEvent } from './repository-test-fixtures'
 import { SupabaseTrustRepository } from './supabase-trust-repository'
 
 describe('SupabaseTrustRepository', () => {
+  const organizationId = '00000000-0000-4000-8000-000000000001'
+
   it('uses only the injected client to append an event', async () => {
     const insert = vi.fn().mockResolvedValue({ data: null, error: null })
     const from = vi.fn().mockReturnValue({ insert })
     const repository = new SupabaseTrustRepository(
       { from } as unknown as SupabaseClient<AiTrustDatabase>,
+      organizationId,
     )
     const event = await createPersistedEvent()
 
     await expect(repository.appendEvent(event)).resolves.toEqual(event)
     expect(from).toHaveBeenCalledWith('ai_trust_events')
-    expect(insert).toHaveBeenCalledWith(toTrustEventRow(event))
+    expect(insert).toHaveBeenCalledWith({
+      ...toTrustEventRow(event),
+      organization_id: organizationId,
+    })
   })
 
   it('retrieves and maps an ordered resource chain from an injected mock', async () => {
@@ -24,6 +30,7 @@ describe('SupabaseTrustRepository', () => {
     const row: AiTrustEventRow = {
       ...toTrustEventRow(event),
       id: '00000000-0000-4000-8000-000000000001',
+      organization_id: organizationId,
       sequence_number: 1,
       created_at: '2026-07-21T20:00:01.000Z',
     }
@@ -36,10 +43,12 @@ describe('SupabaseTrustRepository', () => {
     const from = vi.fn().mockReturnValue({ select })
     const repository = new SupabaseTrustRepository(
       { from } as unknown as SupabaseClient<AiTrustDatabase>,
+      organizationId,
     )
 
     await expect(repository.getEventsByResource(event.resourceId)).resolves.toEqual([event])
-    expect(query.eq).toHaveBeenCalledWith('resource_id', event.resourceId)
+    expect(query.eq).toHaveBeenNthCalledWith(1, 'organization_id', organizationId)
+    expect(query.eq).toHaveBeenNthCalledWith(2, 'resource_id', event.resourceId)
     expect(query.order).toHaveBeenCalledWith('sequence_number', { ascending: true })
   })
 })

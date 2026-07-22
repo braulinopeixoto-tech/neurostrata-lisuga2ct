@@ -1,13 +1,8 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type AiTrustEventRow = {
   id: string
+  organization_id: string
   event_id: string
   resource_id: string
   event_type: string
@@ -24,10 +19,7 @@ export type AiTrustEventRow = {
   created_at: string
 }
 
-export type AiTrustEventInsert = Omit<
-  AiTrustEventRow,
-  'id' | 'sequence_number' | 'created_at'
-> & {
+export type AiTrustEventInsert = Omit<AiTrustEventRow, 'id' | 'sequence_number' | 'created_at'> & {
   id?: string
   sequence_number?: number
   created_at?: string
@@ -35,6 +27,7 @@ export type AiTrustEventInsert = Omit<
 
 export type AiTrustDecisionRow = {
   id: string
+  organization_id: string
   decision_id: string
   resource_id: string
   event_id: string | null
@@ -52,6 +45,7 @@ export type AiTrustDecisionInsert = Omit<AiTrustDecisionRow, 'id' | 'created_at'
 
 type GenericGovernedRow = {
   id: string
+  organization_id: string
   resource_id: string
   metadata: Json
   created_at: string
@@ -59,6 +53,7 @@ type GenericGovernedRow = {
 
 type GenericGovernedInsert = {
   id?: string
+  organization_id: string
   resource_id: string
   metadata?: Json
   created_at?: string
@@ -102,6 +97,48 @@ export interface AiTrustDatabase {
         Row: GenericGovernedRow
         Insert: GenericGovernedInsert
         Update: ImmutableUpdate<GenericGovernedInsert>
+        Relationships: []
+      }
+      ai_trust_organizations: {
+        Row: {
+          id: string
+          organization_key: string
+          display_name: string
+          status: 'ACTIVE' | 'INACTIVE'
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_key: string
+          display_name: string
+          status: 'ACTIVE' | 'INACTIVE'
+          metadata?: Json
+          created_at?: string
+        }
+        Update: Record<string, never>
+        Relationships: []
+      }
+      ai_trust_organization_memberships: {
+        Row: {
+          id: string
+          organization_id: string
+          user_id: string
+          member_role: 'MEMBER' | 'REVIEWER'
+          status: 'ACTIVE' | 'INACTIVE'
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          user_id: string
+          member_role: 'MEMBER' | 'REVIEWER'
+          status: 'ACTIVE' | 'INACTIVE'
+          metadata?: Json
+          created_at?: string
+        }
+        Update: Record<string, never>
         Relationships: []
       }
     }

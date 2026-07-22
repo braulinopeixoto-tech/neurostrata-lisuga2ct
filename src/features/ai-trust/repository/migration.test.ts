@@ -3,10 +3,12 @@ import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const migration = readFileSync(
-  resolve(
-    process.cwd(),
-    'supabase/migrations/20260721190000_ai_trust_persistence_foundation.sql',
-  ),
+  resolve(process.cwd(), 'supabase/migrations/20260721190000_ai_trust_persistence_foundation.sql'),
+  'utf8',
+)
+
+const organizationRlsMigration = readFileSync(
+  resolve(process.cwd(), 'supabase/migrations/20260721210000_ai_trust_organization_rls.sql'),
   'utf8',
 )
 
@@ -27,5 +29,20 @@ describe('AI Trust local migration', () => {
     expect(migration).toContain('ai_trust_events_reject_mutation')
     expect(migration).toContain('ai_trust_validate_event_append')
     expect(migration).toContain('previous hash does not match latest event')
+  })
+})
+
+describe('AI Trust organization RLS migration', () => {
+  it('adds a controlled membership boundary without destructive table operations', () => {
+    expect(organizationRlsMigration).toContain('ai_trust_organization_memberships')
+    expect(organizationRlsMigration).toContain('organization_id')
+    expect(organizationRlsMigration).not.toMatch(/\b(drop table|truncate)\b/i)
+  })
+
+  it('keeps anonymous access ungranted and scopes authenticated policies', () => {
+    expect(organizationRlsMigration).toContain('from anon, authenticated')
+    expect(organizationRlsMigration).toContain('ai_trust_has_organization_access')
+    expect(organizationRlsMigration).toContain('ai_trust_has_organization_role')
+    expect(organizationRlsMigration).toContain("array['REVIEWER']::text[]")
   })
 })

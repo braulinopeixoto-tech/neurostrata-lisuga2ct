@@ -19,7 +19,14 @@ function asMetadata(value: Json | null): TrustMetadata {
   return value as TrustMetadata
 }
 
-export function toTrustEventRow(event: PersistedTrustEvent): AiTrustEventInsert {
+function asCanonicalTimestamp(value: string): string {
+  const timestamp = new Date(value)
+  return Number.isNaN(timestamp.getTime()) ? value : timestamp.toISOString()
+}
+
+export function toTrustEventRow(
+  event: PersistedTrustEvent,
+): Omit<AiTrustEventInsert, 'organization_id'> {
   return {
     event_id: event.eventId,
     resource_id: event.resourceId,
@@ -40,7 +47,7 @@ export function fromTrustEventRow(row: AiTrustEventRow): PersistedTrustEvent {
   const result = trustEventSchema.safeParse({
     eventId: row.event_id,
     eventType: row.event_type,
-    occurredAt: row.occurred_at,
+    occurredAt: asCanonicalTimestamp(row.occurred_at),
     actorId: row.actor_id,
     artifact: row.artifact,
     integrityPolicy: row.integrity_policy,
@@ -67,7 +74,9 @@ export function fromTrustEventRow(row: AiTrustEventRow): PersistedTrustEvent {
   }
 }
 
-export function toTrustDecisionRow(decision: PersistedTrustDecision): AiTrustDecisionInsert {
+export function toTrustDecisionRow(
+  decision: PersistedTrustDecision,
+): Omit<AiTrustDecisionInsert, 'organization_id'> {
   return {
     decision_id: decision.decisionId,
     resource_id: decision.resourceId,
@@ -94,7 +103,7 @@ export function fromTrustDecisionRow(row: AiTrustDecisionRow): PersistedTrustDec
     decisionId: row.decision_id,
     resourceId: row.resource_id,
     eventId: row.event_id,
-    occurredAt: row.occurred_at,
+    occurredAt: asCanonicalTimestamp(row.occurred_at),
     actorId: row.actor_id,
     decision: decisionResult.data,
     metadata: asMetadata(row.metadata),
