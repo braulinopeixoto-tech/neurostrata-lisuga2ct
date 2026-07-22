@@ -46,6 +46,7 @@ import ClinicalJourney from '@/pages/ClinicalJourney'
 import DiagnosticCore from '@/pages/DiagnosticCore'
 import Interventions from '@/pages/Interventions'
 import TrustLayer from '@/pages/TrustLayer'
+import { AiTrustPreviewPage } from '@/features/ai-trust/preview/AiTrustPreviewPage'
 
 const App = () => (
   <AppStoreProvider>
@@ -68,6 +69,7 @@ const App = () => (
                       <Route path="/diagnostic-core" element={<DiagnosticCore />} />
                       <Route path="/interventions" element={<Interventions />} />
                       <Route path="/trust-layer" element={<TrustLayer />} />
+                      <Route path="/ai-trust-preview" element={<AiTrustPreviewPage />} />
 
                       <Route path="/vitalstrata" element={<VitalStrata />} />
                       <Route path="/psychometric-lab" element={<PsychometricLab />} />
