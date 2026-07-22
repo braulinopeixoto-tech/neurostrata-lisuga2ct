@@ -1,14 +1,11 @@
 import type { Session, SupabaseClient } from '@supabase/supabase-js'
+import { aiTrustSupabase } from '@/lib/supabase/client'
 import { calculateTrustEventHash, canonicalize, sha256Hex } from '../hashing'
 import type { AiTrustDatabase } from '../repository/database-types'
 import { normalizeSupabaseError, TrustRepositoryError } from '../repository/errors'
 import { SupabaseTrustRepository } from '../repository/supabase-trust-repository'
 import type { PersistedTrustEvent, TrustRepository } from '../repository/types'
-import {
-  createPreviewSupabaseClient,
-  resolvePreviewClientConfiguration,
-  type PreviewEnvironment,
-} from './preview-client'
+import { resolvePreviewClientConfiguration, type PreviewEnvironment } from './preview-client'
 
 export const DEFAULT_PREVIEW_RESOURCE_ID = 'skip-preview-demo-001'
 
@@ -31,8 +28,6 @@ export interface PreviewChainResult {
 export interface PreviewGateway {
   getSession(): Promise<PreviewSession | null>
   subscribeToSession(listener: (session: PreviewSession | null) => void): () => void
-  signIn(email: string, password: string): Promise<PreviewSession>
-  signOut(): Promise<void>
   resolveOrganization(userId: string): Promise<PreviewOrganizationContext>
   appendSyntheticEvent(
     organization: PreviewOrganizationContext,
@@ -89,20 +84,6 @@ export class SupabasePreviewGateway implements PreviewGateway {
       listener(toPreviewSession(session))
     })
     return () => data.subscription.unsubscribe()
-  }
-
-  async signIn(email: string, password: string): Promise<PreviewSession> {
-    const { data, error } = await this.client.auth.signInWithPassword({ email, password })
-    if (error) throw normalizeSupabaseError(error, 'preview_sign_in')
-    const session = toPreviewSession(data.session)
-    if (!session)
-      throw new TrustRepositoryError('ACCESS_DENIED', 'preview_sign_in', 'Sign-in failed.')
-    return session
-  }
-
-  async signOut(): Promise<void> {
-    const { error } = await this.client.auth.signOut()
-    if (error) throw normalizeSupabaseError(error, 'preview_sign_out')
   }
 
   async resolveOrganization(userId: string): Promise<PreviewOrganizationContext> {
@@ -199,6 +180,6 @@ export class SupabasePreviewGateway implements PreviewGateway {
 export function createPreviewGatewayFromEnvironment(
   environment: PreviewEnvironment = import.meta.env as PreviewEnvironment,
 ): PreviewGateway {
-  const configuration = resolvePreviewClientConfiguration(environment)
-  return new SupabasePreviewGateway(createPreviewSupabaseClient(configuration))
+  resolvePreviewClientConfiguration(environment)
+  return new SupabasePreviewGateway(aiTrustSupabase)
 }

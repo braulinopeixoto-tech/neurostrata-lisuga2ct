@@ -29,6 +29,7 @@ import {
   ChartLegendContent,
 } from '@/components/ui/chart'
 import useAppStore from '@/stores/useAppStore'
+import { AiTrustDashboardIntegration } from '@/features/ai-trust/dashboard/AiTrustDashboardIntegration'
 
 export default function Dashboard() {
   const { patients } = useAppStore()
@@ -76,6 +77,14 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in-up pb-10">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+        <span className="font-semibold">
+          Preview consolidado · conteúdo demonstrativo sintético
+        </span>
+        <span className="rounded-full border border-amber-300 bg-white px-3 py-1 text-xs font-bold uppercase tracking-wider">
+          Non-production
+        </span>
+      </div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border shadow-sm">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center gap-3">
@@ -269,6 +278,9 @@ export default function Dashboard() {
             </ChartContainer>
           </CardContent>
         </Card>
+      </div>
+      <div className="pt-4">
+        <AiTrustDashboardIntegration />
       </div>
     </div>
   )

@@ -1,14 +1,15 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import type { Session, SupabaseClient, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/client'
+import type { Database } from '@/lib/supabase/types'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
-  signUp: (email: string, password: string) => Promise<{ error: any }>
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signOut: () => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signOut: () => Promise<{ error: Error | null }>
   loading: boolean
+  configurationError: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -19,46 +20,75 @@ export const useAuth = () => {
   return context
 }
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode
+  client?: SupabaseClient<Database>
+}
+
+function normalizeAuthError(error: unknown): Error {
+  return error instanceof Error ? error : new Error('AI_TRUST_AUTH_OPERATION_FAILED')
+}
+
+export const AuthProvider = ({ children, client = supabase }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [configurationError, setConfigurationError] = useState(false)
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+    let active = true
+    try {
+      const {
+        data: { subscription },
+      } = client.auth.onAuthStateChange((_event, nextSession) => {
+        if (!active) return
+        setSession(nextSession)
+        setUser(nextSession?.user ?? null)
+        setLoading(false)
+      })
 
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
-    })
-    return { error }
-  }
+      void client.auth
+        .getSession()
+        .then(({ data }) => {
+          if (!active) return
+          setSession(data.session)
+          setUser(data.session?.user ?? null)
+        })
+        .catch(() => active && setConfigurationError(true))
+        .finally(() => active && setLoading(false))
+
+      return () => {
+        active = false
+        subscription.unsubscribe()
+      }
+    } catch {
+      setConfigurationError(true)
+      setLoading(false)
+      return () => {
+        active = false
+      }
+    }
+  }, [client])
+
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error }
+    try {
+      const { error } = await client.auth.signInWithPassword({ email, password })
+      return { error: error ? normalizeAuthError(error) : null }
+    } catch (error) {
+      return { error: normalizeAuthError(error) }
+    }
   }
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    return { error }
+    try {
+      const { error } = await client.auth.signOut()
+      return { error: error ? normalizeAuthError(error) : null }
+    } catch (error) {
+      return { error: normalizeAuthError(error) }
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, signUp, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ user, session, signIn, signOut, loading, configurationError }}>
       {children}
     </AuthContext.Provider>
   )
