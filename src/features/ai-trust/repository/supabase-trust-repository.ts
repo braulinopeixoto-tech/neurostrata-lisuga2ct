@@ -3,19 +3,14 @@ import { validateTrustChain } from '../chain'
 import { calculateTrustEventHash } from '../hashing'
 import type { AiTrustDatabase, AiTrustEventRow } from './database-types'
 import { normalizeSupabaseError, TrustRepositoryError } from './errors'
-import {
-  fromTrustEventRow,
-  toTrustDecisionRow,
-  toTrustEventRow,
-} from './mappers'
-import type {
-  PersistedTrustDecision,
-  PersistedTrustEvent,
-  TrustRepository,
-} from './types'
+import { fromTrustEventRow, toTrustDecisionRow, toTrustEventRow } from './mappers'
+import type { PersistedTrustDecision, PersistedTrustEvent, TrustRepository } from './types'
 
 export class SupabaseTrustRepository implements TrustRepository {
-  constructor(private readonly client: SupabaseClient<AiTrustDatabase>) {}
+  constructor(
+    private readonly client: SupabaseClient<AiTrustDatabase>,
+    private readonly organizationId: string,
+  ) {}
 
   async appendEvent(event: PersistedTrustEvent): Promise<PersistedTrustEvent> {
     if ((await calculateTrustEventHash(event)) !== event.eventHash) {
@@ -26,7 +21,10 @@ export class SupabaseTrustRepository implements TrustRepository {
       )
     }
 
-    const { error } = await this.client.from('ai_trust_events').insert(toTrustEventRow(event))
+    const { error } = await this.client.from('ai_trust_events').insert({
+      ...toTrustEventRow(event),
+      organization_id: this.organizationId,
+    })
     if (error) throw normalizeSupabaseError(error, 'append_event')
     return structuredClone(event)
   }
@@ -35,6 +33,7 @@ export class SupabaseTrustRepository implements TrustRepository {
     const { data, error } = await this.client
       .from('ai_trust_events')
       .select('*')
+      .eq('organization_id', this.organizationId)
       .eq('resource_id', resourceId)
       .order('sequence_number', { ascending: true })
 
@@ -46,6 +45,7 @@ export class SupabaseTrustRepository implements TrustRepository {
     const { data, error } = await this.client
       .from('ai_trust_events')
       .select('*')
+      .eq('organization_id', this.organizationId)
       .eq('resource_id', resourceId)
       .order('sequence_number', { ascending: false })
       .limit(1)
@@ -56,9 +56,10 @@ export class SupabaseTrustRepository implements TrustRepository {
   }
 
   async appendDecision(decision: PersistedTrustDecision): Promise<PersistedTrustDecision> {
-    const { error } = await this.client
-      .from('ai_trust_decisions')
-      .insert(toTrustDecisionRow(decision))
+    const { error } = await this.client.from('ai_trust_decisions').insert({
+      ...toTrustDecisionRow(decision),
+      organization_id: this.organizationId,
+    })
 
     if (error) throw normalizeSupabaseError(error, 'append_decision')
     return structuredClone(decision)

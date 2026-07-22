@@ -10,6 +10,7 @@ describe('AI Trust persistence mappers', () => {
     const row: AiTrustEventRow = {
       ...insert,
       id: '00000000-0000-4000-8000-000000000001',
+      organization_id: '00000000-0000-4000-8000-000000000001',
       sequence_number: 1,
       created_at: '2026-07-21T20:00:01.000Z',
     }
@@ -24,6 +25,7 @@ describe('AI Trust persistence mappers', () => {
       ...insert,
       event_hash: 'not-a-sha256',
       id: '00000000-0000-4000-8000-000000000001',
+      organization_id: '00000000-0000-4000-8000-000000000001',
       sequence_number: 1,
       created_at: '2026-07-21T20:00:01.000Z',
     } as AiTrustEventRow
@@ -31,5 +33,20 @@ describe('AI Trust persistence mappers', () => {
     expect(() => fromTrustEventRow(row)).toThrowError(
       expect.objectContaining({ code: 'INVALID_DATABASE_ROW' }),
     )
+  })
+
+  it('normalizes PostgreSQL timestamptz offsets to the canonical UTC form', async () => {
+    const event = await createPersistedEvent()
+    const insert = toTrustEventRow(event)
+    const row: AiTrustEventRow = {
+      ...insert,
+      occurred_at: '2026-07-21T20:00:00+00:00',
+      id: '00000000-0000-4000-8000-000000000001',
+      organization_id: '00000000-0000-4000-8000-000000000001',
+      sequence_number: 1,
+      created_at: '2026-07-21T20:00:01+00:00',
+    }
+
+    expect(fromTrustEventRow(row).occurredAt).toBe('2026-07-21T20:00:00.000Z')
   })
 })
